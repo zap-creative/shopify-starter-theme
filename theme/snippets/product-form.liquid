@@ -1,3 +1,12 @@
+{%- comment -%}
+  Accepts:
+  - product: {Object} Product object
+  - json: {Boolean} [Optional] Inline product JSON if true
+
+  Usage:
+  {% include 'product-form' with product: product, json: true %}
+{%- endcomment -%}
+
 {% comment %}
   Product form for product page template
   `data-product-form` and `data-product-handle` used by theme ProductForm scripts
@@ -95,4 +104,11 @@
     {% endif %}
   {%- endfor -%}
 
+  {%- comment -%}
+    Optionally include the JSON data for the product, this helps for providing more interactivity
+    on product listings without having to fetch() the data for each individual product after load
+  {%- endcomment -%}
+  {%- if json -%}
+    <script data-product-data="{{product.handle}}" type="application/json">{{ product | json }}</script>
+  {%- endif -%}
 {% endform %}

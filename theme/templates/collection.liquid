@@ -44,18 +44,7 @@
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
       {%- for product in collection.products -%}
 
-        <div class="text-center">
-          <a href="{{ product.url | within: collection }}">
-            {% include 'responsive-image' with image: product.featured_image, width: 600 %}
-          </a>
-          <h2 class="text-xl m-2">
-            <a href="{{ product.url | within: collection }}">{{ product.title }}</a>
-          </h2>
-          <p class="mt-0">
-            {{ product.price | money }}
-            {%- unless product.available -%} - <strong>sold out</strong>{%- endunless -%}
-          </p>
-        </div>
+        {% include 'product-list-item' with product: product, collection: collection, interactive: true %}
 
       {%- else -%}
 

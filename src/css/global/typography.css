@@ -1,3 +1,10 @@
+a { 
+  color: var(--c-primary);
+}
+
+a:hover {
+  color: var(--c-primary-dark);
+}
 
 .text-caps {
   font-size: 12px;

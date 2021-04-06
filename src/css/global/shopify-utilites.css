@@ -1,5 +1,5 @@
 /* Account for JavaScript disabled */
-.js-enabled {
+html.no-js .js-enabled {
   display: none;
 }
 

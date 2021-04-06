@@ -19,30 +19,10 @@
   box-sizing: border-box;
 }
 
-body { margin: 0; }
-
-a { color: var(--c-primary); }
-a:hover { color: var(--c-primary-dark); }
-
-input,
-select,
-button {
-  font-size: 1rem;
+body {
+  margin: 0
 }
 
-img {
-  height: auto;
-  max-width: 100%;
-}
-
-.blur-up {
-  filter: blur(5px);
-  transition: filter 400ms;
-}
-
-.blur-up.lazyloaded {
-  filter: blur(0);
-}
 
 /* Needed for TailwindCSS, did not want the rest of preflight */
 [class*='border'] {

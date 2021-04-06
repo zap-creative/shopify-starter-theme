@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="antialiased text-gray-700" lang="{{ shop.locale }}">
+<html class="no-js antialiased text-gray-700" lang="{{ shop.locale }}">
 <head>
   <title>{{ page_title }}</title>
   <meta charset="utf-8">
@@ -14,6 +14,9 @@
     Make string translations and money formate available to scripts.
   {%- endcomment -%}
   <script>
+      // JS is enabled
+    document.documentElement.classList.replace('no-js', 'js');
+
     window.theme = {
       strings: {
         addToCart: {{ 'products.product.add_to_cart' | t | json }},
@@ -31,16 +34,19 @@
 
   <link rel="preload" href="{{ 'theme.bundle.js' | asset_url }}" as="script">
 
-  {%- if template contains 'product' -%}
-    {{- 'product.bundle.css' | asset_url | stylesheet_tag -}}
-    <link rel="preload" href="{{ 'product.bundle.js' | asset_url }}" as="script">
-  {%- endif -%}
+  {%- case template -%}
+    {%- when 'product' -%}
+      {{- 'product.bundle.css' | asset_url | stylesheet_tag -}}
+      <link rel="preload" href="{{ 'product.bundle.js' | asset_url }}" as="script">
+    {%- when 'collection' -%}
+      <link rel="preload" href="{{ 'collection.bundle.js' | asset_url }}" as="script">
+  {%- endcase -%}
 
   {%- include 'social-meta-tags'  -%}
 
   {{ content_for_header }}
 </head>
-<body>
+<body class="template-{{ template }}">
   {%- section 'site-header' -%}
 
   <main role="main">
@@ -52,9 +58,12 @@
   <aside id="app-cart"></aside>
 
   {{ 'theme.bundle.js' | asset_url | script_tag }}
-  {%- if template contains 'product' -%}
-  {{ 'product.bundle.js' | asset_url | script_tag }}
-  {%- endif -%}
+  {%- case template -%}
+    {%- when 'product' -%}
+      {{ 'product.bundle.js' | asset_url | script_tag }}
+    {%- when 'collection' -%}
+      {{ 'collection.bundle.js' | asset_url | script_tag }}
+  {%- endcase -%}
 
   {% if template.directory == 'customers' %}
   <script src="{{ 'shopify_common.js' | shopify_asset_url }}"></script>

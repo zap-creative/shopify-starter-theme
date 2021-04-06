@@ -15,6 +15,7 @@ module.exports = (env) => ({
   mode: isProduction ? 'production' : 'development',
   entry: {
     theme: './src/js/theme.js',
+    collection: './src/js/collection.js',
     product: './src/js/product.js',
     customers: './src/js/customers.js',
   },
@@ -88,6 +89,7 @@ module.exports = (env) => ({
       https: true,
       port: 3000,
       proxy: `https://${storeURL}?preview_theme_id=${themeID}`,
+      notify: false,
       middleware: [
         (function mw(req, res, next) {
           // Add url paramaters for Shopify theme preview.
