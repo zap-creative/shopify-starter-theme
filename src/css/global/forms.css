@@ -8,7 +8,7 @@ button {
 input,
 textarea,
 select {
-  @apply border-gray-400;
+  @apply p-2 border-gray-400;
 
   border-radius: 4px;
   border-style: solid;

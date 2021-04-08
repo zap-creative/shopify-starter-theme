@@ -1,40 +1,60 @@
+{%- assign assetsPath = 'theme.bundle.js' | asset_url | split: 'theme.bundle.js' | first -%}
+
 <!doctype html>
-<html class="no-js antialiased text-gray-700" lang="{{ shop.locale }}">
+<html class="no-js supports-no-cookies antialiased" lang="{{ shop.locale }}">
 <head>
-  <title>{{ page_title }}</title>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="description" content="{{ page_description | escape }}">
-  <link rel="canonical" href="{{ canonical_url }}">
-  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  {{- 'theme.bundle.css' | asset_url | stylesheet_tag -}}
+  <title>{% include 'seo-title' %}</title>
+  {% if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
 
-  {%- comment -%}
-    Make string translations and money formate available to scripts.
-  {%- endcomment -%}
+  {% if canonical_url -%}
+    <link rel="canonical" href="{{ canonical_url }}">
+  {%- endif %}
+
+  {{ 'theme.bundle.css' | asset_url | stylesheet_tag }}
+  {% render 'css-variables' %}
   <script>
-      // JS is enabled
-    document.documentElement.classList.replace('no-js', 'js');
-
+    {%- comment -%} Make string translations and money formate available to scripts.{%- endcomment %}
     window.theme = {
+      settings: {
+        predictiveSearchEnabled: {{ settings.predictive_search_enabled | json }},
+        predictiveSearchShowPrice: {{ settings.predictive_search_show_price | json }},
+        predictiveSearchShowVendor: {{ settings.predictive_search_show_vendor | json }},
+        predictiveSearchUri: {{ routes.search_url | json }}
+      },
       strings: {
         addToCart: {{ 'products.product.add_to_cart' | t | json }},
+        articles: {{ 'general.search.articles' | t | json }},
+        collections: {{ 'general.search.collections' | t | json }},
+        pages: {{ 'general.search.pages' | t | json }},
+        products: {{ 'general.search.products' | t | json }},
+        searchClose: {{ 'general.search.close' | t | json }},
+        searchFor: {{ 'general.search.search_for' | t | json }},
+        searchPlaceholder: {{ 'general.search.placeholder' | t | json }},
+        searchSubmit: {{ 'general.search.submit' | t | json }},
         soldOut: {{ 'products.product.sold_out' | t | json }},
         unavailable: {{ 'products.product.unavailable' | t | json }}
       },
       moneyFormat: {{ shop.money_format | json }}
     };
+
+    {% comment -%} Required for lazy-loading with Webpack on Shopify CDN {%- endcomment -%}
+    window.__webpack_public_path__ = "{{ assetsPath }}";
+
+    document.documentElement.classList.replace('no-js', 'js');
   </script>
 
-  {%- comment -%} Required for lazy-loading with Webpack on Shopify CDN {%- endcomment -%}
-  {%- capture randomFile -%}{{ 'theme.bundle.js' | asset_url }}{%- endcapture -%}
-  {%- assign assetsPath = randomFile | split: 'theme.bundle.js' | first -%}
-  <script>window.__webpack_public_path__ = "{{ assetsPath }}"</script>
+  <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.shopify.com" crossorigin>
+  <link rel="preconnect" href="https://monorail-edge.shopifysvc.com">
 
   <link rel="preload" href="{{ 'theme.bundle.js' | asset_url }}" as="script">
-
-  {%- case template -%}
+  {%- case request.page_type -%}
     {%- when 'product' -%}
       {{- 'product.bundle.css' | asset_url | stylesheet_tag -}}
       <link rel="preload" href="{{ 'product.bundle.js' | asset_url }}" as="script">
@@ -42,33 +62,56 @@
       <link rel="preload" href="{{ 'collection.bundle.js' | asset_url }}" as="script">
   {%- endcase -%}
 
-  {%- include 'social-meta-tags'  -%}
+  {%- render 'social-meta-tags'  -%}
 
   {{ content_for_header }}
 </head>
-<body class="template-{{ template }}">
-  {%- section 'site-header' -%}
+<body class="template-{{ request.page_type | handle }}{% if request.page_type == 'page' %} template-{{ template.name }}-{{ template.suffix }}{% endif %}">
+  {% if settings.announcement__text -%}
+    {%- render 'announcement' with
+      global: settings.announcement__everywhere,
+      text: settings.announcement__text,
+      link: settings.announcement__link,
+      bg: settings.announcement__bg,
+      bg_image: settings.announcement__bg_image,
+      color: settings.announcement__color
+    -%}
+  {%- endif %}
+
+  {% section 'site-header' %}
 
   <main role="main">
     {{ content_for_layout }}
   </main>
 
-  {%- section 'site-footer' -%}
+  {% section 'site-footer' %}
 
   <aside id="app-cart"></aside>
+  {% if settings.predictive_search_enabled -%}
+    <aside id="predictive-search"
+      data-search-close="{{ 'general.search.close' | t }}"
+      data-search-placeholder="{{ 'general.search.placeholder' | t }}"
+      data-search-submit="{{ 'general.search.submit' | t }}"
+      data-search-uri="{{ routes.search_url }}"
+    ></aside>
+  {%- endif %}
 
   {{ 'theme.bundle.js' | asset_url | script_tag }}
-  {%- case template -%}
+  {%- case request.page_type -%}
     {%- when 'product' -%}
       {{ 'product.bundle.js' | asset_url | script_tag }}
     {%- when 'collection' -%}
       {{ 'collection.bundle.js' | asset_url | script_tag }}
   {%- endcase -%}
 
-  {% if template.directory == 'customers' %}
-  <script src="{{ 'shopify_common.js' | shopify_asset_url }}"></script>
-  {{ 'customers.bundle.js' | asset_url | script_tag }}
-  {% endif %}
+  {% if request.page_type contains 'customers/' -%}
+    <script src="{{ 'shopify_common.js' | shopify_asset_url }}"></script>
+    {{ 'customers.bundle.js' | asset_url | script_tag }}
+  {%- endif -%}
 
+  <ul hidden>
+    <li id="a11y-refresh-page-message">{{ 'general.accessibility.refresh_page' | t }}</li>
+    <li id="a11y-selection-message">{{ 'general.accessibility.selection_help' | t }}</li>
+  </ul>
 </body>
 </html>

@@ -26,6 +26,7 @@
 @import './components/hero.css';
 @import './components/loading.css';
 @import './components/product-listing.css';
+@import './components/search-drawer.css';
 
 /**
  * TailwindCSS utilities

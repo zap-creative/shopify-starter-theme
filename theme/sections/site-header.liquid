@@ -1,42 +1,49 @@
-{%- if section.settings.announcement -%}
-  {%- if section.settings.announcement_only_home == false or template.name == 'index' -%}
-    <style>
-      /* stylelint-disable */
-      .announcement { background-color: {{ section.settings.accouncement_color_bg }}; }
-      .announcement--link:hover {
-        {%- assign brightness = section.settings.accouncement_color_bg | color_brightness -%}
-        {%- if brightness <= 192 -%}
-          {%- assign lightenAmount = 255 | minus: brightness | divided_by: 255 | times: 16 -%}
-          background-color: {{ section.settings.accouncement_color_bg | color_lighten: lightenAmount }};
-        {%- else -%}
-          {%- assign darkenAmount = 255 | divided_by: brightness | times: 8 -%}
-          background-color: {{ section.settings.accouncement_color_bg | color_darken: darkenAmount }};
-        {%- endif -%}
-      }
-      .announcement__message { color: {{ section.settings.accouncement_color_text }}; }
-      /* stylelint-enable */
-    </style>
+{%- assign centered = section.settings.align_logo | strip | remove: 'center' | size -%}
 
-    {%- if section.settings.announcement_link == blank -%}
-      <div class="announcement p-2 text-center">
-    {%- else -%}
-      <a href="{{ section.settings.announcement_link }}" class="announcement announcement--link">
-    {%- endif -%}
-
-      <div class="announcement__message text-sm">{{ section.settings.announcement_text | escape }}</div>
-
-    {%- if section.settings.announcement_link == blank -%}
-      </div>
-    {%- else -%}
+{% capture logo %}
+  {% if request.page_type == 'index' %}
+    <h1 class="h2 title site-header__logo">
+  {% else %}
+    <div class="h2 title site-header__logo">
+  {% endif %}
+    {% if settings.logo %}
+      {%- assign img_url = settings.logo | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+      <a href="{{ routes.root_url }}" class="site-header__logo-image{% if section.settings.align_logo == 'center' %} site-header__logo-image--centered{% endif %}">
+        {% capture logo_alt %}{{ settings.logo.alt | default: shop.name }}{% endcapture %}
+        <img class="lazyload js"
+              src="{{ settings.logo | img_url: '300x300' }}"
+              data-src="{{ img_url }}"
+              data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+              data-aspectratio="{{ settings.logo.aspect_ratio }}"
+              data-sizes="auto"
+              alt="{{ logo_alt | escape }}"
+              style="max-width: {{ settings.logo_max_width }}px">
+        <noscript>
+          {% capture image_size %}{{ settings.logo_max_width | escape }}x{% endcapture %}
+          <img src="{{ settings.logo | img_url: image_size }}"
+                srcset="{{ settings.logo | img_url: image_size }} 1x, {{ settings.logo | img_url: image_size, scale: 2 }} lg"
+                alt="{{ settings.logo.alt | default: shop.name }}"
+                style="max-width: {{ settings.logo_max_width }}px;">
+        </noscript>
       </a>
-    {%- endif -%}
+    {% else %}
+      <a class="site-header__logo-link" href="{{ routes.root_url }}">{{ shop.name }}</a>
+    {% endif %}
+  {% if request.page_type == 'index' %}
+    </h1>
+  {% else %}
+    </div>
+  {% endif %}
+{% endcapture %}
 
-  {%- endif -%}
-{%- endif -%}
-
-<header data-section-id="{{ section.id }}" data-section-type="header-section" class="site-header page-pad" role="banner">
-
-  {%- if template.name == 'index' -%}<h1 class="site-title" itemscope itemtype="http://schema.org/Organization">{%- else -%}<div class="site-title" itemscope itemtype="http://schema.org/Organization">{%- endif -%}
+<header
+  data-section-id="{{ section.id }}"
+  data-section-type="header-section"
+  data-header-section
+  class="site-header page-pad"
+  role="banner"
+>
+   {%- if template.name == 'index' -%}<h1 class="site-title" itemscope itemtype="http://schema.org/Organization">{%- else -%}<div class="site-title" itemscope itemtype="http://schema.org/Organization">{%- endif -%}
     <a href="/" itemprop="url" class="site-header__logo">{{ shop.name }}</a>
   {%- if template.name == 'index' -%}</h1>{%- else -%}</div>{%- endif -%}
 
@@ -63,10 +70,11 @@
   </nav>
 
   <nav id="site-actions" class="site-actions" role="navigation">
-    {%- if shop.customer_accounts_enabled -%}
+    {% if shop.customer_accounts_enabled -%}
     <a href="/account"><i class="material-icons-outlined">person</i></a>
-    {%- endif -%}
-    {%- if template != 'cart' -%}
+    {%- endif %}
+    <a href="{{ routes.search_url }}" class="open-search"><i class="material-icons-outlined">search</i></a>
+    {%- if request.page_type != 'cart' -%}
       <a href="/cart" class="open-cart">
     {%- else -%}
       <a href="#cart">
@@ -80,45 +88,55 @@
   {
     "name": "Site Header",
     "settings": [
-			{
+      {
         "type": "header",
-        "content": "Announcement bar"
+        "content": "Logo"
       },
       {
-        "type": "checkbox",
-        "id": "announcement",
-        "label": "Show announcement",
-        "default": true
+        "type": "select",
+        "id": "align_logo",
+        "label": "Alignment",
+        "default": "left",
+        "options": [
+          {
+            "value": "center",
+            "label": "Centered"
+          },
+          {
+            "value": "left",
+            "label": "Left (default)"
+          }
+        ]
       },
       {
-        "type": "checkbox",
-        "id": "announcement_only_home",
-        "label": "Only show on home page",
-        "default": false
+        "type": "header",
+        "content": "Menus"
+      },
+      {
+        "type": "link_list",
+        "id": "linklist",
+        "label": "Desktop Menu",
+        "default": "main-menu"
+      },
+      {
+        "type": "link_list",
+        "id": "mobile_linklist",
+        "label": "Mobile Menu",
+        "default": "main-menu"
+      },
+      {
+        "type": "header",
+        "content": "Advanced"
       },
       {
         "type": "text",
-        "id": "announcement_text",
-        "label": "Announcement text",
-        "default": "Announce something here"
+        "id": "html_id",
+        "label": "CSS id"
       },
       {
-        "type": "url",
-        "id": "announcement_link",
-        "label": "Announcement link",
-        "info": "Optional"
-      },
-      {
-        "type": "color",
-        "id": "accouncement_color_bg",
-        "label": "Bar",
-        "default": "#333333"
-      },
-      {
-        "type": "color",
-        "id": "accouncement_color_text",
-        "label": "Text",
-        "default": "#fff"
+        "type": "text",
+        "id": "html_classes",
+        "label": "CSS classes"
       }
     ]
   }

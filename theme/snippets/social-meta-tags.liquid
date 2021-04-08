@@ -13,7 +13,7 @@
   {%- endcapture -%}
 {%- endif -%}
 
-{%- case template.name -%}
+{%- case request.page_type -%}
   {%- when 'product' -%}
     {%- assign og_title = product.title | strip_html -%}
     {%- assign og_type = 'product' -%}
@@ -74,7 +74,7 @@
 <meta property="og:type" content="{{ og_type }}">
 <meta property="og:description" content="{{ og_description }}">
 
-{%- if template.name == 'product' -%}
+{%- if request.page_type == 'product' -%}
   <meta property="og:price:amount" content="{{ product.price | money_without_currency | strip_html }}">
   <meta property="og:price:currency" content="{{ shop.currency }}">
 {%- endif -%}

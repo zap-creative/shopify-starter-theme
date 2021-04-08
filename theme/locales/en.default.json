@@ -3,6 +3,41 @@
     "404": {
       "title": "Page not found",
       "subtext_html": "The page you were looking for does not exist"
+    },
+    "onboarding": {
+      "product_title": "Your product's name",
+      "product_description": "This area is used to describe your product’s details. Tell customers about the look, feel, and style of your product. Add details on color, materials used, sizing, and where it was made.",
+      "collection_title": "Your collection's name",
+      "blog_title": "Your post's title",
+      "blog_excerpt": "Your store hasn’t published any blog posts yet. A blog can be used to talk about new product launches, tips, or other news you want to share with your customers. You can check out Shopify’s ecommerce blog for inspiration and advice for your own store and blog.",
+      "blog_author": "Author name",
+      "no_content": "This section doesn’t currently include any content. Add content to this section using the sidebar."
+    },
+    "search": {
+      "no_results": "Try checking your spelling or using different words.",
+      "empty_search_message": "Search field cannot be empty",
+      "results_with_count": {
+        "one": "{{ count }} result for &ldquo;{{ terms }}&rdquo;",
+        "other": "{{ count }} results for &ldquo;{{ terms }}&rdquo;"
+      },
+      "title": "Discover your soft touch.",
+      "placeholder": "Search",
+      "submit": "Submit",
+      "close": "Close search",
+      "heading": {
+        "one": "Search result",
+        "other": "Search results"
+      },
+      "search_for": "Search for",
+      "articles": "Articles",
+      "collections": "Collections",
+      "products": "Products",
+      "pages": "Pages",
+      "loading": "Loading",
+      "clear_search_term": "Clear search term",
+      "number_of_results": "{{ result_number }} of {{ results_count }}",
+      "number_of_results_found": "{{ results_count }} results found",
+      "one_result_found": "1 result found"
     }
   },
   "products": {
@@ -135,7 +170,7 @@
   },
   "layout": {
     "cart": {
-      "title": "Cart",
+      "title": "Bag",
       "items_count": {
         "one": "item",
         "other": "items"
@@ -149,10 +184,24 @@
       "create_account": "Create account"
     },
     "footer": {
-      "copyright": "Copyright"
+      "copyright": "Copyright",
+      "social_platform": "{{ name }} on {{ platform }}"
+    },
+    "navigation": {
+      "search": "Search",
+      "expand": "expand",
+      "collapse": "collapse",
+      "menu": "Menu",
+      "close_menu": "Close Menu",
+      "back": "Back"
     }
   },
   "date_formats": {
     "month_day_year": "%B %d, %Y"
+  },
+  "sections": {
+    "header": {
+      "announcement_bar_label": "Announcement"
+    }
   }
 }

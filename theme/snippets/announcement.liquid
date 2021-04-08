@@ -1,0 +1,99 @@
+{%- liquid 
+  if id == blank
+    assign id = "now" | date: "%N" | modulo: 25 | times: 6536
+  endif
+
+  assign show = text | strip | size
+  assign global = global | default: false
+  
+  assign bg = bg | default: settings.announcement__bg
+  assign color = color | default: settings.announcement__color
+
+  assign bg_image = bg_image | default: settings.announcement__bg_image
+  assign bg_size = bg_size | default: settings.announcement__bg_image_size
+  assign bg_blend = bg_blend | default: settings.announcement__bg_image_blend
+  assign bg_opacity = bg_opacity | default: settings.announcement__bg_image_opacity
+  assign bg_alignment = bg_alignment | default: settings.announcement__bg_image_alignment
+
+  assign brightness = bg | color_brightness
+  assign contrast = color | brightness_difference: bg
+  assign lightenAmount = 255 | minus: brightness | divided_by: 255 | times: 16
+  assign darkenAmount = 255 | divided_by: brightness | times: 8
+
+  if brightness <= 192
+    assign bg_color_hover = bg | color_darken: darkenAmount
+  else
+    assign bg_color_hover = bg | color_lighten: lightenAmount
+  endif
+-%}
+
+{% if show > 0 %}
+  {% style %}
+    #announcement-{{- id }} {
+      background-color: {{ bg -}};
+      color: {{ color -}};
+      {% if contrast <= 125 -%}
+        {%- if brightness <= 192 -%}
+          text-shadow: 1px 1px {{ bg | color_darken: darkenAmount -}};
+        {%- else -%}
+          text-shadow: 1px 1px {{ bg | color_lighten: lightenAmount -}};
+        {%- endif -%}
+      {%- endif %}
+    }
+
+    #announcement-{{- id -}}:hover {
+      background-color: {{ bg_color_hover -}};
+    }
+
+    {% if bg_image -%}
+      {%- assign opacity = bg_opacity | divided_by: 100.0 -%}
+      #announcement-{{- id }} .announcement-bg {
+          background-position: {{ bg_alignment -}};
+          background-size: {{ bg_size -}};
+          mix-blend-mode: {{ bg_blend -}};
+
+          opacity: {{ opacity -}};
+      }
+    {%- endif %}
+  {%- endstyle %}
+
+
+  {% if global == true or request.page_type == 'index' -%}
+    <aside id="announcement-{{- id -}}" class="announcement"
+      aria-label="{{ 'sections.header.announcement_bar_label' | t }}"
+      role="region"
+    >
+      {% if bg_image -%}
+        <div class="announcement-bg is-overlay lazyload {% unless lazy -%}lazypreload{%- endunless %}"
+          data-bg="{{- bg_image | img_url: '16x9' -}}"
+          data-bgset="{% render 'bgset', image: bg_image %}"
+          data-sizes="auto"
+          data-parent-fit="{{- hero_bg_size -}}"
+          {% unless bg_image.alt == blank -%}
+            aria-label="{{- bg_image.alt | escape -}}"
+            role="img"
+          {%- endunless %}
+        ></div>
+        <noscript>
+          <div class="announcement-bg is-overlay no-js"
+            style="background-image: url('{{- bg_image | img_url: '1920x' -}}');"
+            {% unless bg_image.alt == blank %}
+              aria-label="{{- bg_image.alt | escape -}}"
+              role="img"
+            {% endunless %}
+          ></div>
+        </noscript>
+      {%- endif %}
+
+      {% unless link == blank -%}
+        <a href="{{ link }}" class="m-0 announcement__link">
+      {%- endunless %}
+          <div class="content p-2 text-center announcement__message">
+            {{- text | replace: '&amp;', '&' -}}
+          </div>
+      {% unless link == blank -%}
+        </a>
+      {%- endunless %}
+    </aside>
+  {%- endif %}
+{%- endif %}

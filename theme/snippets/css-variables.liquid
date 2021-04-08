@@ -1,0 +1,186 @@
+{% comment %}
+  This is used to create CSS custom variables with Liquid references
+{% endcomment %}
+{% style -%}
+  {%- liquid
+    assign base_font = settings.type_base_font
+    assign base_font_size = settings.type_base_size
+    assign base_font_bolder = base_font | font_modify: 'weight', 'bolder'
+    assign base_font_bold = base_font | font_modify: 'weight', 'bold'
+    assign base_font_italic = base_font | font_modify: 'style', 'italic'
+    assign base_font_bold_italic = base_font_bold | font_modify: 'style', 'italic'
+    
+    assign header_font = settings.type_header_font | font_modify: 'weight': 'medium'
+    assign header_base_font_size = settings.type_header_base_size
+    assign header_font_bold = header_font | font_modify: 'weight', 'bold'
+
+    assign header_h1_font_size = header_base_font_size | times: 1.30
+    assign header_h2_font_size = header_base_font_size | times: 0.98
+    assign header_h3_font_size = header_base_font_size | times: 0.80
+    assign header_h4_font_size = header_base_font_size | times: 0.72
+    assign header_h5_font_size = header_base_font_size | times: 0.60
+    assign header_h6_font_size = header_base_font_size | times: 0.48
+  %}
+
+  :root {
+    --font-size-base: {{ base_font_size -}};
+    --font-size-header-base: {{ header_base_font_size -}};
+
+    --font-size: {{ settings.type_base_size -}};
+
+    --font-size-h1: {{ header_h1_font_size | divided_by: base_font_size -}};
+    --font-size-h2: {{ header_h2_font_size | divided_by: base_font_size -}};
+    --font-size-h3: {{ header_h3_font_size | divided_by: base_font_size -}};
+    --font-size-h4: {{ header_h4_font_size | divided_by: base_font_size -}};
+    --font-size-h5: {{ header_h5_font_size | divided_by: base_font_size -}};
+    --font-size-h6: {{ header_h6_font_size | divided_by: base_font_size -}};
+
+    {% if settings.type_base_enabled -%}
+      --font-stack-body: {{ base_font.family -}}, {{ base_font.fallback_families -}};
+      --font-style-body: {{ base_font.style -}};
+      --font-weight-body: {{ base_font.weight -}};
+    {%- else -%}
+      --font-stack-body: {{ base_font.fallback_families -}};
+      --font-style-body: initial;
+      --font-weight-body: 400;
+    {%- endif %}
+
+    --font-weight-body--bold: {{ base_font_bold.weight | default: 700 }};
+    --font-weight-body--bolder: {{ base_font_bolder.weight | default: 900 }};
+
+    {% if settings.type_header_enabled -%}
+      --font-stack-header: {{ header_font.family -}}, {{ header_font.fallback_families -}};
+      --font-style-header: {{ header_font.style -}};
+      --font-weight-header: {{ header_font.weight -}};
+      --font-weight-header--bold: {{ header_font_bold.weight -}};
+    {%- else -%}
+      --font-stack-header: 'Proxima Nova', {{ base_font.fallback_families }};
+      --font-style-header: normal;
+      --font-weight-header: 400;
+      --font-weight-header--light: 300;
+      --font-weight-header--bold: 700;
+    {%- endif %}
+
+    --font-rich-text-large: {{ settings.type_base_size | times: 1.15 | floor }};
+    --font-rich-text-small: {{ settings.type_base_size | times: 0.88 | floor }};
+
+    --color-primary: {{ settings.color_primary }};
+    --color-accent: {{ settings.color_accent }};
+    --color-primary-rgb: {{ settings.color_primary | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --color-accent-rgb: {{ settings.color_accent | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+
+    --color-text: {{ settings.color_text }};
+    --color-text-rgb: {{ settings.color_text | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --color-body-text: {{ settings.color_text_body }};
+    --color-sale-text: {{ settings.color_sale_text }};
+    --color-small-button-text-border: {{ settings.color_small_button_text_border }};
+    --color-text-field: {{ settings.color_text_field }};
+    --color-text-field-text: {{ settings.color_text_field_text }};
+    --color-text-field-text-rgb: {{ settings.color_text_field_text | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+
+    --color-btn-primary: {{ settings.color_button }};
+    --color-btn-primary-darker: {{ settings.color_button | color_darken: 10 }};
+    --color-btn-primary-text: {{ settings.color_button_text }};
+
+    --color-blankstate: {{ settings.color_text_body | color_modify: 'alpha', 0.35 }};
+    --color-blankstate-border: {{ settings.color_text_body | color_modify: 'alpha', 0.2 }};
+    --color-blankstate-background: {{ settings.color_text_body | color_modify: 'alpha', 0.1 }};
+
+    --color-text-focus: {%- render 'adaptive-color' with settings.color_text as color -%};
+    --color-overlay-text-focus: {%- render 'adaptive-color' with settings.color_image_overlay_text as color -%};
+    --color-btn-primary-focus: {%- render 'adaptive-color' with settings.color_button as color -%};
+    --color-btn-social-focus: {%- render 'adaptive-color' with settings.color_borders as color -%};
+    --color-small-button-text-border-focus: {%- render 'adaptive-color' with settings.color_small_button_text_border as color -%};
+    --predictive-search-focus: {%- render 'adaptive-color' with settings.color_body_bg as color, is_background_color: true -%};
+
+    --color-body: {{ settings.color_body_bg }};
+    --color-bg: {{ settings.color_body_bg }};
+    --color-bg-rgb: {{ settings.color_body_bg | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --color-bg-alt: {{ settings.color_text_body | color_modify: 'alpha', 0.05 }};
+    --color-bg-currency-selector: {{ settings.color_text_body | color_modify: 'alpha', 0.2 }};
+
+    --color-card: {{ settings.color_card -}};
+    --color-card-rgb: {{ settings.color_card | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --color-card-text: {{ settings.color_card_text -}};
+    --color-card-highlight: {{ settings.color_card | color_lighten: 20 | color_modify: 'alpha', 0.75 -}};
+    --color-card-shadow: {{ settings.color_card_shadow | color_modify: 'alpha', 0.5 -}};
+    --color-card-shadow-op1: {{ settings.color_card_shadow | color_lighten: 12 | color_modify: 'alpha', 0.075 -}};
+    --color-card-shadow-op2: {{ settings.color_card_shadow | color_lighten: 18 | color_modify: 'alpha', 0.15 -}};
+
+    --color-overlay-title-text: {{ settings.color_image_overlay_text }};
+    --color-image-overlay: {{ settings.color_image_overlay }};
+    --color-image-overlay-rgb: {{ settings.color_image_overlay | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+
+    {%- assign image_overlay_opacity = settings.image_overlay_opacity | divided_by: 100.00 -%}
+    --opacity-image-overlay: {{ image_overlay_opacity }};
+
+    {%- comment -%}
+      Brand logo variables
+    {%- endcomment -%}
+    --brand-logo-width: {{ settings.logo_max_width | escape | append: 'px'}};
+    --brand-logo-width-mobile: {{ settings.logo_max_width | times: 0.75 | escape | append: 'px'}};
+
+    {%- comment -%}
+      Based on the image overlay opacity, either lighten or darken the image on hover
+    {%- endcomment -%}
+    {%- if image_overlay_opacity > 0.85 -%}
+      {%- assign image_overlay_opacity_hover = image_overlay_opacity | minus: 0.3 -%}
+    {%- else -%}
+      {%- assign image_overlay_opacity_hover = image_overlay_opacity | plus: 0.4 -%}
+    {%- endif -%}
+    --hover-overlay-opacity: {{ image_overlay_opacity_hover | at_most: 1 }};
+
+    --color-border: {{ settings.color_borders }};
+    --color-border-form: {{ settings.color_text_field_border }};
+    --color-border-form-darker: {{ settings.color_text_field_border | color_darken: 10}};
+
+    --svg-brand-icon: url({{ "icon-brand.svg" | asset_url }});
+    --svg-select-icon: url({{ "icon-select.svg" | asset_url }});
+    --slick-img-url: url({{ "ajax-loader.gif" | asset_url }});
+
+    {% comment -%} Create an appropriate poster background color based on background color and brightness {%- endcomment -%}
+    {%- assign color_body_bg = settings.color_body_bg -%}
+    {%- assign color_body_bg_brightness = color_body_bg | color_brightness -%}
+    {%- if color_body_bg_brightness <= 26 -%}
+      {%- assign background_color_poster = color_body_bg | color_lighten: 10 -%}
+    {%- elsif color_body_bg_brightness <= 65 -%}
+      {%- assign background_color_poster = color_body_bg | color_lighten: 5 -%}
+    {%- else -%}
+      {%- assign background_color_poster = color_body_bg | color_darken: 5 -%}
+    {%- endif -%}
+    --color-video-bg: {{ background_color_poster }};
+
+    {% comment -%} Image placeholder {%- endcomment -%}
+    {% assign placeholder_alpha = settings.color_image_loader_opacity | divided_by: 100.00 -%}
+    --global-color-image-loader-primary: {{ settings.color_image_loader | color_modify: 'alpha', placeholder_alpha }};
+    --global-color-image-loader-secondary: {{ settings.color_image_loader | color_darken: 5 | color_modify: 'alpha', placeholder_alpha }};
+  }
+
+  @media screen and (max-width: 767px) {
+    :root {
+      --font-size: {{ settings.type_base_size | times: 0.9 | floor -}};
+
+      --font-size-h1: {{ header_h1_font_size | divided_by: base_font_size | times: 0.9 -}};
+      --font-size-h2: {{ header_h2_font_size | divided_by: base_font_size | times: 0.9 -}};
+      --font-size-h3: {{ header_h3_font_size | divided_by: base_font_size | times: 0.9 -}};
+      --font-size-h4: {{ header_h4_font_size | divided_by: base_font_size | times: 0.9 -}};
+      --font-size-h5: {{ header_h5_font_size | divided_by: base_font_size | times: 0.9 -}};
+      --font-size-h6: {{ header_h6_font_size | divided_by: base_font_size | times: 0.9 -}};
+
+    }
+  }  
+
+  @media screen and (min-width: 1408px) {
+    :root {
+      --font-size: {{ settings.type_base_size | times: 1.05 | floor -}};
+
+      --font-size-h1: {{ header_h1_font_size | divided_by: base_font_size | times: 1.05 -}};
+      --font-size-h2: {{ header_h2_font_size | divided_by: base_font_size | times: 1.05 -}};
+      --font-size-h3: {{ header_h3_font_size | divided_by: base_font_size | times: 1.05 -}};
+      --font-size-h4: {{ header_h4_font_size | divided_by: base_font_size | times: 1.05 -}};
+      --font-size-h5: {{ header_h5_font_size | divided_by: base_font_size | times: 1.05 -}};
+      --font-size-h6: {{ header_h6_font_size | divided_by: base_font_size | times: 1.05 -}};
+    }
+  }
+{%- endstyle %}
+ 

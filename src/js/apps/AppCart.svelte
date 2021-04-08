@@ -26,7 +26,7 @@
       .then((res) => (cartData = res))
       .then(() => {
         loading = false
-        trapFocus(document.getElementById('modal-content'));
+        trapFocus(document.getElementById('cart-modal'));
       });
   }
 
@@ -62,7 +62,7 @@
     z-index: 1000;
   }
 
-  .modal-content {
+  .modal {
     background: #fff;
     bottom: 0;
     max-width: 500px;
@@ -80,7 +80,7 @@
 
   <div class="modal-bg overflow-hidden" transition:fade="{{ duration: 250 }}" on:click={hideCart} />
 
-  <div id="modal-content" class="modal-content" transition:fly="{{ x: 200, duration: 250, delay: 100 }}">
+  <div id="cart-modal" class="modal" transition:fly="{{ x: 200, duration: 250, delay: 100 }}">
 
     <div class="flex flex-col justify-between h-full relative">
 

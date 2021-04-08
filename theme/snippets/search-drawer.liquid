@@ -1,0 +1,44 @@
+<aside id="SearchDrawer" 
+  class="search-bar drawer drawer--top critical-hidden"
+  aria-label="{{ 'general.search.placeholder' | t }}"
+  aria-modal="true"
+  role="dialog"
+  data-predictive-search-drawer
+>
+  <div class="search-bar__container" data-search-form-container>
+    <form class="search-form search-bar__form" action="{{ routes.search_url }}" method="get" role="search">
+      <div class="search-form__input-wrapper">
+        <input
+          type="text"
+          name="q"
+          placeholder="{{ 'general.search.placeholder' | t }}"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-owns="predictive-search-results"
+          aria-expanded="false"
+          aria-label="{{ 'general.search.placeholder' | t }}"
+          aria-haspopup="listbox"
+          class="search-form__input search-bar__input"
+          data-predictive-search-drawer-input
+        />
+        <input type="hidden" name="options[prefix]" value="last" aria-hidden="true" />
+        <div class="predictive-search-wrapper predictive-search-wrapper--drawer"    
+          data-predictive-search-mount="drawer"
+        ></div>
+      </div>
+
+      <button class="search-bar__submit search-form__submit"
+        type="submit"
+        data-search-form-submit
+      >
+        <i class="material-icons-outlined">search</i>
+      </button>
+    </form>
+
+    <div class="buttons are-medium search-bar__actions">
+      <button type="button" class="button is-text m-0 search-bar__close js-drawer-close">
+        <i class="material-icons-outlined">close</i>
+      </button>
+    </div>
+  </div>
+</aside>
