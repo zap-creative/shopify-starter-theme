@@ -1,4 +1,5 @@
 const isProduction = process.env.NODE_ENV === 'production';
+
 const path = require('path');
 const read = require('read-yaml');
 const BrowserSync = require('browser-sync');
@@ -36,7 +37,19 @@ module.exports = (env) => ({
         test: /\.svelte$/,
         use: {
           loader: 'svelte-loader',
-          options: { emitCss: false },
+          options: { 
+            emitCss: false,
+            hotReload: false,
+            preprocess: require("svelte-preprocess")({
+              sourceMap: !isProduction,
+                postcss: {
+                  plugins: [
+                    require("tailwindcss"), 
+                    require("autoprefixer"),
+                  ],
+                },
+            })
+          },
         },
       },
       {
