@@ -24,7 +24,7 @@
         "id": "logo_max_width",
         "label": "Custom width",
         "min": 50,
-        "max": 250,
+        "max": 400,
         "step": 5,
         "unit": "px",
         "default": 100
@@ -558,7 +558,7 @@
     ]
   },
   {
-    "name": "Interactivity",
+    "name": "Shopping Cart",
     "settings": [
       {
         "type": "header",

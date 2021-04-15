@@ -1,0 +1,131 @@
+<ul class="mobile-navigation-menu">
+  {% for link in linklists[linklist].links -%}
+    {%- assign outerIndex = forloop.index -%}
+
+    <li class="menu-item">
+      {% if link.links != blank -%}
+        {%- capture secondary_handle -%}{{ link.handle }}-{{ outerIndex }}{%- endcapture -%}
+        <button type="button"
+          class="button menu-item__button {% if link.child_active -%}menu-item__button--active{%- endif %} toggle-submenu"
+          data-target="{{- secondary_handle -}}"
+          aria-label="{{- link.title | escape -}}"
+          aria-expanded="false"
+          data-level="1"
+        >
+          <span class="menu-item__label">{{- link.title | escape -}}</span>
+          <i class="material-icons-outlined">chevron_right</i>
+        </button>
+        <ul class="menu-item__dropdown"
+          data-parent="{{- secondary_handle -}}"
+          data-level="2"
+        >
+          <li class="sr-only" data-menu-title="2" tabindex="-1">
+            {{- link.title }} {{ 'layout.navigation.menu' | t -}}
+          </li>
+          <li class="menu-item">
+            <button type="button"
+              class="button menu-item__button menu-item__button--return toggle-submenu"
+              aria-label="{{- link.title -}}"
+              aria-expanded="true"
+            >
+              <i class="material-icons-outlined">chevron_left</i>
+              <span class="menu-item__label">{{ 'layout.navigation.back' | t -}}</span>
+            </button>
+          </li>
+          {% for secondary in link.links -%}
+            <li class="menu-item menu-item--secondary">
+              {% if secondary.links != blank -%}
+                {% capture tertiary_handle %}{{ secondary.handle }}-{{ outerIndex }}-{{ forloop.index }}{% endcapture %}
+                <button type="button"
+                  class="button toggle-submenu menu-item__button menu-item__button--sublist"
+                  data-target="{{- tertiary_handle -}}"
+                  aria-label="{{- secondary.title | escape -}}"
+                  aria-expanded="false"
+                >
+                  <span class="menu-item__label">{{- secondary.title | escape -}}</span>
+                  <i class="material-icons-outlined">chevron_right</i>
+                </button>
+                <ul class="menu-item__dropdown"
+                  data-parent="{{- tertiary_handle -}}"
+                  data-level="3"
+                >
+                  <li class="sr-only" data-menu-title="3" tabindex="-1">
+                    {{- secondary.title }} {{ 'layout.navigation.menu' | t -}}
+                  </li>
+                  <li class="menu-item">
+                    <button type="button"
+                      class="button menu-item__button menu-item__button--return toggle-submenu"
+                      data-target="{{- secondary_handle -}}"
+                      aria-label="{{- link.title -}}"
+                      aria-expanded="true"
+                    >
+                      <i class="material-icons-outlined">chevron_left</i>
+                      <span class="menu-item__label">{{- link.title | escape -}}</span>
+                    </button>
+                  </li>
+                  {% for tertiary in secondary.links -%}
+                    <li class="menu-item menu-item--tertiary">
+                      <a href="{{ tertiary.url }}" 
+                        class="menu-item__link menu-item__link--sublist {% if tertiary.active -%}menu-item__link--active{%- endif -%}"
+                        {% if tertiary.current -%}
+                          aria-current="page"
+                        {%- endif -%}
+                      >
+                        <span class="menu-item__label">{{- tertiary.title | escape -}}</span>
+                      </a>
+                    </li>
+                  {%- endfor %}
+                </ul>
+              {%- else-%}
+                <a href="{{- secondary.url -}}"
+                  class="menu-item__link menu-item__link--sublist {% if secondary.active -%}menu-item__link--active{%- endif -%}"
+                  {% if secondary.current -%}
+                    aria-current="page"
+                  {%- endif -%}
+                >
+                  <span class="menu-item__label">{{- secondary.title | escape -}}</span>
+                </a>
+              {%- endif %}
+            </li>
+          {%- endfor %}
+        </ul>
+
+      {%- else -%}
+        <a href="{{- link.url -}}"
+          class="menu-item__link {% if link.active -%}menu-item__link--active{%- endif -%}"
+          {% if link.current -%}
+            aria-current="page"
+          {%- endif %}
+        >
+          <span class="menu-item__label">{{- link.title | escape -}}</span>
+        </a>  
+
+      {%- endif %}
+    </li>
+  {%- endfor %}
+  {% if shop.customer_accounts_enabled -%}
+    <li class="menu-item">
+      {% if customer -%}
+        <a href="{{ routes.account_url }}"
+          class="menu-item__link menu-item__link--has-icon {% if link.active -%}menu-item__link--active{%- endif -%}"
+          {% if link.current -%}
+            aria-current="page"
+          {%- endif %}
+        >
+          <span class="icon">{% render 'icon-login' %}</span>
+          <span class="menu-item__label">{{ 'layout.customer.account' | t -}}</span>
+        </a>
+      {%- else -%}
+        <a href="{{ routes.account_login_url }}"
+          class="menu-item__link menu-item__link--has-icon {% if link.active -%}menu-item__link--active{%- endif -%}"
+          {% if link.current -%}
+            aria-current="page"
+          {%- endif %}
+        >
+          <span class="icon">{% render 'icon-login' %}</span>
+          <span class="menu-item__label">{{ 'layout.customer.log_in' | t -}}</span>
+        </a>
+      {%- endif %}
+    </li>
+  {%- endif %}
+</ul>

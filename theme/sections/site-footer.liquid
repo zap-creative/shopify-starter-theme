@@ -1,4 +1,4 @@
-<footer id="colophon" class="site-footer border-t px-4 py-8 mt-8" role="content-info">
+<section id="colophon" class="site-footer border-t px-4 py-8 mt-8" role="content-info">
 
   {% comment %}
   Only show newsetter form if they have not already signed up
@@ -50,11 +50,12 @@
 
   <p>{{ 'layout.footer.copyright' | t }} &copy; {{ 'now' | date: '%Y' }}, {{ shop.name | link_to: '/' }}</p>
 
-</footer>
+</section>
 
 {% schema %}
   {
     "name": "Site Footer",
+    "tag": "footer"
     "settings": []
   }
 {% endschema %}

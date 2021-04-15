@@ -1,0 +1,16 @@
+.page-pad {
+  @apply px-12;
+}
+
+.copy {
+  @apply mx-auto max-w-3xl;
+
+  &--narrow {
+    @apply max-w-lg;
+  }
+  
+  &--wide {
+    @apply max-w-7xl;
+  }
+}
+

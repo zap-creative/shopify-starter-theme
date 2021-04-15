@@ -86,9 +86,9 @@
       {%- endif %}
 
       {% unless link == blank -%}
-        <a href="{{ link }}" class="m-0 announcement__link">
+        <a href="{{ link }}" class="announcement__link">
       {%- endunless %}
-          <div class="content p-2 text-center announcement__message">
+          <div class="content announcement__message">
             {{- text | replace: '&amp;', '&' -}}
           </div>
       {% unless link == blank -%}

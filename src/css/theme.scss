@@ -1,0 +1,41 @@
+/**
+ * TailwindCSS
+ */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+
+/**
+ * Custom styles
+ */
+
+/* Third party */
+@import 'https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined';
+
+/* Base & global styles */
+@import './global/base';
+@import './global/images';
+@import './global/forms';
+@import './global/typography';
+@import './global/layout';
+@import './global/button';
+@import './global/dropdown';
+@import './global/flex-list';
+@import './global/shopify-utilites';
+
+/* Components */
+@import './components/site-header';
+@import './components/site-footer';
+@import './components/navigation';
+@import './components/mobile-navigation';
+@import './components/announcement';
+@import './components/banner';
+@import './components/hero';
+@import './components/loading';
+@import './components/product-listing';
+@import './components/search-drawer';
+
+/**
+ * TailwindCSS utilities
+ * Should be last for specificity priority
+ */
+@import 'tailwindcss/utilities';

@@ -2,17 +2,21 @@
   Accepts:
   - product: {Object} Product object
   - collection {Object} Collection object
+  - interactive: {Boolean} [Optional] Whether or not to include form functionality
 
   Usage:
-  {% include 'product-list-item' with product: product, collection: collection %}
+  {% render 'product-list-item' with product: product, collection: collection %}
 {%- endcomment -%}
 
 {% assign current_variant = product.selected_or_first_available_variant %}
 {% assign featured_image = current_variant.featured_image | default: product.featured_image %}
 
-<div class="text-center">
+<div class="text-center" data-product>
   <a href="{{ product.url | within: collection }}">
-    {% include 'responsive-image' with image: product.featured_image, width: 600 %}
+    {% render 'responsive-image' with 
+      image: product.featured_image,
+      width: 600
+    %}
   </a>
   <h2 class="text-xl m-2">
     <a href="{{ product.url | within: collection }}">{{ product.title }}</a>
@@ -21,7 +25,11 @@
     {{ product.price | money }}
     {%- unless product.available -%} - <strong>sold out</strong>{%- endunless -%}
   </p>
-  {%- if interactive -%}
-    {% include 'product-form' with product: product, json: true %}
-  {%- endif -%}
+  {% if interactive -%}
+    {% render 'product-form' with
+      product: product,
+      current_variant: current_variant,
+      json: true
+    %}
+  {%- endif %}
 </div>

@@ -1,0 +1,48 @@
+#announcement-header {
+  @apply z-50;
+}
+
+.announcement {
+  position: relative;
+  text-align: center;
+
+  &__link,
+  &__message {
+    @apply m-0;
+
+    display: block;
+    position: relative;
+    width: 100%;
+    z-index: 1;
+
+    &,
+    &:hover {
+      color: inherit;
+    }
+  }
+
+  &__link {
+    text-decoration: none;
+  }
+
+  &__message {
+    @apply py-3 px-12;
+
+    font-size: calc(((13) / (var(--font-size-base))) * 1em);
+    font-weight: var(--font-weight-normal);
+
+    *:first-child {
+      margin-top: 0;
+    }
+
+    *:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.announcement-bg {
+  background-position: center;
+  background-size: cover;
+  opacity: 1;
+}

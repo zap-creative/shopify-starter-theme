@@ -1,0 +1,144 @@
+.cart {
+  color: var(--color-body-text);
+
+  &--no-cookies {
+    .cart__continue-btn {
+      display: none;
+    }
+
+    .cart--empty-message {
+      display: none;
+    }
+
+    .cookie-message {
+      display: block;
+    }
+  }
+}
+
+.cart-form {
+  position: relative;
+  z-index: 2;
+
+  hr {
+    margin: 1rem auto;
+  }
+}
+
+.cart-column {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+
+  padding: 0;
+
+  &--mobile-checkout {
+    .cart-summary {
+      margin-top: -3rem;
+    }
+  }
+}
+
+.cart-item-list,
+.cart-summary {
+  width: 100%;
+}
+
+.quantity-field {
+  .control {
+    display: flex;
+    align-items: center;
+  }
+
+  .input--quantity {
+    max-width: 5rem;
+
+    font-size: calc(((var(--font-rich-text-large) + 1) / var(--font-size-base) * 1rem));
+    font-weight: var(--font-weight-body--bold);
+    text-align: center;
+
+    appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      margin: 0;
+      appearance: none;
+    }
+  }
+}
+
+.cart-summary {
+  .cart-shipping {
+    margin-bottom: 1rem;
+  }
+}
+
+.empty-page-content {
+
+  .cart-empty-image {
+    height: auto;
+  }
+}
+
+.cookie-message {
+  display: none;
+  padding-bottom: 25px;
+}
+
+@screen tablet-down {
+  .cart-item {
+    .column {
+      flex: 1 0 100%;
+      width: 100%;
+    }
+
+    .quantity-field {
+      justify-content: center;
+    }
+  }
+}
+
+@screen tablet {
+  .cart-column {
+    &--items-list {
+      align-items: flex-end;
+    }
+
+    &--summary {
+      align-items: flex-start;
+    }
+  }
+
+  .cart-item-list {
+    margin-top: -6rem;
+  }
+
+  .cart-actions {
+    position: sticky;
+  }
+
+  .cart-summary {
+    height: 100%;
+  }
+}
+
+@screen desktop {
+  .cart-item {
+    &__final-price-label {
+      margin-left: 140px;
+    }
+  }
+
+  .quantity-field {
+    .input--quantity:not(:focus) {
+      border: none;
+      box-shadow: none;
+    }
+  }
+}
+
+@screen widescreen {
+  .cart-item-list {
+    margin-top: -8rem;
+  }
+}

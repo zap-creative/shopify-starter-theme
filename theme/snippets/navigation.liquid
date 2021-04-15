@@ -1,0 +1,105 @@
+{%- comment -%}
+    Renders a list of menu items
+    Accepts:
+    - linklist: {Object} Linklist object (required)
+
+    Usage:
+    {% render 'navigation' with linklist: section.settings.main_linklist %}
+{%- endcomment -%}
+
+<ul class="navigation">
+  {% for link in linklists[linklist].links %}
+    {%- assign child_list_handle = link.title | handleize -%}
+
+    {% comment %}
+      Check if third-level nav exists on each parent link.
+    {% endcomment %}
+    {%- assign three_level_nav = false -%}
+    {% if link.links != blank %}
+      {% if link.levels == 2 %}
+        {%- assign three_level_nav = true -%}
+      {% endif %}
+    {% endif %}
+
+    {% if link.links != blank %}
+      <li class="dropdown is-hoverable nav-item nav-item--dropdown {% if link.active -%}is-active{%- endif -%}"
+        data-has-dropdowns
+      >
+        <button type="button"
+          class="button nav-link nav-link--main nav-link--button {% if link.child_active -%}is-active{%- endif -%}"
+          aria-controls="navigation-dropdown-{{ child_list_handle }}"
+          aria-expanded="false"
+          aria-haspopup="true"
+        >
+          <span class="nav-label">{{ link.title | escape }}</span>
+          <i class="material-icons-outlined">expand_more</i>
+        </button>
+
+        <div id="navigation-dropdown-{{ child_list_handle }}"
+          class="dropdown-menu has-text-left site-nav__dropdown"
+        >
+          <div class="dropdown-content is-radiusless menu nav-menu" role="menu">
+            {% if three_level_nav %}
+              <ul class="menu-list nav-menu__list">
+                {% if link.links != blank %}
+                  {% for secondlink in link.links %}
+                    <li class="nav-item nav-item--secondary {% if secondlink.active -%}is-active{%- endif -%}">
+                      {% if secondlink.links == blank %}
+                        <a href="{{ secondlink.url }}" class="nav-link nav-link--secondary nav-link--parent"
+                          {% if secondlink.current %} aria-current="page"{% endif %}
+                        >
+                          <span class="nav-label">{{ secondlink.title | escape }}</span>
+                        </a>
+
+                      {% else %}
+                        <span class="menu-label nav-label nav-label--secondary">
+                          {{ secondlink.title | escape }}
+                        </span>
+
+                        <ul class="menu-list nav-menu__list nav-menu__list--tertiary">
+                          {% for thirdlink in secondlink.links %}
+                            <li class="nav-item nav-item--tertiary {% if thirdlink.active -%}is-active{%- endif -%}">
+                              <a href="{{ thirdlink.url }}"
+                              class="nav-link nav-link--child"
+                              {% if thirdlink.current %} aria-current="page"{% endif %}
+                            >
+                                <span class="nav-label nav-label--tertiary">{{ thirdlink.title | escape }}</span>
+                              </a>
+                            </li>
+                          {% endfor %}
+                        </ul>
+
+                      {% endif %}
+                    </li>
+                  {% endfor %}
+                {% endif %}
+              </ul>
+
+            {% else %}
+              <ul class="menu-list nav-menu__list">
+                {% for secondlink in link.links %}
+                  <li>
+                    <a href="{{ secondlink.url }}" class="nav-link nav-link--secondary{% if forloop.last %} nav-link--last{% endif %}"
+                      {% if secondlink.current %} aria-current="page"{% endif %}
+                    >
+                      <span class="nav-label">{{ secondlink.title | escape }}</span>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+
+            {% endif %}
+          </div>
+        </div>
+      </li>
+    {% else %}
+      <li class="nav-item {% if link.current -%}is-active{%- endif -%}">
+        <a href="{{ link.url }}" class="nav-link nav-link--main {% if link.current -%}is-active{%- endif -%}"
+          {% if link.current %} aria-current="page"{% endif %}
+        >
+          <span class="nav-label">{{ link.title | escape }}</span>
+        </a>
+      </li>
+    {% endif %}
+  {% endfor %}
+</ul>

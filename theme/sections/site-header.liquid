@@ -1,72 +1,55 @@
 {%- assign centered = section.settings.align_logo | strip | remove: 'center' | size -%}
 
-{% capture logo %}
-  {% if request.page_type == 'index' %}
-    <h1 class="h2 title site-header__logo">
+{%- capture logo -%}
+  {% if settings.logo %}
+    {%- assign img_url = settings.logo | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+    {% capture logo_alt %}{{ settings.logo.alt | default: shop.name }}{% endcapture %}
+      <img class="lazyload js"
+        src="{{ settings.logo | img_url: '300x300' }}"
+        data-src="{{ img_url }}"
+        data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+        data-aspectratio="{{ settings.logo.aspect_ratio }}"
+        data-sizes="auto"
+        alt="{{ logo_alt | escape }}"
+        style="max-width: {{ settings.logo_max_width }}px">
+      <noscript>
+        {% capture image_size %}{{ settings.logo_max_width | escape }}x{% endcapture %}
+        <img src="{{ settings.logo | img_url: image_size }}"
+          srcset="{{ settings.logo | img_url: image_size }} 1x, {{ settings.logo | img_url: image_size, scale: 2 }} lg"
+          alt="{{ settings.logo.alt | default: shop.name }}"
+          style="max-width: {{ settings.logo_max_width }}px;">
+      </noscript>
+      <span class="sr-only">{{ shop.name }}</span>
+    </a>
   {% else %}
-    <div class="h2 title site-header__logo">
+    {{ shop.name }}
   {% endif %}
-    {% if settings.logo %}
-      {%- assign img_url = settings.logo | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
-      <a href="{{ routes.root_url }}" class="site-header__logo-image{% if section.settings.align_logo == 'center' %} site-header__logo-image--centered{% endif %}">
-        {% capture logo_alt %}{{ settings.logo.alt | default: shop.name }}{% endcapture %}
-        <img class="lazyload js"
-              src="{{ settings.logo | img_url: '300x300' }}"
-              data-src="{{ img_url }}"
-              data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
-              data-aspectratio="{{ settings.logo.aspect_ratio }}"
-              data-sizes="auto"
-              alt="{{ logo_alt | escape }}"
-              style="max-width: {{ settings.logo_max_width }}px">
-        <noscript>
-          {% capture image_size %}{{ settings.logo_max_width | escape }}x{% endcapture %}
-          <img src="{{ settings.logo | img_url: image_size }}"
-                srcset="{{ settings.logo | img_url: image_size }} 1x, {{ settings.logo | img_url: image_size, scale: 2 }} lg"
-                alt="{{ settings.logo.alt | default: shop.name }}"
-                style="max-width: {{ settings.logo_max_width }}px;">
-        </noscript>
-      </a>
-    {% else %}
-      <a class="site-header__logo-link" href="{{ routes.root_url }}">{{ shop.name }}</a>
-    {% endif %}
-  {% if request.page_type == 'index' %}
-    </h1>
-  {% else %}
-    </div>
-  {% endif %}
-{% endcapture %}
+{%- endcapture -%}
 
-<header
+<div class="site-header {% if centered == 0 -%}site-header--centered{%- endif -%}"
   data-section-id="{{ section.id }}"
   data-section-type="header-section"
   data-header-section
-  class="site-header page-pad"
   role="banner"
 >
-   {%- if template.name == 'index' -%}<h1 class="site-title" itemscope itemtype="http://schema.org/Organization">{%- else -%}<div class="site-title" itemscope itemtype="http://schema.org/Organization">{%- endif -%}
-    <a href="/" itemprop="url" class="site-header__logo">{{ shop.name }}</a>
+  {% if centered == 0 -%}
+    <div class="w-full pb-5 flex flex-none sm-down:hidden">
+      {{- logo -}}
+    </div>
+  {%- endif %}
+
+  {% if template.name == 'index' -%}
+    <h1 class="site-title {% if centered == 0 %}tablet:hidden{% endif %}" itemscope itemtype="http://schema.org/Organization">
+  {%- else -%}
+    <div class="site-title" itemscope itemtype="http://schema.org/Organization">
+  {%- endif -%}
+    <a href="/" itemprop="url" class="site-header__logo">
+      {{- logo -}}
+    </a>
   {%- if template.name == 'index' -%}</h1>{%- else -%}</div>{%- endif -%}
 
-  <nav id="site-navigation" class="site-navigation" role="navigation">
-
-    <ul class="nav-menu">
-    {%- for link in linklists.main-menu.links -%}
-      {%- assign child_list_handle = link.title | handleize -%}
-      {%- if linklists[child_list_handle].links != blank -%}
-        <li>
-          <a href="{{ link.url }}">{{ link.title }}</a>
-          <ul class="nav-submemu">
-            {%- for childlink in linklists[child_list_handle].links -%}
-            <li><a href="{{ childlink.url }}">{{ childlink.title | escape }}</a></li>
-            {%- endfor -%}
-          </ul>
-        </li>
-      {%- else -%}
-        <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-      {%- endif -%}
-    {%- endfor -%}
-    </ul>
-
+  <nav id="site-navigation" class="sm-down:hidden" role="navigation">
+    {% render 'navigation' with linklist: section.settings.linklist %}
   </nav>
 
   <nav id="site-actions" class="site-actions" role="navigation">
@@ -80,13 +63,21 @@
       <a href="#cart">
     {%- endif -%}<i class="material-icons-outlined">shopping_cart</i></a>
     </a>
+    <a href="#" class="tablet:hidden toggle-mobile-navigation">
+      <i class="material-icons-outlined">menu</i>
+    </a>
   </nav>
 
-</header>
+</div>
+
+<nav id="mobile-navigation" class="tablet:hidden critical-hidden">
+  {% render 'mobile-navigation' with linklist: section.settings.mobile_linklist %}
+</nav>
 
 {% schema %}
   {
     "name": "Site Header",
+    "tag": "header",
     "settings": [
       {
         "type": "header",

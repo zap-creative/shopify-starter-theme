@@ -22,10 +22,18 @@
     {%- comment -%} Make string translations and money formate available to scripts.{%- endcomment %}
     window.theme = {
       settings: {
+        ajaxEnabled: {{ settings.enable_ajax | json }},
         predictiveSearchEnabled: {{ settings.predictive_search_enabled | json }},
         predictiveSearchShowPrice: {{ settings.predictive_search_show_price | json }},
         predictiveSearchShowVendor: {{ settings.predictive_search_show_vendor | json }},
-        predictiveSearchUri: {{ routes.search_url | json }}
+        predictiveSearchUri: {{ routes.search_url | json }},
+      },
+      breakpoints: {
+        small: 480,
+        tablet: 640,
+        desktop: 768,
+        widescreen: 1216,
+        fullhd: 1664,
       },
       strings: {
         addToCart: {{ 'products.product.add_to_cart' | t | json }},
@@ -38,9 +46,9 @@
         searchPlaceholder: {{ 'general.search.placeholder' | t | json }},
         searchSubmit: {{ 'general.search.submit' | t | json }},
         soldOut: {{ 'products.product.sold_out' | t | json }},
-        unavailable: {{ 'products.product.unavailable' | t | json }}
+        unavailable: {{ 'products.product.unavailable' | t | json }},
       },
-      moneyFormat: {{ shop.money_format | json }}
+      moneyFormat: {{ shop.money_format | json }},
     };
 
     {% comment -%} Required for lazy-loading with Webpack on Shopify CDN {%- endcomment -%}
@@ -58,6 +66,8 @@
     {%- when 'product' -%}
       {{- 'product.bundle.css' | asset_url | stylesheet_tag -}}
       <link rel="preload" href="{{ 'product.bundle.js' | asset_url }}" as="script">
+    {%- when 'cart' -%}
+      {{- 'cart.bundle.css' | asset_url | stylesheet_tag -}}
     {%- when 'collection' -%}
       <link rel="preload" href="{{ 'collection.bundle.js' | asset_url }}" as="script">
   {%- endcase -%}
@@ -69,6 +79,7 @@
 <body class="template-{{ request.page_type | handle }}{% if request.page_type == 'page' %} template-{{ template.name }}-{{ template.suffix }}{% endif %}">
   {% if settings.announcement__text -%}
     {%- render 'announcement' with
+      id: 'header',
       global: settings.announcement__everywhere,
       text: settings.announcement__text,
       link: settings.announcement__link,
@@ -86,8 +97,12 @@
 
   {% section 'site-footer' %}
 
-  <aside id="app-cart"></aside>
+  {% if settings.enable_ajax -%}
+    <aside id="app-cart"></aside>
+  {%- endif %}
+
   {% if settings.predictive_search_enabled -%}
+    <link rel="preload" href="{{ 'predictive-search-init.bundle.js' | asset_url }}" as="script">
     <aside id="predictive-search"
       data-search-close="{{ 'general.search.close' | t }}"
       data-search-placeholder="{{ 'general.search.placeholder' | t }}"
@@ -102,6 +117,8 @@
       {{ 'product.bundle.js' | asset_url | script_tag }}
     {%- when 'collection' -%}
       {{ 'collection.bundle.js' | asset_url | script_tag }}
+    {%- when 'cart' -%}
+      {{ 'cart.bundle.js' | asset_url | script_tag }}
   {%- endcase -%}
 
   {% if request.page_type contains 'customers/' -%}

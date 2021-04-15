@@ -1,10 +1,11 @@
 {%- comment -%}
   Accepts:
   - product: {Object} Product object
+  - current_variant: {Object} [Optional] Product variant object
   - json: {Boolean} [Optional] Inline product JSON if true
 
   Usage:
-  {% include 'product-form' with product: product, json: true %}
+  {% include 'product-form' with product: product, current_variant: current_variant, json: true %}
 {%- endcomment -%}
 
 {% comment %}
@@ -105,10 +106,12 @@
   {%- endfor -%}
 
   {%- comment -%}
-    Optionally include the JSON data for the product, this helps for providing more interactivity
-    on product listings without having to fetch() the data for each individual product after load
+    Optionally include the JSON data for the product, this helps for providing more 
+    interactivity on product listings without having to fetch() the data for each 
+    individual product after load. This is not cached by the browser.
   {%- endcomment -%}
   {%- if json -%}
     <script data-product-data="{{product.handle}}" type="application/json">{{ product | json }}</script>
+    <script data-product-option-data="{{product.handle}}" type="application/json">{{ product.options_with_values | json }}</script>
   {%- endif -%}
 {% endform %}

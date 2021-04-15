@@ -44,7 +44,11 @@
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
       {%- for product in collection.products -%}
 
-        {% include 'product-list-item' with product: product, collection: collection, interactive: true %}
+        {% render 'product-list-item' with 
+          product: product, 
+          collection: collection,
+          interactive: settings.enable_ajax
+        %}
 
       {%- else -%}
 

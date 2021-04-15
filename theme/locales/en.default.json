@@ -1,8 +1,46 @@
 {
   "general": {
+    "accessibility": {
+      "skip_to_content": "Skip to content",
+      "close": "Close",
+      "close_modal": "Close",
+      "link_messages": {
+        "new_window": "Opens in a new window.",
+        "external": "Opens external website.",
+        "new_window_and_external": "Opens external website in a new window."
+      },
+      "refresh_page": "Choosing a selection results in a full page refresh.",
+      "selection_help": "Press the space key then arrow keys to make a selection.",
+      "error": "Error"
+    },
+    "meta": {
+      "tags": "Tagged \"{{ tags }}\"",
+      "page": "Page {{ page }}"
+    },
+    "navigation": {
+      "return_home": "Return to homepage"
+    },
+    "pagination": {
+      "previous": "Previous page",
+      "next": "Next page",
+      "current_page": "Page {{ current }} of {{ total }}"
+    },
     "404": {
+      "help": "May we help you?",
+      "link": "Continue shopping",
       "title": "Page not found",
-      "subtext_html": "The page you were looking for does not exist"
+      "subtext_html": "We're unable to find the page you are looking for at that address. It may not exist, may have been deleted, or is temporarily unavailable."
+    },
+    "password_page": {
+      "opening_soon": "Opening Soon",
+      "login_form_heading": "Enter store using password",
+      "login_form_password_label": "Password",
+      "login_form_password_placeholder": "Your password",
+      "login_form_submit": "Enter",
+      "signup_form_email_label": "Email",
+      "signup_form_success": "We will send you an email right before we open!",
+      "admin_link_html": "Are you the store owner? <a href=\"\/admin\" class=\"text-link\">Log in here<\/a>",
+      "password_link": "Enter using password"
     },
     "onboarding": {
       "product_title": "Your product's name",
@@ -40,19 +78,77 @@
       "one_result_found": "1 result found"
     }
   },
+  "cart": {
+    "general": {
+      "title": "Your bag",
+      "note": "Add a note to your order",
+      "removed_item_html": "<p>Removed {{ link }} <small>({{ quantity }} items)<\/small> from your bag.<\/p>",
+      "remove": "Remove item",
+      "savings": "You're saving",
+      "taxes_and_shipping_at_checkout": "Taxes and shipping calculated at checkout",
+      "taxes_and_shipping_policy_at_checkout_html": "Taxes and <a href=\"{{ link }}\">shipping<\/a> calculated at checkout",
+      "taxes_included_but_shipping_at_checkout": "Tax included and shipping calculated at checkout",
+      "taxes_included_and_shipping_policy_html": "Tax included. <a href=\"{{ link }}\">Shipping<\/a> calculated at checkout.",
+      "update": "Update",
+      "checkout": "Check out",
+      "empty": "Your bag is currently empty.",
+      "cookies_required": "Enable cookies to use the shopping bag",
+      "continue_shopping": "Continue shopping",
+      "cart_error": "There was an error while updating your bag. Please try again."
+    },
+    "label": {
+      "discounted_total": "Discounted total",
+      "product": "Product",
+      "product_total": "Product total",
+      "price": "Price",
+      "price_column": "See Price column for discount details.",
+      "product_details": "Product details",
+      "quantity": "Quantity",
+      "qty": "Qty",
+      "regular_total": "Regular total",
+      "remove": "Remove {{ product }}",
+      "subtotal": "Subtotal",
+      "total": "Bag total",
+      "update": "Update"
+    },
+    "popup": {
+      "added_to_cart": "Just added to your bag",
+      "cart_count": {
+        "one": "{{ count }} item",
+        "other": "{{ count }} items"
+      },
+      "product_details": "Product details",
+      "quantity": "Qty",
+      "quantity_label": "Quantity: {{ quantity_count }}"
+    }
+  },
   "products": {
     "product": {
-      "add_to_cart": "Add to Cart",
-      "available": "Available",
-      "backorder": "Backorder Now",
-      "from_text_html": "From {{ price }}",
-      "next_shipmenbt": "Next shipment arrives",
-      "on_sale_from_html": "On Sale from {{ price }}",
-      "on_sale": "On Sale",
-      "quantity": "Quantity",
+      "buy_now": "Buy Now",
+      "shop_now": "Shop Now",
       "regular_price": "Regular price",
-      "sold_out": "Sold Out",
-      "unavailable": "Unavailable"
+      "sold_out": "Sold out",
+      "unavailable": "Unavailable",
+      "available": "Available",
+      "availability": "Availability",
+      "on_sale": "Sale",
+      "from_lowest_price_html": "from {{ lowest_price }}",
+      "sale_price": "Sale price",
+      "quantity": "Quantity",
+      "add_to_cart": "Add to bag",
+      "loader_label": "Adding product to your bag",
+      "back_to_collection": "Back to {{ title }}",
+      "vendor": "Vendor",
+      "quantity_minimum_message": "Quantity must be 1 or more",
+      "include_taxes": "Tax included.",
+      "shipping_policy_html": "<a href=\"{{ link }}\">Shipping<\/a> calculated at checkout.",
+      "unit_price_label": "Unit price",
+      "unit_price_separator": "per",
+      "value": "value",
+      "value_price": "({{ price }} value)",
+      "view_cart": "View cart",
+      "view_in_space": "View in your space",
+      "view_in_space_label": "View in your space, loads item in augmented reality window"
     }
   },
   "customer": {

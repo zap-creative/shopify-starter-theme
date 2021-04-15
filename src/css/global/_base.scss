@@ -20,9 +20,19 @@
 }
 
 body {
-  margin: 0
+  display: flex;
+  flex-flow: column wrap;
+  align-items: stretch;
+  justify-content: flex-start;
+
+  min-height: 100vh;
+
+  margin: 0;
 }
 
+main {
+  flex: 1;
+}
 
 /* Needed for TailwindCSS, did not want the rest of preflight */
 [class*='border'] {

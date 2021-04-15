@@ -5,14 +5,16 @@ import { ProductForm } from '@shopify/theme-product-form';
 import { formatMoney } from '@shopify/theme-currency';
 import { addItem } from '@shopify/theme-cart';
 
-import '../css/product.css';
-import './utility/public-path'; // Needed for openCart
+import './utility/public-path';
 import openCart from './utility/open-cart';
 
 const themeStrings = window.theme.strings;
+const themeSettings = window.theme.settings;
 const themeMoneyFormat = window.theme.moneyFormat;
 
-const formElements = document.querySelectorAll('[data-product-form]');
+const products = document.querySelectorAll('[data-product]');
+
+import '../css/product.scss';
 
 /**
  * Updating the featured image
@@ -48,7 +50,10 @@ const handleOptionChange = (stockMessages, addToCartBtn, featuredImage) => (even
   }
 
   // Show stock message for this variant.
-  document.getElementById(`stock-message-${variant.id}`).classList.remove('hidden');
+  let stockMessage = document.getElementById(`stock-message-${variant.id}`);
+  if (stockMessage) {
+    stockMessage.classList.remove('hidden');
+  }
 
   // Update feature image
   if (variant.featured_image) {
@@ -93,29 +98,44 @@ const handleFormSubmit = (addToCartBtn, formElement) => (event) => {
     });
 }
 
-formElements.forEach(formElement => {
-  const addToCartBtn = formElement.querySelector('[data-add-to-cart]');
-  const featuredImage = formElement.querySelector('[data-featured-image]');
-  const stockMessages = formElement.querySelectorAll('[data-stock-message]');
-  const thumbnailLinks = formElement.querySelectorAll('[data-thumbnail-links]');
-  const productData = formElement.querySelector('[data-product-data]');
+products.forEach(product => {
+  const formElement = product.querySelector('[data-product-form]');
+  const addToCartBtn = product.querySelector('[data-add-to-cart]');
+  const featuredImage = product.querySelector('[data-featured-image]');
+  const stockMessages = product.querySelectorAll('[data-stock-message]');
+  const thumbnailLinks = product.querySelectorAll('[data-thumbnail-links]');
+
+  // We need to pull in option data separately since it's not included
+  // in {{ product | json }} in our liquid template
+  const productData = product.querySelector('[data-product-data]');
+  const productOptionData = product.querySelector('[data-product-option-data]');
+  
+  const onOptionChange = handleOptionChange(stockMessages, addToCartBtn, featuredImage);
+  const onFormSubmit = handleFormSubmit(addToCartBtn, formElement);
+  const handleThumbnailClick = handleFeaturedImage(featuredImage);
 
   // Update featured image when you click on thumbnails
   if (thumbnailLinks) {
     thumbnailLinks.forEach((link) => {
       link.addEventListener('click', (event) => {
         event.preventDefault();
-        handleFeaturedImage(featuredImage)(event.currentTarget.href, event.target.alt);
+        handleThumbnailClick(event.currentTarget.href, event.target.alt);
       });
     });
   }
 
-  Promise.resolve(productData.innerHTML)
-    .then(JSON.parse)
-    .then((product) => {
-      new ProductForm(formElement, product, {
-        onOptionChange: handleOptionChange(stockMessages, addToCartBtn, featuredImage),
-        onFormSubmit: handleFormSubmit(addToCartBtn, formElement),
-      });
+
+  Promise.all([
+    Promise.resolve(productData.innerHTML),
+    Promise.resolve(productOptionData.innerHTML)
+  ]).then(([productData, productOptionData]) => {
+    const productJSON = JSON.parse(productData);
+    if (productOptionData !== null) {
+      productJSON.options = JSON.parse(productOptionData);
+    }
+
+    const productForm = new ProductForm(formElement, productJSON, {
+      onOptionChange, onFormSubmit,
     });
+  });
 });

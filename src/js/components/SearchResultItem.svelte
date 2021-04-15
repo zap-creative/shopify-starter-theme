@@ -2,10 +2,10 @@
   import { fly, fade } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
 
-  export let id;
   export let url;
   export let index = 0;
 </script>
+
 
 <style>
   @layer components {
@@ -18,9 +18,7 @@
   }
 </style>
 
-<li id="search-result-{id}"
-  role="option"
-  data-search-result
+<li role="option"
   in:fly="{{
     duration: 300,
     delay: (index * 20),

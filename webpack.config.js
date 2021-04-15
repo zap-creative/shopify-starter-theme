@@ -16,9 +16,11 @@ module.exports = (env) => ({
   mode: isProduction ? 'production' : 'development',
   entry: {
     theme: './src/js/theme.js',
+    index: './src/js/index.js',
     collection: './src/js/collection.js',
     product: './src/js/product.js',
     customers: './src/js/customers.js',
+    cart: './src/js/cart.js',
   },
   output: {
     filename: '[name].bundle.js',
@@ -31,10 +33,14 @@ module.exports = (env) => ({
       automaticNameDelimiter: '-',
     },
   },
+  watchOptions: {
+    ignored: [path.resolve(__dirname, 'node_modules')],
+  },
   module: {
     rules: [
       {
         test: /\.svelte$/,
+        exclude: [path.resolve(__dirname, 'node_modules')],
         use: {
           loader: 'svelte-loader',
           options: { 
@@ -54,18 +60,21 @@ module.exports = (env) => ({
       },
       {
         test: /\.m?js$/,
-        exclude: /(node_modules)/,
+        exclude: [path.resolve(__dirname, 'node_modules')],
         use: {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env'],
-            plugins: ['@babel/plugin-proposal-object-rest-spread'],
+            plugins: [
+              '@babel/plugin-proposal-object-rest-spread',
+              '@babel/plugin-transform-runtime',
+            ],
           },
         },
       },
       {
         test: /\.css$/,
-        exclude: /node_modules/,
+        exclude: [path.resolve(__dirname, 'node_modules')],
         use: [
           MiniCssExtractPlugin.loader,
           {
@@ -76,6 +85,31 @@ module.exports = (env) => ({
             },
           },
           { loader: 'postcss-loader' },
+        ],
+      },
+      {
+        test: /\.scss$/,
+        exclude: [path.resolve(__dirname, 'node_modules')],
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+              importLoaders: 1,
+              url: false // Don't resolve url(), all assets end up in assets directory
+            },
+          },
+          { loader: 'postcss-loader',
+            options: {
+              sourceMap: true,
+            }
+          },
+          { loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+            }
+          },
         ],
       },
     ],

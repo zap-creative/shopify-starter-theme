@@ -1,0 +1,547 @@
+{%- liquid
+  assign title = section.settings.title
+  assign title_size = section.settings.title_level
+  assign title_align = section.settings.title_align
+
+  assign hero_variant = title_align | append: ' section-header--fullhd'
+
+  assign hero_bg = section.settings.hero_bg
+  assign hero_color = section.settings.hero_color
+  assign hero_image = section.settings.hero_image
+  assign hero_bg_size = section.settings.hero_image_size
+  assign hero_bg_blend = section.settings.hero_bg_blend
+  assign hero_bg_opacity = section.settings.hero_image_opacity
+  assign hero_bg_alignment = section.settings.hero_image_alignment
+-%}
+
+{%- if title == blank -%}
+  {%- capture title -%}{{ 'cart.general.title' | t }}{%- endcapture -%}
+{%- endif -%}
+{%- capture text -%}
+  <p>
+    <a aclass="fine-print" href="{{ routes.all_products_collection_url }}">
+      {{ 'cart.general.continue_shopping' | t }}
+    </a>
+  </p>
+{%- endcapture -%}
+
+{% style -%}
+  .cart-header {
+    {% unless hero_color == 'rgba(0, 0, 0, 0)' %}
+      color: {{ hero_color -}};
+    {% endunless %}
+
+    {% unless hero_bg == 'rgba(0, 0, 0, 0)' %}
+    background-color: {{ hero_bg -}};
+    {% endunless %}
+  }
+
+  {% if hero_image %}
+    {%- assign opacity = hero_bg_opacity | divided_by: 100.0 -%}
+    .cart-header .hero-background {
+        background-position: {{ hero_bg_alignment -}};
+        mix-blend-mode: {{ hero_bg_blend | default: 'normal' -}};
+
+        opacity: {{ opacity -}};
+    }
+  {% endif %}
+{%- endstyle %}
+
+<div class="container mx-auto"
+  data-section-id="{{ section.id }}"
+  data-section-type="cart-template"
+>
+  <div class="section empty-page-content has-text-centered {% if cart.item_count > 0 %}hidden{% endif %}" data-empty-page-content>
+    <h1 class="title">{{ 'cart.general.title' | t }}</h1>
+    <p class="subtitle cart-empty-message">{{ 'cart.general.empty' | t }}</p>
+    <div class="cookie-message">
+      <p>{{ 'cart.general.cookies_required' | t }}</p>
+    </div>
+    <a href="{{ routes.root_url }}" class="button is-dark cart__continue-btn">
+      <span>{{ 'general.404.link' | t }}</span>
+      <i class="material-icons-outlined">arrow_right_alt</i>
+    </a>
+    {% unless section.settings.empty_image == blank -%}
+      {%- assign empty_image = section.settings.empty_image -%}
+      {%- assign img_url = empty_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+      <div class="lazy-image__wrapper"
+        style="max-width: {{ empty_image.width -}}px;"
+        data-loading-animation
+      >
+        <figure class="ratio-container js"
+          style="padding-bottom: {{ 1 | divided_by: empty_image.aspect_ratio | times: 100 }}%;"
+        >
+          <img id="{{ img_id }}"
+            class="lazy-image cart-empty-image lazyload"
+            src="{{ empty_image | img_url: '480x' }}"
+            alt="{{ empty_image.alt | escape }}"
+            data-src="{{ img_url }}"
+            data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+            data-aspectratio="{{ empty_image.aspect_ratio }}"
+            data-sizes="auto"
+          >
+        </figure>
+        <noscript>
+        {% capture image_size -%}
+          {{ 480 | times: empty_image.aspect_ratio | round }}x{{ 480 }}
+        {%- endcapture -%}
+        <img class="cart-empty-image" src="{{- empty_image | img_url: image_size, scale: 2 -}}" alt="{{- empty_image.alt -}}" style="max-width: {{ 480 | times: empty_image.aspect_ratio -}}px;">
+      </noscript>
+      </div>
+    {%- endunless %}
+  </div>
+
+  <div class="cart {% if cart.item_count == 0 %}hidden{% endif %}" data-cart-wrapper>
+    <header class="hero is-small cart-header">
+      {% if hero_image -%}
+        <div class="hero-background lazyload lazypreload js"
+          data-bg="{{ hero_image | img_url: '640x480' }}"
+          data-bgset="{% render 'bgset', image: hero_image %}"
+          data-sizes="auto"
+          data-parent-fit="{{ hero_bg_size }}"
+          {% unless hero_image.alt == blank -%}
+            aria-label="{{ hero_image.alt | escape }}"
+            role="img"
+          {%- endunless %}
+        ></div>
+        <noscript>
+          <div class="hero-background no-js"
+            style="background-image: url('{{ hero_image | img_url: '1920x' }}');"
+            {% unless hero_image.alt == blank %}
+              aria-label="{{ hero_image.alt | escape }}"
+              role="img"
+            {% endunless %}
+          ></div>
+        </noscript>
+      {%- endif %}
+      <div class="hero-body">
+        {% comment %} {% render 'section-header', 
+          title: title,
+          title_level: title_size,
+          title_page: true,
+          text: text
+          size: text_size,
+          variant: hero_variant
+        %} {% endcomment %}
+      </div>
+    </header>
+    
+    <form action="{{ routes.cart_url }}" method="post" novalidate class="form columns m-0 cart-form">
+      <div class="w-full tablet:hidden cart-column cart-column--mobile-checkout">
+        <div class="cart-summary">
+          <div class="card cart-actions">
+            <div class="card-content">
+              <div class="table-container">
+                <table class="table is-fullwidth summary-table summary-table--cart">
+                  <tfoot>
+                    <tr class="summary-row summary-row--total cart-total">
+                      <th class="cart-total__title" scope="row">
+                        <strong>{{ 'cart.label.total' | t }}</strong>
+                      </th>
+                      <td class="has-no-wrap cart-total__price has-text-right"
+                        data-label="{{ 'cart.label.total' | t }}"
+                      >
+                        <strong data-cart-total>{{ cart.total_price | money_with_currency }}</strong>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+        
+              {%- capture taxes_shipping_checkout -%}
+                {%- if shop.taxes_included and shop.shipping_policy.body != blank -%}
+                  {{ 'cart.general.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                {%- elsif shop.taxes_included -%}
+                  {{ 'cart.general.taxes_included_but_shipping_at_checkout' | t }}
+                {%- elsif shop.shipping_policy.body != blank -%}
+                  {{ 'cart.general.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+                {%- else -%}
+                  {{ 'cart.general.taxes_and_shipping_at_checkout' | t }}
+                {%- endif -%}
+              {%- endcapture -%}
+              <div class="content fine-print has-text-centered cart-shipping">{{ taxes_shipping_checkout }}</div>
+              <div class="cart-buttons">
+                <div class="field is-grouped">
+                  {%- unless section.settings.cart_ajax_enable -%}
+                  <div class="control">
+                    <input type="submit" name="update"
+                        class="button is-primary is-outlined cart-button cart-button--update"
+                        value="{{ 'cart.general.update' | t }}">
+                    </div>
+                  {%- endunless -%}
+                  <div class="control is-expanded">
+                    <input type="submit" name="checkout"
+                      class="button is-dark is-fullwidth cart-buttion cart-button--submit"
+                      value="{{ 'cart.general.checkout' | t }}">
+                  </div>
+                </div>
+              </div>
+      
+              {%- if additional_checkout_buttons -%}
+                <div class="additional-checkout-buttons">{{ content_for_additional_checkout_buttons }}</div>
+              {%- endif -%}
+      
+              <div class="notification is-danger is-light cart-error-message hidden"
+                data-cart-error-message-wrapper
+                role="alert"
+              >
+                <span class="sr-only">{{ 'general.accessibility.error' | t }} </span>
+                <i class="material-icons-outlined">error</i>
+                <span class="cart__error-message" data-cart-error-message></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="column is-7 cart-column cart-column--items-list">
+        <ul class="list cart-item-list" data-cart-line-items>
+          {%- for item in cart.items -%}
+            {% render 'cart-item' with 
+              item: item,
+              line_number: forloop.index
+            %}
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      <div class="column is-5-tablet is-4-desktop is-3-fullhd cart-column cart-column--summary">
+        <div class="cart-summary">
+          {% if section.settings.cart_notes_enable -%}
+            <div class="field">
+              <label for="CartSpecialInstructions" class="label label--note has-text-centered-mobile">
+                {{ 'cart.general.note' | t }}
+              </label>
+              <div class="control">
+                <textarea name="note" id="CartSpecialInstructions"
+                  class="textarea textarea--note"
+                  data-cart-notes
+                >
+                  {{- cart.note -}}
+                </textarea>
+              </div>
+            </div>
+          {%- endif %}
+  
+          <div class="card is-shadowless cart-actions">
+            <div class="card-content">
+              <div class="table-container">
+                <table class="table is-fullwidth summary-table summary-table--cart">
+                  <tbody class="cart-subtotal {% if cart.cart_level_discount_applications.size == 0 %}hidden{% endif %}">
+                    <tr class="summary-row summary-row--subtotal cart-subtotal">
+                      <th class="cart-subtotal__title" scope="row">
+                        {{ 'cart.label.subtotal' | t }}
+                      </th>
+                      <td class="has-no-wrap cart-subtotal__price has-text-right"
+                        data-label="{{ 'cart.label.subtotal' | t }}"
+                        data-cart-subtotal
+                      >
+                        {{ cart.original_total_price | money_with_currency }}
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tbody class="cart-discounts {% if cart.cart_level_discount_applications.size == 0 %}hidden{% endif %}"
+                    data-cart-discount-wrapper
+                  >
+                    {%- assign cartDiscounts = 'template ' | split: ' ' -%}
+                    {%- if cart.cart_level_discount_applications.size > 0 -%}
+                      {%- assign cartDiscounts = cart.cart_level_discount_applications -%}
+                    {%- endif -%}
+  
+                    {% for discount in cartDiscounts -%}
+                    <tr class="summary-row summary-row--discount cart-discount" data-cart-discount>
+                      <th scope="row">
+                        <span class="tag is-dark cart-discount__title">
+                          <i class="material-icons-outlined">sell</i>
+                          <span data-cart-discount-title>{{- discount.title -}}</span>
+                          <span class="sr-only">{{ 'customer.order.discount' | t }}:</span>
+                        </span>
+                      </th>
+                      <td class="cart-discount__value has-text-right">
+                        (-<span data-cart-discount-amount>{{ discount.total_allocated_amount | money }}</span>)
+                      </td>
+                    </tr>
+                    {%- endfor %}
+                  </tbody>
+                  <tfoot>
+                    <tr class="summary-row summary-row--total cart-total">
+                      <th class="cart-total__title" scope="row">
+                        <strong>{{ 'cart.label.total' | t }}</strong>
+                      </th>
+                      <td class="has-no-wrap cart-total__price has-text-right"
+                        data-label="{{ 'cart.label.total' | t }}"
+                      >
+                        <strong data-cart-total>{{ cart.total_price | money_with_currency }}</strong>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+      
+            {%- capture taxes_shipping_checkout -%}
+              {%- if shop.taxes_included and shop.shipping_policy.body != blank -%}
+                {{ 'cart.general.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+              {%- elsif shop.taxes_included -%}
+                {{ 'cart.general.taxes_included_but_shipping_at_checkout' | t }}
+              {%- elsif shop.shipping_policy.body != blank -%}
+                {{ 'cart.general.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+              {%- else -%}
+                {{ 'cart.general.taxes_and_shipping_at_checkout' | t }}
+              {%- endif -%}
+            {%- endcapture -%}
+            <div class="content fine-print has-text-centered cart-shipping">{{ taxes_shipping_checkout }}</div>
+            <div class="cart-buttons">
+              <div class="field is-grouped">
+                {% unless section.settings.cart_ajax_enable -%}
+                <div class="control">
+                  <input type="submit" name="update"
+                      class="button is-primary is-outlined cart-button cart-button--update"
+                      value="{{ 'cart.general.update' | t }}">
+                  </div>
+                {%- endunless %}
+                <div class="control is-expanded">
+                  <input type="submit" name="checkout"
+                    class="button is-dark is-fullwidth cart-buttion cart-button--submit"
+                    value="{{ 'cart.general.checkout' | t }}">
+                </div>
+              </div>
+            </div>
+      
+            {% if additional_checkout_buttons -%}
+              <div class="additional-checkout-buttons">{{ content_for_additional_checkout_buttons }}</div>
+            {%- endif %}
+      
+            <div class="notification is-danger is-light cart-error-message hidden"
+              data-cart-error-message-wrapper
+              role="alert"
+            >
+              <span class="sr-only">{{ 'general.accessibility.error' | t }} </span>
+              <i class="material-icons-outlined">error</i>
+              <span class="cart__error-message" data-cart-error-message></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <p class="sr-only" data-cart-status aria-live="polite" role="status" ></p>
+  </div>
+</div>
+
+
+
+{% schema %}
+{
+  "name": "Cart Page",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero"
+    },
+    {
+      "type": "color",
+      "id": "hero_bg",
+      "label": "Background color",
+      "default": "#3a3a3a"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Background image"
+    },
+    {
+      "type": "select",
+      "id": "hero_image_size",
+      "label": "Image size",
+      "default": "cover",
+      "options": [
+        {
+        "value": "cover",
+        "label": "Cover (default)"
+        },
+        {
+        "value": "contain",
+        "label": "Contain"
+        },
+        {
+        "value": "auto",
+        "label": "Auto"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "hero_image_alignment",
+      "label": "Background image alignment",
+      "default": "center",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "hero_bg_blend",
+      "label": "Blend mode",
+      "options": [
+        {
+        "value": "normal",
+        "label": "Normal (default)"
+        },
+        {
+        "value": "multiply",
+        "label": "Multiply"
+        },
+        {
+        "value": "screen",
+        "label": "Screen"
+        },
+        {
+        "value": "overlay",
+        "label": "Overlay"
+        },
+        {
+        "value": "darken",
+        "label": "Darken"
+        },
+        {
+        "value": "lighten",
+        "label": "Lighten"
+        },
+        {
+        "value": "color-dodge",
+        "label": "Color-Dodge"
+        },
+        {
+        "value": "color-burn",
+        "label": "Color-Burn"
+        },
+        {
+        "value": "hard-light",
+        "label": "Hard-Light"
+        },
+        {
+        "value": "soft-light",
+        "label": "Soft-Light"
+        },
+        {
+        "value": "difference",
+        "label": "Difference"
+        },
+        {
+        "value": "exclusion",
+        "label": "Exclusion"
+        },
+        {
+        "value": "hue",
+        "label": "Hue"
+        },
+        {
+        "value": "saturation",
+        "label": "Saturation"
+        },
+        {
+        "value": "color",
+        "label": "Color"
+        },
+        {
+        "value": "luminosity",
+        "label": "Luminosity"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "range",
+      "id": "hero_image_opacity",
+      "label": "Image opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Hero Content"
+    },
+    {
+      "type": "color",
+      "id": "hero_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    },
+    {
+      "type": "range",
+      "id": "title_level",
+      "label": "Heading level",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "select",
+      "id": "title_align",
+      "label": "Text alignment",
+      "default": "has-text-centered",
+      "options": [
+        {
+          "label": "Left",
+          "value": "has-text-left"
+        },
+        {
+          "label": "Centered (default)",
+          "value": "has-text-centered"
+        },
+        {
+          "label": "Right",
+          "value": "has-text-right"
+        },
+        {
+          "label": "Justify",
+          "value": "has-text-justified"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Cart Options"
+    },
+    {
+      "type": "image_picker",
+      "id": "empty_image",
+      "label": "Empty cart image"
+    },
+    {
+      "type": "checkbox",
+      "id": "cart_ajax_enable",
+      "label": "Enable automatic cart updates",
+      "info": "Updates the cart as soon as customer changes are made",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "cart_notes_enable",
+      "label": "Enable cart notes",
+      "default": false
+    }
+  ]
+}
+{% endschema %}

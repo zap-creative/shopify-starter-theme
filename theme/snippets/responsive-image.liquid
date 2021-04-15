@@ -43,7 +43,6 @@
   data-srcset="{{ image_sizes }}"
   class="lazyload {{ image_class }}"
   {{ image_attributes }} />
-
 <noscript>
   <img class="{{ image_class }}" src="{{ image | img_url: '1200x1200' }}" alt="{{ image.alt | escape }}">
 </noscript>
