@@ -1,16 +1,49 @@
-<div class="page-pad">
-  <div class="copy">
+{% liquid 
+  assign bg_image = settings.user_pages__login_bg_image
+  assign bg_opacity = settings.user_pages__login_bg_opacity | divided_by: 100.0
+-%}
 
-    {% paginate customer.addresses by 5 %}
+<section class="address-section" style="background-color: {{ settings.user_pages__login_bg | default: 'var(--color-bg)'-}};">
+  {% if bg_image -%}
+    <div class="overlay background lazyload lazypreload js-enabled"
+      style="opacity: {{ bg_opacity -}};"
+      data-bg="{{ bg_image | img_url: '640x480' }}"
+      data-bgset="{% render 'bgset', image: bg_image %}"
+      data-sizes="auto"
+      data-parent-fit="cover"
+      data-loading-animation
+    >
+    </div>
+    <noscript>
+      <div class="overlay background"
+        style="background-image: url('{{- bg_image | img_url: '1920x' -}}'); opacity: {{ bg_opacity -}};"
+        {% unless bg_image.alt == blank %}
+          aria-label="{{- bg_image.alt | escape -}}"
+          role="img"
+        {% endunless %}
+      ></div>
+    </noscript>
+  {%- else -%}
+    {{ 'image' | placeholder_svg_tag: 'placeholder-svg overlay background' }}
+  {%- endif %}
+    
+  <div class="hero adapt is-primary is-dark mb-10">
+    <div class="hero-body">
+      <div class="tablet:container">
+        <p class="mb-4">
+          <a href="{{- routes.customer_account_link -}}" class="text-gray-900">
+            &lsaquo; {{ 'customer.account.return' | t -}}
+          </a>
+        </p>
+        <h1 class="h2">{{ 'customer.addresses.title' | t }}</h1>
+      </div>
+    </div>
+  </div>
 
-    <p class="mb-8 text-sm">
-      <a href="/account">&lsaquo; {{ 'customer.account.return' | t }}</a>
-    </p>
-
-    <h1 class="font-display text-3xl">{{ 'customer.addresses.title' | t }}</h1>
+  <div class="tablet:container prose">
+    {%- paginate customer.addresses by 5 -%}
 
     {% for address in customer.addresses %}
-
     <div class="my-4 border rounded" data-address>
       <div class="p-4 md:p-6">
         {% if address == customer.default_address %}

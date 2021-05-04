@@ -1,0 +1,107 @@
+@import '../keyframes';
+
+$modal-radius: $border-radius-sm !default;
+
+$modal-animation-in: slideinup !default;
+$modal-animation-out: slideoutup !default;
+$modal-animation-duration: $transition-duration !default;
+$modal-animation-easing: $transition-easing !default;
+$modal-overlay-animation-in: fadein !default;
+$modal-overlay-animation-out: fadeout !default;
+$modal-overlay-animation-duration: $transition-duration !default;
+$modal-overlay-animation-easing: $transition-easing !default;
+
+%modal {
+  bottom: 0;
+  display: none;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 1000;
+
+  &.contained {
+    position: absolute;
+  }
+
+  &.open {
+    display: block;
+  }
+}
+
+.modal {
+  @extend %modal;
+}
+
+%modal-overlay {
+  @apply px-12;
+
+  align-items: center;
+  backdrop-filter: blur(8px);
+  background-color: rgba($c-modal-overlay--rgb, $o-modal-overlay);
+  display: flex;
+  flex-flow: column wrap;
+  height: 100%;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+
+  [aria-hidden=false] & {
+    animation: $modal-overlay-animation-in $modal-overlay-animation-duration $modal-overlay-animation-easing;
+  }
+
+  [aria-hidden=true] & {
+    animation: $modal-overlay-animation-out $modal-overlay-animation-duration $modal-overlay-animation-easing;
+    animation-delay: 100ms;
+  }
+}
+
+.modal-overlay {
+  @extend %modal-overlay;
+}
+
+%modal-body {
+  @apply p-6 max-w-xl;
+
+  align-items: stretch;
+  background-color: var(--c-modal-bg);
+  border-radius: $modal-radius;
+  color: var(--c-modal-text);
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  max-height: 100vh;
+  position: relative;
+  width: 100%;
+  will-change: transform;
+
+  [aria-hidden=false] & {
+    animation: $modal-animation-in $modal-animation-duration $modal-animation-easing;
+  }
+
+  [aria-hidden=true] & {
+    animation: $modal-animation-out $modal-animation-duration $modal-animation-easing;
+  }
+
+  > header {
+    align-items: center;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+  }
+
+  > section {
+    @apply py-8;
+  }
+}
+
+.modal-body {
+  @extend %modal-body;
+}
+
+/* fix for micromodal close button with children */
+button[data-modal-close] > * {
+  pointer-events: none;
+}

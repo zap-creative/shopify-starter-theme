@@ -17,8 +17,8 @@
         </div>
     </div>
     {%- if collection.description != blank -%}
-      <div class="page-pad text-center py-12 mb-16 bg-gray-100 border-b">
-        <div class="copy">
+      <div class="text-center py-12 mb-16 bg-gray-100 border-b">
+        <div class="prose">
           {{ collection.description }}
         </div>
       </div>
@@ -26,8 +26,8 @@
 
   {%- else -%}
 
-    <div class="page-pad text-center pt-16 pb-20">
-      <div class="copy">
+    <div class="text-center pt-16 pb-20">
+      <div class="prose">
         <h1 class="m-0">{{ collection.title }}</h1>
         {%- if collection.description != blank -%}
         <div class="mt-8">
@@ -39,32 +39,26 @@
 
   {%- endif -%}
 
-  <div class="page-pad">
-
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-      {%- for product in collection.products -%}
-
-        {% render 'product-list-item' with 
-          product: product, 
+  <section class="container">
+    <div class="grid grid-cols-2 tablet:grid-cols-3 desktop:grid-cols-4 widescreen:grid-cols-5 gap-8">
+      {% for product in collection.products -%}
+        {% render 'product-list-item' with
+          product: product,
           collection: collection,
           interactive: settings.enable_ajax
         %}
-
       {%- else -%}
-
         <div>
           <p>no matches</p>
         </div>
-
-      {%- endfor -%}
+      {%- endfor %}
     </div>
+  </section>
 
-    {%- if paginate.pages > 1 -%}
-      <div class="m-8 text-center">
-        {{ paginate | default_pagination }}
-      </div>
-    {%- endif -%}
-
-  </div>
+  {% if paginate.pages > 1 -%}
+    <div class="m-8 text-center">
+      {{ paginate | default_pagination }}
+    </div>
+  {%- endif %}
 
 {% endpaginate %}

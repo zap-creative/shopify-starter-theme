@@ -3,8 +3,8 @@
   position: relative;
   vertical-align: top;
 
-  &.is-active,
-  &.is-hoverable:hover {
+  &.active,
+  &.hoverable:hover {
     .dropdown-menu {
       display: block;
     }
@@ -31,9 +31,9 @@
   @apply pt-2 z-20;
 
   display: none;
+  min-width: 12rem;
   position: absolute;
   top: 100%;
-  min-width: 12rem;
 }
 
 .dropdown-content {
@@ -48,15 +48,15 @@
 
 a.dropdown-item,
 button.dropdown-item {
-  width: 100%;
   text-align: inherit;
   white-space: nowrap;
+  width: 100%;
 
   &:hover {
     @apply bg-gray-50 text-gray-700;
   }
 
-  &.is-active {
+  &.active {
     @apply text-gray-700;
   }
 }
@@ -64,7 +64,7 @@ button.dropdown-item {
 .dropdown-divider {
   @apply bg-gray-200 my-2 mx-0;
 
+  border: none;
   display: block;
   height: 1px;
-  border: none;
 }

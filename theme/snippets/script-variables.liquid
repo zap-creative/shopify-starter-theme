@@ -1,0 +1,71 @@
+{% assign assetsPath = 'theme.bundle.js' | asset_url | split: 'theme.bundle.js' | first -%}
+<script>
+  {%- comment -%} Make string translations and money formate available to scripts.{%- endcomment %}
+  window.theme = {
+    breakpoints: {
+      small: 528,
+      tablet: 768,
+      desktop: 1008,
+      widescreen: 1344,
+      fullhd: 1680,
+    },
+    numbers: {
+      money_format: {{ shop.money_format | json -}},
+      money_off: {{ 'numbers.money.value_off' | t | json -}},
+      percent_off: {{ 'numbers.money.percent_off' | t | json -}},
+    },
+    settings: {
+      ajaxEnabled: {{ settings.enable_ajax | json -}},
+      predictiveSearchEnabled: {{ settings.predictive_search_enabled | json -}},
+      predictiveSearchNumResults: {{ settings.predictive_search_num_results | json -}},
+      predictiveSearchShowProducts: {{ settings.predictive_search_show_products | json -}},
+      predictiveSearchShowCollections: {{ settings.predictive_search_show_collections | json -}},
+      predictiveSearchShowPages: {{ settings.predictive_search_show_pages | json -}},
+      predictiveSearchShowArticles: {{ settings.predictive_search_show_articles | json -}},
+      predictiveSearchUri: {{ routes.search_url | json -}},
+      searchShowProductPrice: {{ settings.search_show_price | json -}},
+      searchShowProductVendor: {{ settings.search_show_vendor | json -}},
+      searchShowVendor: {{ settings.search_show_vendor | json -}},
+    },
+    strings: {
+      a11y_external: {{ 'general.accessibility.link_messages.external' | t | json -}},
+      a11y_new_window: {{ 'general.accessibility.link_messages.new_window' | t | json -}},
+      a11y_new_window_external: {{ 'general.accessibility.link_messages.new_window_and_external' | t | json -}},
+      add_to_cart: {{ 'products.product.add_to_cart' | t | json -}},
+      articles: {{ 'general.search.articles' | t | json -}},
+      cart_close: {{ 'cart.sidebar.close' | t | json -}},
+      cart_open: {{ 'cart.sidebar.open' | t | json -}},
+      cart_order_discount: {{ 'customer.order.discount' | t | json -}},
+      cart_subtotal: {{ 'cart.label.subtotal' | t | json -}},
+      cart_title: {{ 'cart.sidebar.title' | t | json -}},
+      cart_total: {{ 'cart.label.total' | t | json -}},
+      cart_view: {{ 'cart.sidebar.view' | t | json -}},
+      collections: {{ 'general.search.collections' | t | json -}},
+      pages: {{ 'general.search.pages' | t | json -}},
+      products: {{ 'general.search.products' | t | json -}},
+      qty_minus: {{ 'cart.label.qty_minus' | t | json -}},
+      qty_plus: {{ 'cart.label.qty_plus' | t | json -}},
+      qty_remove: {{ 'cart.label.remove' | t | json -}},
+      qty_value: {{ 'cart.label.qty_value' | t | json -}},
+      search_close: {{ 'general.search.close' | t | json -}},
+      search_clear: {{ 'general.search.clear' | t | json -}},
+      search_placeholder: {{ 'general.search.placeholder' | t | json -}},
+      search_results_loading: {{ 'general.search.loading' | t | json -}},
+      search_results_showing: {
+        'one': {{ 'general.search.showing_with_count.one' | t | json -}},
+        'other': {{ 'general.search.showing_with_count.other' | t | json -}},
+        'zero': {{ 'general.search.showing_with_count.zero' | t | json -}}
+      },
+      search_show_all: {{ 'general.search.show_all' | t | json -}},
+      search_submit: {{ 'general.search.submit' | t | json -}},
+      search_term_empty: {{ 'general.search.empty_search_message' | t | json -}},
+      sold_out: {{ 'products.product.sold_out' | t | json -}},
+      unavailable: {{ 'products.product.unavailable' | t | json }}
+    }
+  };
+
+  {% comment -%} Required for lazy-loading with Webpack on Shopify CDN {%- endcomment -%}
+  window.__webpack_public_path__ = "{{ assetsPath }}";
+
+  document.documentElement.classList.replace('no-js', 'js');
+</script>

@@ -1,6 +1,6 @@
-const openSearch = () => import(/* webpackChunkName: "predictive-search-init" */ '../apps/predictive-search-init').then((module) => {
-  const predictiveSearch = module.default;
-  predictiveSearch();
+const openSearch = () => import(/* webpackChunkName: "app-predictive-search" */ '../apps/predictive-search.js').then((module) => {
+  const PredictiveSearch = module.default;
+  PredictiveSearch();
   return true;
 }).catch(() => false);
 

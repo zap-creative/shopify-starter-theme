@@ -1,0 +1,39 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"editor.rulers": [
+			80, 100
+		],
+		"files.exclude": {
+			"**/.git": true,
+			"**/node_modules": true,
+			"**/.DS_Store": true,
+			"**/yarn.lock": true
+		},
+		"files.watcherExclude": {
+			"**/.git/objects/**": true,
+			"**/.git/subtree-cache/**": true,
+			"**/node_modules/*/**": true
+		},
+		"search.exclude": {
+			"**/node_modules": true
+		},
+		"css.validate": false,
+		"less.validate": false,
+		"scss.validate": false,
+		"tailwindCSS.lint.invalidScreen": "ignore",
+		"advancedNewFile.convenienceOptions": [
+			"last",
+			"current",
+			"root"
+		],
+		"advancedNewFile.exclude": {
+			"node_modules": true,
+			"assets": true
+		}
+	}
+}

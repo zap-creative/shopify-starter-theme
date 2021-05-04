@@ -1,0 +1,97 @@
+.control {
+  box-sizing: border-box;
+  clear: both;
+  font-size: $f-size-normal;
+  position: relative;
+  text-align: inherit;
+
+  &.has-icons-left,
+  &.has-icons-right {
+    .input,
+    .select {
+      &:focus {
+        & ~ .icon:not(:hover) {
+          color: $input-icon-active-color;
+        }
+      }
+
+      &.small ~ .icon {
+        font-size: $f-size-small;
+      }
+
+      &.medium ~ .icon {
+        font-size: $f-size-medium;
+      }
+
+      &.large ~ .icon {
+        font-size: $f-size-large;
+      }
+    }
+
+    .icon {
+      align-items: center;
+      color: $input-icon-color;
+      display: flex;
+      height: $input-height;
+      justify-content: center;
+      position: absolute;
+      top: 0;
+      width: $input-height;
+      z-index: 4;
+
+      &:hover {
+        color: $input-icon-hover-color;
+      }
+
+      &:not(button):not(.btn) {
+        pointer-events: none;
+      }
+    }
+  }
+
+  &.has-icons-left {
+    .input,
+    .select select {
+      padding-left: $input-height;
+    }
+
+    .icon.is-left {
+      left: 0;
+    }
+  }
+
+  &.has-icons-right {
+    .input,
+    .select select {
+      padding-right: $input-height;
+    }
+
+    .icon.is-right {
+      right: 0;
+    }
+  }
+
+  &.loading {
+    &::after {
+      position: absolute !important;
+      top: 0.625em;
+      z-index: 4;
+
+      @include ltr-position(0.625em);
+
+      @extend %loader;
+    }
+
+    &.small::after {
+      font-size: $f-size-small;
+    }
+
+    &.medium::after {
+      font-size: $f-size-medium;
+    }
+
+    &.large::after {
+      font-size: $f-size-large;
+    }
+  }
+}

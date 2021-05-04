@@ -1,4 +1,4 @@
-/* Account for JavaScript disabled */
+/* js-enabled elements */
 html.no-js .js-enabled {
   display: none;
 }
@@ -7,14 +7,57 @@ html.no-js .js-enabled {
   display: inherit;
 }
 
+.no-js .lazyload {
+  display: none;
+}
+
+/* cookie-enabled elements */
+.supports-no-cookies:not(html) {
+  display: none;
+
+  html.supports-no-cookies & {
+    display: block;
+  }
+}
+
+// Only show when browser cookies are supported
+.supports-cookies {
+  html.supports-no-cookies & {
+    display: none;
+  }
+}
+
+/* toggle mouse events
+*/
+
+.not-interactive {
+  pointer-events: none;
+}
+
+.interactive {
+  pointer-events: initial;
+}
+
+/* support for transitions */
+.transitioning {
+  display: block !important;
+  visibility: visible !important;
+}
+
 /* Fallback SVG image when no image has been set */
 .placeholder-svg {
-  @apply bg-gray-200 text-gray-400 fill-current;
+  background: $c-primary-bg;
+  color: $c-primary;
+  fill: currentColor;
 }
 
 /* Default Shopify Block section styles */
 .shopify-section {
-  @extend .page-pad;
+  @apply px-8;
+
+  @screen widescreen {
+    @apply px-12;
+  }
 }
 
 /**
@@ -22,12 +65,18 @@ html.no-js .js-enabled {
  * https://shopify.dev/docs/liquid/reference/objects/form#form-errors
  */
 .errors {
-  background-color: var(--c-error-bg);
-  border-top-color: var(--c-error);
+  @apply my-4 px-5 py-5;
+
+  background-color: $c-error-bg;
+  border-top-color: $c-error;
   border-top-style: solid;
   border-top-width: 3px;
-  padding: 0.8rem 1.2rem;
   text-align: left;
+
+  .title {
+    color: $c-error;
+    font-weight: $f-weight-bold;
+  }
 
   ul {
     list-style-type: none;
@@ -65,9 +114,14 @@ html.no-js .js-enabled {
 }
 
 .current {
-  font-weight: bold;
+  font-weight: $f-weight-bold;
 }
 
 .deco {
-  color: var(--c-text-light);
+  color: $c-text-light;
+}
+
+/* hide the generated spritesheet */
+#svelte-shopify-sprites {
+  display: none !important;
 }

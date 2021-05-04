@@ -1,86 +1,49 @@
 .cart-item {
-  @apply shadow-md mb-2 p-4;
+  @apply p-4;
 
-  .list & {
-    flex-flow: column wrap;
-    align-items: stretch;
+  width: 100%;
+}
+
+.cart-item-content {
+  @apply space-x-4;
+
+  align-items: flex-start;
+  display: flex;
+  flex-flow: unless-rtl(row, row-reverse) wrap;
+  justify-content: space-between;
+}
+
+.cart-item-image {
+  @apply rounded-sm h-32 w-32;
+
+  align-items: center;
+  align-self: center;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+
+  img {
+    max-width: none;
   }
+}
 
-  &__content,
-  &__details {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: flex-start;
-    justify-content: flex-start;
+.cart-item-details {
+  flex: 1;
+}
+
+.cart-item-price {
+  flex: 0 1 auto;
+
+  .item-price {
+    @apply mb-2;
+
+    font-weight: $f-weight-bold;
+    text-align: unless-rtl(right, left);
   }
+}
 
-  &__content {
-    @apply space-x-4;
-  }
-
-  &__image {
-    max-width: 240px;
-  }
-
-  &__details {
-    flex: 1;
-    justify-content: space-between;
-  }
-
-  &__price {
-    display: flex;
-    flex-flow: column wrap;
-
-    .item-discounts {
-      margin-top: 1rem;
-    }
-  }
-
-  &__quantity {
-    @apply space-x-2;
-
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-    width: 100%;
-
-    .input {
-      @apply rounded-sm;
-
-      max-width: 8rem;
-      text-align: center;
-    }
-
-    .button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  }
-
-  &__removed-message {
-    p {
-      margin: 0;
-    }
-  }
-
-  &__final-price {
-    dl:not(.hidden) {
-      display: inline-flex;
-      flex-flow: row wrap;
-    }
-
-    dd {
-      margin-left: 0.5em;
-    }
-  }
-
-  &__footer {
-    @apply pt-2 space-x-2;
-
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    justify-content: flex-end;
-  }
+.cart-item-footer {
+  align-items: center;
+  color: $c-text-light;
+  justify-content: flex-end;
 }

@@ -3,17 +3,23 @@
 }
 
 .announcement {
+  background-color: var(--c-banner-bg);
+  color: var(--c-banner-text);
   position: relative;
   text-align: center;
 
-  &__link,
-  &__message {
+  &:hover {
+    background-color: var(--c-banner-bg--hover);
+    color: var(--c-banner-text--hover);
+  }
+
+  .link,
+  .prose {
     @apply m-0;
 
     display: block;
+    max-width: 100%;
     position: relative;
-    width: 100%;
-    z-index: 1;
 
     &,
     &:hover {
@@ -21,15 +27,19 @@
     }
   }
 
-  &__link {
+  .link {
     text-decoration: none;
   }
 
-  &__message {
-    @apply py-3 px-12;
+  .prose {
+    @apply py-3 px-8;
 
-    font-size: calc(((13) / (var(--font-size-base))) * 1em);
-    font-weight: var(--font-weight-normal);
+    font-size: $f-size-small;
+    font-weight: $f-weight;
+
+    @sreen widescreen {
+      @apply px-12;
+    }
 
     *:first-child {
       margin-top: 0;

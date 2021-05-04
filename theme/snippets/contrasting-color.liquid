@@ -1,0 +1,39 @@
+{%- comment -%}
+  Accepts:
+  - color: {Mixed} Color type
+  - dark: {Mixed} [Optional] Color type
+  - light: {Mixed} [Optional] Color type
+
+  Usage:
+  {% render 'contrasting-color' with color: color, dark: '#ffffff' %}
+{%- endcomment -%}
+{% liquid 
+  assign dark = dark | default: '#000000'
+  assign light = light | default: '#ffffff'
+  assign adjustments = '5 10 15 20 25 30 35' | split: ' '
+
+  assign contrast_dark = color | brightness_difference: dark
+  assign contrast_light = color | brightness_difference: light
+  
+  if contrast_dark > contrast_light
+    for i in adjustments
+      if contrast_dark > 140
+        break
+      endif
+
+      assign dark = dark | color_darken: i
+      assign contrast_dark = color | brightness_difference: dark
+    endfor
+    echo dark
+  else
+    for i in adjustments
+      if contrast_light > 140
+        break
+      endif
+
+      assign light = light | color_lighten: i
+      assign contrast_light = color | brightness_difference: light
+    endfor
+    echo light
+  endif
+-%}

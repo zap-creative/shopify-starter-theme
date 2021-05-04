@@ -1,0 +1,25 @@
+$label-color: $c-form-labels !default;
+$label-weight: $f-weight-bold !default;
+
+.label {
+  color: $label-color;
+  display: block;
+  font-size: $f-size-normal;
+  font-weight: $label-weight;
+
+  &:not(:last-child) {
+    @apply mb-2;
+  }
+
+  &.small {
+    font-size: $f-size-small;
+  }
+
+  &.medium {
+    font-size: $f-size-medium;
+  }
+
+  &.large {
+    font-size: $f-size-large;
+  }
+}

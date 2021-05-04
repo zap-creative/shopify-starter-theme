@@ -1,0 +1,33 @@
+@import '../mixins/icons';
+
+$material-icon-color: inherit !default;
+
+$material-icon-size: $icon-size !default;
+$material-icon-size-min: $icon-size-min !default;
+$material-icon-size-max: $icon-size-max !default;
+$material-icon-scale: $icon-size-scale !default;
+$material-icon-steps: ($material-icon-size-max - $material-icon-size-min) / $material-icon-scale;
+
+.material-icons,
+.material-icons-outlined {
+  color: $material-icon-color;
+  font-size: #{$material-icon-size}px;
+
+  @include icon-sizes (
+    $material-icon-size,
+    $material-icon-scale,
+    $material-icon-size-min,
+    $material-icon-steps,
+    (font-size),
+    'px'
+  );
+
+
+  /* Rules for using icons as black on a light background. */
+  &.is-dark { color: rgba(0, 0, 0, 0.54); }
+  &.is-dark.inactive { color: rgba(0, 0, 0, 0.26); }
+
+  /* Rules for using icons as white on a dark background. */
+  &.is-light { color: rgba(255, 255, 255, 1); }
+  &.is-light.inactive { color: rgba(255, 255, 255, 0.3); }
+}

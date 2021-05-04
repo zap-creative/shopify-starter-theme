@@ -1,0 +1,7 @@
+.account-section {
+  @extend %customer-section;
+
+  @apply pb-12;
+
+  padding-top: 0;
+}

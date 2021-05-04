@@ -1,34 +1,46 @@
 <script>
   import { fly, fade } from 'svelte/transition';
-  import { cubicOut } from 'svelte/easing';
 
-  export let url;
   export let index = 0;
+  export let title;
+  export let url;
+  export let wide = false;
 </script>
 
-
 <style>
-  @layer components {
-    a {
-      @apply flex flex-row p-2;
+  li {
+    align-items: stretch;
+    flex: 0 0 auto;
+    width: 100%;
+  }
 
-      background-color: var(--color-card);
-      color: var(--color-card-text);
+  a {
+    @apply py-2;
+
+    background-color: var(--c-card);
+    color: var(--c-card-text);
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+  }
+
+  @screen small {
+    li:not(.wide) {
+      min-width: 280px;
+      width: 50%;
+    }
+
+    a {
+      flex-wrap: nowrap;
     }
   }
 </style>
 
-<li role="option"
-  in:fly="{{
-    duration: 300,
-    delay: (index * 20),
-    y: 120,
-    opacity: 0.5,
-    easing: cubicOut
-  }}"
+<li role="option" class="{wide ? 'wide' : ''}"
+  in:fly="{{ duration: 300, delay: (index * 20), y: 120, opacity: 0.5 }}"
   out:fade="{{ duration: 250 }}"
 >
-  <a href="{url}">
+  <a href="{url}" title="{title}">
     <slot></slot>
   </a>
 </li>

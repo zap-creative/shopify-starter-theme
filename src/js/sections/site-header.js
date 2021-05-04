@@ -1,7 +1,12 @@
 import { register } from '@shopify/theme-sections';
 import { trapFocus, removeTrapFocus } from '@shopify/theme-a11y';
 
-import prepareTransition from '../utility/prepareTransition';
+import prepareTransition from '../utility/prepare-transition';
+import debounce from '../utility/debounce';
+
+const {
+  breakpoints,
+} = window.theme;
 
 register('header-section', {
   async onLoad() {
@@ -30,7 +35,7 @@ class Navigation {
     };
   
     this.classes = {
-      activeClass: 'is-active',
+      activeClass: 'active',
       childLinkClass: 'nav-link--child',
       rightDropdownClass: 'is-right',
       leftDropdownClass: 'is-left'
@@ -41,33 +46,87 @@ class Navigation {
     this.showDropdown = this.showDropdown.bind(this);
     this.hideDropdown = this.hideDropdown.bind(this);
     this.keyUpHandler = this.keyUpHandler.bind(this);
+    this.resizeHandler = this.resizeHandler.bind(this);
     this.submenuFocusoutHandler = this.submenuFocusoutHandler.bind(this);
     this.submenuParentClickHandler = this.submenuParentClickHandler.bind(this);
     
     this.cache = this.cacheSelectors(this.selectors);
     
-    this.cache.parents.forEach((element) => {
-      element.addEventListener('click', this.submenuParentClickHandler);
-    });
-
-    // check when we're leaving a dropdown and close the active dropdown
-    this.cache.siteNavChildLink.forEach((element) => {
-      element.addEventListener('focusout', this.submenuFocusoutHandler);
-    });
-
-    this.cache.topLevel.forEach((element) => {
-      element.addEventListener('focus', this.hideDropdown);
-    });
-
-    this.cache.subMenuLinks.forEach((element) => {
-      element.addEventListener('click', (event) => {
-        event.stopImmediatePropagation();
+    if (this.cache.sectionHeader) {
+      document.documentElement.style.setProperty(
+        '--js-header-height', 
+        `${this.cache.sectionHeader.offsetHeight}px`
+      );
+      window.addEventListener('resize', debounce(this.resizeHandler));
+    }
+    
+    if(this.cache.parents){
+      this.cache.parents.forEach((element) => {
+        element.addEventListener('click', this.submenuParentClickHandler);
       });
-    });
+    }
+
+    if(this.cache.siteNavChildLink) {
+      // check when we're leaving a dropdown and close the active dropdown
+      this.cache.siteNavChildLink.forEach((element) => {
+        element.addEventListener('focusout', this.submenuFocusoutHandler);
+      });
+    }
+
+    if(this.cache.topLevel) {
+      this.cache.topLevel.forEach((element) => {
+        element.addEventListener('focus', this.hideDropdown);
+      });
+    }
+
+    if(this.cache.subMenuLinks) {
+      this.cache.subMenuLinks.forEach((element) => {
+        element.addEventListener('click', (event) => {
+          event.stopImmediatePropagation();
+        });
+      });
+    }
+  }
+
+  unload() {
+    if(this.cache.topLevel) {
+      this.cache.topLevel.forEach((element) => {
+        element.removeEventListener('focus', this.hideDropdown);
+      });
+    }
+
+    if(this.cache.subMenuLinks) {
+      this.cache.subMenuLinks.forEach((element) => {
+        element.removeEventListener('click', (event) => {
+          event.stopImmediatePropagation();
+        });
+      });
+    }
+
+    if(this.cache.parents) {
+      this.cache.parents.forEach((element) => {
+        element.removeEventListener('click', this.submenuParentClickHandler);
+      });
+    }
+
+    if(this.cache.siteNavChildLink) {
+      this.cache.siteNavChildLink.forEach((element) => {
+        element.removeEventListener('focusout', this.submenuFocusoutHandler);
+      });
+    }
+
+    document.documentElement.style.removeProperty('--js-header-height');
+
+    window.removeEventListener('keyup', this.keyUpHandler);
+    window.removeEventListener('resize', debounce(this.resizeHandler));
+    document.body.removeEventListener('click', this.hideDropdown);
   }
 
   cacheSelectors(selectors) {
     const navigation = document.querySelector(selectors.navigation);
+    if (!navigation) {
+      return {};
+    }
 
     return {
       nav: navigation,
@@ -116,6 +175,13 @@ class Navigation {
     if (event.keyCode === 27) this.hideDropdown();
   }
 
+  resizeHandler(event) {
+    document.documentElement.style.setProperty(
+      '--js-header-height',
+      `${this.cache.sectionHeader.offsetHeight}px`
+    );
+  }
+
   submenuParentClickHandler(event) {
     const element = event.currentTarget;
 
@@ -134,29 +200,6 @@ class Navigation {
 
     this.hideDropdown();
   }
-
-  unload() {
-    this.cache.topLevel.forEach((element) => {
-      element.removeEventListener('focus', this.hideDropdown);
-    });
-
-    this.cache.subMenuLinks.forEach((element) => {
-      element.removeEventListener('click', (event) => {
-        event.stopImmediatePropagation();
-      });
-    });
-
-    this.cache.parents.forEach((element) => {
-      element.removeEventListener('click', this.submenuParentClickHandler);
-    });
-
-    this.cache.siteNavChildLink.forEach((element) => {
-      element.removeEventListener('focusout', this.submenuFocusoutHandler);
-    });
-
-    window.removeEventListener('keyup', this.keyUpHandler);
-    document.body.removeEventListener('click', this.hideDropdown);
-  }
 };
 
 class MobileNavigation {
@@ -166,19 +209,17 @@ class MobileNavigation {
       mobileNavToggle: '.toggle-mobile-navigation',
       mobileNavContainer: '#mobile-navigation',
       mobileNav: '.mobile-navigation-menu',
-      navItem: '.menu-item',
-      navLink: '.menu-item__link',
       navDropdown: '.menu-item__dropdown',
-      subNavLink: '.menu-item__link--sublist',
-      return: 'menu-item__button--return',
-      subNavToggleBtns: '.toggle-submenu',
-      mobileNavOpenIcon: 'mobile-navigation--open',
-      mobileNavCloseIcon: 'mobile-navigation--close',
-      navOpen: 'is-open',
-      subNavActive: 'is-active',
-      subNavClosing: 'is-closing',
+      subNavToggle: '.toggle-submenu',
+    };
+    
+    this.classes = {
+      navOpen: 'open',
+      subNavActive: 'active',
+      subNavClosing: 'closing',
       subNavShowing: 'has-secondary-open',
       thirdNavShowing: 'has-tertiary-open',
+      toggleReturn: 'toggle-submenu--return',
     };
 
     this.menuLevel = 1;
@@ -198,23 +239,32 @@ class MobileNavigation {
     this.cache = this.cacheSelectors(this.selectors);
     
     // set up event listeners
-    this.cache.mobileNavToggle.addEventListener('click', this.toggleMobileNav.bind(this));
-    this.cache.subNavToggleBtns.forEach((element) => {
-      element.addEventListener('click', this.toggleSubNav.bind(this));
-    });
+    if(this.cache.mobileNavToggle) {
+      this.cache.mobileNavToggle.addEventListener('click', this.toggleMobileNav.bind(this));
+    }
+
+    if(this.cache.subNavToggle) {
+      this.cache.subNavToggle.forEach((element) => {
+        element.addEventListener('click', this.toggleSubNav.bind(this));
+      });
+    }
     
-    this.mql = window.matchMedia(`(min-width: ${theme.breakpoints.tablet}px)`);
-    this.mql.addListener(this.initBreakpoints.bind(this));
+    if(this.cache.mobileNavContainer){
+      this.mql = window.matchMedia(`(min-width: ${breakpoints.tablet}px)`);
+      this.mql.addListener(this.initBreakpoints.bind(this));
+    }
   }
 
   unload() {
-    this.mql.removeListener(this.initBreakpoints);
+    if(this.mql){
+      this.mql.removeListener(this.initBreakpoints);
+    }
   }
 
   initBreakpoints() {
     if (
       this.mql.matches &&
-      this.cache.mobileNavContainer.classList.contains(this.selectors.navOpen)
+      this.cache.mobileNavContainer.classList.contains(this.classes.navOpen)
     ) {
       this.closeMobileNav();
     }
@@ -228,14 +278,12 @@ class MobileNavigation {
       mobileNavToggle: sectionHeader.querySelector(selectors.mobileNavToggle),
       mobileNavContainer: sectionHeader.querySelector(selectors.mobileNavContainer),
       mobileNav: sectionHeader.querySelector(selectors.mobileNav),
-      subNavToggleBtns: sectionHeader.querySelectorAll(selectors.subNavToggleBtns),
+      subNavToggle: sectionHeader.querySelectorAll(selectors.subNavToggle),
     };
   }
 
   toggleMobileNav() {
-    if (this.cache.mobileNavToggle.classList.contains(
-      this.selectors.mobileNavCloseIcon
-    )) {
+    if (this.cache.mobileNavToggle.getAttribute('aria-expanded') === 'true') {
       this.closeMobileNav();
     } else {
       this.openMobileNav();
@@ -243,77 +291,83 @@ class MobileNavigation {
   }
 
   openMobileNav() {
-    const translateHeaderHeight = this.cache.sectionHeader.offsetHeight;
+    const {
+      sectionHeader,
+      mobileNavContainer,
+      mobileNav,
+      mobileNavToggle
+    } = this.cache;
+    const {
+      navOpen
+    } = this.classes;
 
-    prepareTransition(this.cache.mobileNavContainer);
-    this.cache.mobileNavContainer.classList.add(this.selectors.navOpen);
-    this.cache.mobileNavContainer.setAttribute(
+    prepareTransition(mobileNavContainer);
+    mobileNavContainer.classList.add(navOpen);
+    mobileNavContainer.setAttribute(
       'data-original-height',
-      this.cache.mobileNav.offsetHeight
+      mobileNav.offsetHeight
     );
 
-    this.cache.mobileNavContainer.style.transform = `translateY(${translateHeaderHeight}px)`;
-
-    trapFocus(this.cache.sectionHeader, {
-      elementToFocus: this.cache.mobileNavToggle
-    });
-
-    this.cache.mobileNavToggle.setAttribute('aria-expanded', true);
-    this.cache.mobileNavToggle.classList.add(
-      this.selectors.mobileNavCloseIcon
-    );
-    this.cache.mobileNavToggle.classList.remove(
-      this.selectors.mobileNavOpenIcon
-    );
+    trapFocus(sectionHeader, {elementToFocus: mobileNavToggle});
+    mobileNavToggle.setAttribute('aria-expanded', true);
 
     window.addEventListener('keyup', this.keyUpHandler.bind(this));
   }
 
   closeMobileNav() {
-    prepareTransition(this.cache.mobileNavContainer);
-    this.cache.mobileNavContainer.classList.remove(this.selectors.navOpen);
-    this.cache.mobileNavContainer.style.transform = 'translateY(-100%)';
+    const {
+      mobileNavContainer,
+      mobileNav,
+      mobileNavToggle
+    } = this.cache;
+    const {
+      navOpen
+    } = this.classes;
 
-    trapFocus(document.documentElement, {
-      elementToFocus: document.body
-    });
+    prepareTransition(mobileNavContainer);
+    mobileNavContainer.classList.remove(navOpen);
+    mobileNavContainer.removeAttribute('data-original-height');
 
-    this.cache.mobileNavContainer.addEventListener('transitionend', (event) => {
-      removeTrapFocus({
-        container: this.cache.mobileNav
-      });
+    trapFocus(document.documentElement, {elementToFocus: document.body});
+    mobileNavContainer.addEventListener('transitionend', (event) => {
+      removeTrapFocus({container: mobileNav});
     }, { once: true });
 
-    this.cache.mobileNavToggle.setAttribute('aria-expanded', false);
-    this.cache.mobileNavToggle.classList.add(this.selectors.mobileNavOpenIcon);
-    this.cache.mobileNavToggle.classList.remove(this.selectors.mobileNavCloseIcon);
-    this.cache.mobileNavToggle.focus();
+    mobileNavToggle.setAttribute('aria-expanded', false);
+    mobileNavToggle.focus();
 
     window.removeEventListener('keyup', this.keyUpHandler.bind(this));
   }
 
   toggleSubNav(event) {
     if (this.isTransitioning) return;
+    const {
+      subNavToggle,
+    } = this.selectors;
+    const {
+      subNavActive,
+      toggleReturn,
+    } = this.classes;
 
     const toggleBtn = event.currentTarget;
-    const isReturn = toggleBtn.classList.contains(this.selectors.return);
+    const isReturn = toggleBtn.classList.contains(toggleReturn);
 
     this.isTransitioning = true;
 
     if (isReturn) {
-      const subNavToggleBtns = document.querySelectorAll(
-        `.${this.selectors.subNavToggleBtns}[data-level='${menuLevel - 1}']`
+      const toggleBtns = document.querySelectorAll(
+        `${subNavToggle}[data-level='${this.menuLevel - 1}']`
       );
 
-      subNavToggleBtns.forEach((element) => {
-        element.classList.remove(this.selectors.subNavActive);
+      toggleBtns.forEach((element) => {
+        element.classList.remove(subNavActive);
       });
 
       if (this.activeTrigger) {
-        this.activeTrigger.classList.remove(this.selectors.subNavActive);
+        this.activeTrigger.classList.remove(subNavActive);
       }
     } else {
-      toggleBtn.classList.add(this.selectors.subNavActive);
+      toggleBtn.classList.add(subNavActive);
     }
 
     this.activeTrigger = toggleBtn;
@@ -322,57 +376,58 @@ class MobileNavigation {
   }
 
   goToSubnav(target) {
+    const {
+      navDropdown,
+    } = this.selectors;
+    const {
+      subNavClosing,
+      subNavShowing,
+      thirdNavShowing,
+    } = this.classes;
+    const {
+      sectionHeader,
+      mobileNavContainer,
+      mobileNav,
+    } = this.cache;
+
     const targetMenu = target
-      ? document.querySelector(`${this.selectors.navDropdown}[data-parent="${target}"]`)
-      : this.cache.mobileNav;
+      ? document.querySelector(`${navDropdown}[data-parent="${target}"]`)
+      : mobileNav;
 
     const menuLevel = targetMenu.dataset.level 
       ? Number(targetMenu.dataset.level) 
-      : 1;
+      : mobileNav;
 
     if (this.activeSubNav) {
       prepareTransition(this.activeSubNav);
-      this.activeSubNav.classList.add(this.selectors.subNavClosing);
+      this.activeSubNav.classList.add(subNavClosing);
     }
 
     this.activeSubNav = targetMenu;
 
-    const openNavClass = menuLevel > 2 
-      ? this.selectors.thirdNavShowing 
-      : this.selectors.subNavShowing;
+    const openNavClass = menuLevel > 2 ? thirdNavShowing : subNavShowing;
 
-    const translateMenuHeight = targetMenu === this.cache.mobileNav
-      ? this.cache.mobileNavContainer.getAttribute('data-original-height')
+    const translateMenuHeight = targetMenu === mobileNav
+      ? mobileNavContainer.getAttribute('data-original-height')
       : targetMenu.offsetHeight;
     
-    this.cache.mobileNav.style.height = translateMenuHeight + 'px';
-    this.cache.mobileNav.classList.remove(this.selectors.thirdNavShowing);
-    this.cache.mobileNav.classList.add(openNavClass);
-      
-    if (!target) {
-      this.cache.mobileNav.classList.remove(
-        this.selectors.thirdNavShowing,
-        this.selectors.subNavShowing
-      );
+    mobileNav.style.height = translateMenuHeight + 'px';
+    mobileNav.classList.remove(subNavShowing, thirdNavShowing);
+    if (target) {
+      mobileNav.classList.add(openNavClass);
     }
 
     /* if going back to first subnav, focus is on whole header */
-    const container = menuLevel === 1 ? this.cache.sectionHeader : targetMenu;
+    const container = menuLevel === 1 ? sectionHeader : targetMenu;
 
-    this.cache.mobileNavContainer.addEventListener('transitionend', (event) => {
-      trapFocus({
-        container: container
-      });
-
-      this.cache.mobileNavContainer.removeEventListener('transitionend');
-
+    mobileNavContainer.addEventListener('transitionend', (event) => {
+      trapFocus(container);
       this.isTransitioning = false;
     }, { once: true });
 
-    this.activeSubNav.classList.remove(this.selectors.subNavClosing);
+    this.activeSubNav.classList.remove(subNavClosing);
   }
 
-  
   keyUpHandler(event) {
     if (event.which === 27) {
       this.closeMobileNav();

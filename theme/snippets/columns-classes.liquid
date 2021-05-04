@@ -1,0 +1,66 @@
+{%- liquid
+  assign classes = ''
+  unless inline
+    assign classes = classes | append: ' multiline'
+  endunless
+
+  if is_mobile
+    assign classes = classes | append: ' is-mobile'
+  endif
+
+  unless columns == empty or count == empty
+    assign widths = widths | default: 'mobile tablet desktop' | split: ' '
+
+    for width in widths
+      assign breakpoint = 'column_width_' | append: width | remove: '_mobile'
+      assign remainder = count | modulo: columns[breakpoint]
+
+      if remainder == 0 or count <= columns[breakpoint]
+        assign classes = classes | append: ' ' | append: width | append: ':h-center'
+      endif
+
+    endfor
+
+    assign classes = classes | replace: ' mobile:h-center tablet:h-center desktop:h-center', ' h-center'
+    assign classes = classes | replace: ' mobile:h-center tablet:h-center', ' tablet-down:h-center'
+
+    assign last_twenty = classes | slice: -20, 20
+    if last_six == ' tablet:h-center'
+      assign classes = classes | replace: 'tablet:h-center', 'tablet-only:h-center'
+    endif
+
+  endunless
+
+  if columns.columns_gap or columns.columns_gap_mobile
+    assign gap = columns.columns_gap | default: 3
+    assign mobile_gap = columns.columns_gap_mobile | default: 3
+
+    if gap != 3 and gap != 0 or mobile_gap != 3 and mobile_gap != 0
+      assign is_variable = true
+    endif
+
+    unless is_variable
+      if mobile_gap == 0 and gap == 0
+          assign classes = classes | append: ' gapless'
+      else
+        if mobile_gap == 0
+          assign classes = classes | append: ' small:gapless'
+        endif
+        if gap == 0
+          assign classes = classes | append: ' widescreen:gapless'
+        endif
+      endif
+    else
+      assign tablet_gap = gap | plus: mobile_gap | plus: 1 | divided_by: 2 | round
+
+      if gap == mobile_gap
+        assign classes = classes | append: ' variable-{{gap}}' | replace: '{{gap}}', gap 
+      else
+        assign classes = classes | append: ' variable-{{gap}}' | replace: '{{gap}}', mobile_gap 
+        assign classes = classes | append: ' tablet:variable-{{gap}}' | replace: '{{gap}}', tablet_gap 
+        assign classes = classes | append: ' widescreen:variable-{ gap}}' | replace: '{{gap}}', gap 
+      endif
+    endunless
+  endif
+-%}
+{{- 'columns' | append: classes -}}

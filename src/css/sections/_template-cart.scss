@@ -1,0 +1,161 @@
+.section-template-cart {
+  .hero {
+    @apply -mx-8 px-8;
+
+    @screen widescreen {
+      @apply -mx-12 px-12;
+    }
+  }
+}
+
+.cart-form {
+  position: relative;
+  z-index: 2;
+
+  hr {
+    margin: 1rem auto;
+  }
+}
+
+.cart-column {
+  align-items: center;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.cart-items {
+  background-color: $c-bg-light;
+}
+
+.cart-item-list {
+  @apply py-8;
+
+  width: 100%;
+
+  .cart-item {
+    align-items: stretch;
+    background-color: transparent;
+
+    &:not(:first-child) {
+      border-top: 2px solid $c-border;
+    }
+  }
+}
+
+.cart-summary {
+  width: 100%;
+
+  .field {
+    @apply p-2;
+  }
+}
+
+.summary-table {
+  @apply p-2;
+
+  th,
+  td {
+    span {
+      vertical-align: middle;
+    }
+  }
+
+  td {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .tags,
+  .tag {
+    margin-bottom: 0;
+  }
+
+  .cart-taxes {
+    th,
+    td {
+      border-color: $c-border-dark;
+    }
+  }
+}
+
+.cart-buttons {
+  @apply space-x-2 space-y-2 py-2 mb-2;
+
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+
+  .btn[name='checkout'] {
+    min-width: 16rem;
+  }
+}
+
+.additional-checkout-buttons {
+  flex: 1 0 100%;
+  width: 100%;
+
+  [data-shopify-buttoncontainer] {
+    @apply space-x-2;
+
+    align-items: center;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+
+    &::after,
+    &::before {
+      @apply mx-2;
+
+      background-color: $c-border-dark;
+      content: '';
+      flex: 1 1 auto;
+      height: 1px;
+      width: auto;
+    }
+  }
+
+  div[role='button'] {
+    border-radius: $control-border-radius !important;
+  }
+}
+
+.quantity-field {
+  .control {
+    align-items: center;
+    display: flex;
+  }
+
+  .input--quantity {
+    appearance: textfield;
+    font-size: $f-size-large;
+    font-weight: $f-weight-bold;
+    max-width: 5rem;
+    text-align: center;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      appearance: none;
+      margin: 0;
+    }
+  }
+}
+
+.empty-page-content {
+  .cart-empty-image {
+    height: auto;
+  }
+}
+
+.cookie-message {
+  @apply pb-8;
+}
+
+@screen tablet {
+  .cart-summary {
+    @apply pt-8;
+
+    position: sticky;
+    top: var(--js-header-height, theme('padding.32'));
+  }
+}

@@ -9,7 +9,7 @@
 {% if collection -%}
   <div class="container mx-auto">
     <hr class="my-2">
-    <a href="{{ collection.url }}" class="button is-primary return-link">
+    <a href="{{ collection.url }}" class="btn is-primary return-link">
       <span class="icon">{% render 'icon-arrow-left' %}</span>
       <span>{{ 'products.product.back_to_collection' | t: title: collection.title }}</span> 
     </a>

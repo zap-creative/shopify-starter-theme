@@ -1,0 +1,10 @@
+%customer-section {
+  overflow: hidden;
+  position: relative;
+}
+
+.customer-section {
+  @apply py-16;
+
+  @extend %customer-section;
+}

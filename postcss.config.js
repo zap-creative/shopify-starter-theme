@@ -8,4 +8,7 @@ module.exports = {
     autoprefixer(),
     cssnano({ preset: 'default' }),
   ],
+  options: {
+    sourceMap: false,
+  }
 };

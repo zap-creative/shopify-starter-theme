@@ -5,8 +5,10 @@
 
 <style>
   h3 {
-    @apply p-2 font-bold;
+    @apply py-2 mb-2;
+
+    border-bottom: 1px solid var(--c-border);
   }
 </style>
 
-<h3 id="{id}">{title}</h3>
+<h3 id="result-heading-{id}" class="text-caps">{title}</h3>

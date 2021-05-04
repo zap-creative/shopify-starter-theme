@@ -1,0 +1,92 @@
+$card-shadow: 0 2px 8px -4px;
+
+$card-colors: $colors !default;
+
+.card {
+  background-color: $c-card-bg;
+  color: $c-card-text;
+
+  &:not(.shadowless) {
+    box-shadow: $card-shadow rgba(#{$c-card-shadow}, 0.4);
+  }
+
+  &.hoverable:not(.shadowless) {
+    @apply outline-none;
+
+    backface-visibility: hidden;
+    transition: box-shadow $transition-duration $transition-easing;
+    will-change: box-shadow;
+
+    &:hover {
+      @apply shadow-md;
+    }
+  }
+
+  @each $name, $set in $card-colors {
+    $background: nth($set, 1);
+    $text: nth($set, 2);
+
+    &.is-#{$name} {
+      background-color: $background;
+      color: $text;
+
+      @if length($set) > 3 {
+        $background-light: nth($set, 3);
+        $text-light: nth($set, 4);
+
+        &.is-light {
+          background-color: $background-light;
+          color: $text-light;
+        }
+      }
+
+      @if length($set) > 5 {
+        $background-dark: nth($set, 5);
+        $text-dark: nth($set, 6);
+
+        &.is-dark {
+          background-color: $background-dark;
+          color: $text-dark;
+        }
+      }
+    }
+  }
+}
+
+.card-header,
+.card-footer {
+  align-items: center;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.card-header,
+.card-content,
+.card-footer {
+  @apply py-2 px-8;
+}
+
+.card-content {
+  @apply py-4;
+}
+
+@screen mobile {
+  .card {
+    @apply shadow-sm;
+  }
+}
+
+@screen desktop {
+  .card {
+    &.hoverable:not(.shadowless) {
+      transform: none;
+      transition: transform $transition-duration $transition-easing, box-shadow ($transition-duration * 0.9) $transition-easing;
+      will-change: box-shadow, transform;
+
+      &:hover {
+        transform: scale(1.0075) translate3d(0, -1%, 0);
+      }
+    }
+  }
+}

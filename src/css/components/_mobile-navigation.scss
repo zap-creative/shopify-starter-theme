@@ -1,25 +1,31 @@
 #mobile-navigation {
-  background-color: var(--color-bg);
+  background-color: var(--c-bg);
   display: none;
   left: 0;
   overflow: hidden;
   position: absolute;
-  top: 0;
+  top: 100%;
   transform: translate3d(0, -100%, 0);
-  transition: all 0.45s cubic-bezier(0.29, 0.63, 0.44, 1);
+  transition-duration: 450ms;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.29, 0.63, 0.44, 1);
   width: 100%;
   z-index: -1;
 
-  &.is-open {
+  &.open {
     display: block;
+    transform: none;
   }
 }
 
 .mobile-navigation-menu {
-  display: block;
+  display: flex;
+  flex-flow: column nowrap;
   position: relative;
   transform: translate3d(0, 0, 0);
-  z-index: -1;
+  transition-duration: 450ms;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.29, 0.63, 0.44, 1);
 
   &.has-secondary-open {
     transform: translate3d(-100%, 0, 0);
@@ -36,7 +42,7 @@
     width: 100%;
 
     &__dropdown {
-      background-color: var(--color-body);
+      background-color: var(--c-body);
       display: none;
       position: absolute;
       right: -100%;
@@ -44,21 +50,18 @@
       width: 100%;
       z-index: 8;
 
-      &.is-closing {
+      &.closing {
         opacity: 0.99;
         transition: all 0.45s cubic-bezier(0.29, 0.63, 0.44, 1);
       }
     }
 
-    &__button.is-active + .menu-item__dropdown {
-      display: block;
-      opacity: 1;
-    }
-
     &__link,
     &__button {
+      @apply p-2;
+
       align-items: center;
-      color: var(--color-body-text);
+      color: var(--c-body-text);
       display: flex;
       flex: 1 1 100%;
       flex-flow: row nowrap;
@@ -68,27 +71,32 @@
       letter-spacing: 1px;
       width: 100%;
 
-      &--return,
-      &--has-icon {
-        justify-content: flex-start;
-      }
-
       &.button {
         border: none;
         color: inherit;
       }
+
+      &.active + .menu-item__dropdown {
+        display: block;
+        opacity: 1;
+      }
     }
 
-    &__button--return .menu-item__label,
-    &__link--has-icon .menu-item__label {
-      margin-left: 1em;
+    &.has-icon .menu-item__link,
+    &.has-icon .menu-item__button {
+      justify-content: flex-start;
     }
 
     &__label {
-      color: var(--color-body-text);
-      font-family: var(--font-stack-header);
+      color: var(--c-body-text);
+      font-family: var(--f-stack-header);
       letter-spacing: 1px;
+      margin-left: 2.5em;
       text-transform: uppercase;
+    }
+
+    &.has-icon .menu-item__label {
+      margin-left: 1em;
     }
   }
 }

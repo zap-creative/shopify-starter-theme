@@ -1,0 +1,23 @@
+.login-card {
+  .card-header {
+    @apply py-6;
+
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+#login-heading,
+#recover-password-heading {
+  &:focus {
+    outline: none;
+  }
+}
+
+#guest-login-form {
+  @apply mt-8;
+
+  .btn {
+    min-width: 16rem;
+  }
+}

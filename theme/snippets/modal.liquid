@@ -1,0 +1,34 @@
+{% liquid 
+  assign title = title | default: ''
+
+  unless id
+    assign id = "now" | date: "%N" | modulo: 25 | times: 6536 | prepend: 'modal-'
+  endunless
+
+  unless close_label 
+    assign close_label = 'general.accessibility.close_modal' | t
+  endunless
+-%}
+
+<div id="{{- id -}}" class="modal" aria-hidden="true" hidden data-modal>
+  <div tabindex="-1" class="modal-overlay" data-modal-close>
+    <div class="modal-body" role="dialog" aria-modal="true" aria-labelledby="{{- id -}}-title">
+      <header>
+        <h2 id="{{- id -}}-title" class="h4">
+          {{ title }}
+        </h2>
+        <button aria-label="{{- close_label -}}" data-modal-close>
+          <i class="icon material-icons-outlined">close</i>
+        </button>
+      </header>
+      <section id="{{- id -}}-content">
+        {{ content }}
+      </section>
+      {% if footer -%}
+        <footer>
+          {{ footer }}
+        </footer>
+      {%- endif %}
+    </div>
+  </div>
+</div>

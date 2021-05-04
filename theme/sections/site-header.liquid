@@ -1,10 +1,16 @@
-{%- assign centered = section.settings.align_logo | strip | remove: 'center' | size -%}
+{% liquid 
+  if request.page_type == 'captcha'
+    assign simple_header = true
+  endif
+
+  assign centered = section.settings.align_logo | strip | remove: 'center' | size
+-%}
 
 {%- capture logo -%}
   {% if settings.logo %}
     {%- assign img_url = settings.logo | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
     {% capture logo_alt %}{{ settings.logo.alt | default: shop.name }}{% endcapture %}
-      <img class="lazyload js"
+      <img class="lazyload js-enabled"
         src="{{ settings.logo | img_url: '300x300' }}"
         data-src="{{ img_url }}"
         data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
@@ -26,14 +32,29 @@
   {% endif %}
 {%- endcapture -%}
 
-<div class="site-header {% if centered == 0 -%}site-header--centered{%- endif -%}"
+{% style -%}
+  #shopify-section-site-header {
+    {% unless simple_header -%}
+      --c-bg: {{ section.settings.color_bg }};
+      --c-bg--rgb: {{ section.settings.color_bg | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+      --c-text: {{ section.settings.color_text }};
+    {%- else -%}
+      --c-bg: transparent;
+      --c-bg--rgb: transparent;
+      --c-border: transparent;
+      --c-text: {{ section.settings.color_text }};
+    {%- endunless %}
+  }
+{%- endstyle %}
+
+<div class="site-header {% if simple_header -%}simple-site-header{%- endif -%}"
   data-section-id="{{ section.id }}"
   data-section-type="header-section"
   data-header-section
   role="banner"
 >
   {% if centered == 0 -%}
-    <div class="w-full pb-5 flex flex-none sm-down:hidden">
+    <div class="header-banner mobile:hidden">
       {{- logo -}}
     </div>
   {%- endif %}
@@ -41,64 +62,55 @@
   {% if template.name == 'index' -%}
     <h1 class="site-title {% if centered == 0 %}tablet:hidden{% endif %}" itemscope itemtype="http://schema.org/Organization">
   {%- else -%}
-    <div class="site-title" itemscope itemtype="http://schema.org/Organization">
+    <div class="site-title {% if centered == 0 %}tablet:hidden{% endif %}" itemscope itemtype="http://schema.org/Organization">
   {%- endif -%}
     <a href="/" itemprop="url" class="site-header__logo">
       {{- logo -}}
     </a>
   {%- if template.name == 'index' -%}</h1>{%- else -%}</div>{%- endif -%}
 
-  <nav id="site-navigation" class="sm-down:hidden" role="navigation">
-    {% render 'navigation' with linklist: section.settings.linklist %}
-  </nav>
+  {% unless simple_header -%}
+    <nav id="site-navigation" class="mobile:hidden" role="navigation">
+      {% render 'navigation' with linklist: section.settings.linklist %}
+    </nav>
 
-  <nav id="site-actions" class="site-actions" role="navigation">
-    {% if shop.customer_accounts_enabled -%}
-    <a href="/account"><i class="material-icons-outlined">person</i></a>
-    {%- endif %}
-    <a href="{{ routes.search_url }}" class="open-search"><i class="material-icons-outlined">search</i></a>
-    {%- if request.page_type != 'cart' -%}
-      <a href="/cart" class="open-cart">
-    {%- else -%}
-      <a href="#cart">
-    {%- endif -%}<i class="material-icons-outlined">shopping_cart</i></a>
-    </a>
-    <a href="#" class="tablet:hidden toggle-mobile-navigation">
-      <i class="material-icons-outlined">menu</i>
-    </a>
-  </nav>
-
+    <nav id="site-actions" class="site-actions" role="navigation">
+      {% if shop.customer_accounts_enabled -%}
+        <a href="/account" title="{{- 'customer.account.title' | t -}}"
+          class="sm-down:hidden"
+        >
+          <i class="material-icons-outlined">account_circle</i>
+        </a>
+      {%- endif %}
+      <a href="{{ routes.search_url }}" title="{{- 'general.search.open' | t -}}" 
+        {% if request.page_type != 'search' -%}class="open-search"{%- endif %}
+      >
+        <i class="material-icons-outlined">search</i>
+      </a>
+      <a href="/cart" title="{{- 'cart.sidebar.open' | t -}}"
+        {% if request.page_type != 'cart' -%}class="open-cart"{%- endif -%}
+      >
+        <i class="material-icons-outlined">shopping_cart</i>
+      </a>
+      <a href="#" class="tablet:hidden toggle-mobile-navigation" aria-expanded="false">
+        <i class="material-icons-outlined icon-open">menu</i>
+        <i class="material-icons-outlined icon-close">close</i>
+      </a>
+    </nav>
+  {%- endunless %}
 </div>
 
-<nav id="mobile-navigation" class="tablet:hidden critical-hidden">
-  {% render 'mobile-navigation' with linklist: section.settings.mobile_linklist %}
-</nav>
+{% unless simple_header -%}
+  <nav id="mobile-navigation" class="tablet:hidden critical-hidden">
+    {% render 'mobile-navigation' with linklist: section.settings.mobile_linklist %}
+  </nav>
+{%- endunless %}
 
 {% schema %}
   {
     "name": "Site Header",
     "tag": "header",
     "settings": [
-      {
-        "type": "header",
-        "content": "Logo"
-      },
-      {
-        "type": "select",
-        "id": "align_logo",
-        "label": "Alignment",
-        "default": "left",
-        "options": [
-          {
-            "value": "center",
-            "label": "Centered"
-          },
-          {
-            "value": "left",
-            "label": "Left (default)"
-          }
-        ]
-      },
       {
         "type": "header",
         "content": "Menus"
@@ -117,17 +129,35 @@
       },
       {
         "type": "header",
-        "content": "Advanced"
+        "content": "Style"
       },
       {
-        "type": "text",
-        "id": "html_id",
-        "label": "CSS id"
+        "type": "color",
+        "id": "color_bg",
+        "label": "Background Colour",
+        "default": "#f6f6f6"
       },
       {
-        "type": "text",
-        "id": "html_classes",
-        "label": "CSS classes"
+        "type": "color",
+        "id": "color_text",
+        "label": "Text Colour",
+        "default": "#333232"
+      },
+      {
+        "type": "select",
+        "id": "align_logo",
+        "label": "Logo Alignment",
+        "default": "left",
+        "options": [
+          {
+            "value": "center",
+            "label": "Centered"
+          },
+          {
+            "value": "left",
+            "label": "Left (default)"
+          }
+        ]
       }
     ]
   }

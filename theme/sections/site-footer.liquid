@@ -1,61 +1,760 @@
-<section id="colophon" class="site-footer border-t px-4 py-8 mt-8" role="content-info">
+{%- liquid 
+  if request.page_type == 'captcha'
+    assign simple_footer = true
+  endif
 
-  {% comment %}
-  Only show newsetter form if they have not already signed up
-  {% endcomment %}
-  {% unless customer.accepts_marketing %}
-    {% form 'customer' %}
-      <input type="hidden" name="contact[tags]" value="newsletter">
+  assign social_icon_size = section.settings.social_accounts_icon_size
+  assign social_icon_color = section.settings.social_accounts_icon_color
 
-      <label for="NewsletterEmail">{{ 'customer.newsletter_form.headline' | t }}</label>
-      <input type="email"
-        id="NewsletterEmail"
-        name="contact[email]"
-        value="{% if customer %}{{ customer.email }}{% endif %}"
-        placeholder="{{ 'customer.newsletter_form.placeholder' | t }}"
-        aria-label="{{ 'customer.newsletter_form.placeholder' | t }}"
-        autocorrect="off"
-        autocapitalize="off"
-        required>
+  assign social_sccounts_title = section.settings.social_media_title
+  unless social_accounts_title
+    assign social_accounts_title = 'general.social.join' | t
+  endunless
 
-        <button type="submit">
-          {{ 'customer.newsletter_form.button' | t }}
-        </button>
+  assign social_networks = 'Facebook Twitter Pinterest Instagram Tumblr Snapchat YouTube Vimeo' | split: ' '
+  for social in social_networks
+    assign property = social | downcase | prepend: 'social_' | append: '_link'
+    if settings[property] != blank
+      assign show_social_accounts = section.settings.show_social_accounts
+    endif
+  endfor
 
-        {% if form.posted_successfully? %}
-          <div class="banner banner--success" aria-role="alert">
-            <p>{{ 'customer.newsletter_form.confirmation' | t }}</p>
-          </div>
-        {% endif %}
+  assign legal_menu = linklists[section.settings.footer_legal_menu]
+  assign show_legal_menu = section.settings.footer_legal_show
 
-      {{ form.errors | default_errors }}
+  if section.settings.show_locale_selector and shop.published_locales.size > 1 
+    assign show_locale_selector = true
+  endif 
 
-      {% comment %} Standard form submission {% endcomment %}
-      {% if form.posted_successfully? %}
-        <div class="note note--success" aria-role="alert">
-          {{ 'customer.newsletter_form.confirmation' | t }}
+  if section.settings.show_currency_selector and shop.enabled_currencies.size > 1 
+    assign show_currency_selector = true
+  endif 
+
+  if show_currency_selector or show_locale_selector 
+    assign show_selectors = true
+  endif 
+
+  assign payment_icon_class = 'icon svg-icon sz-' | append: section.settings.payment_icon_size
+  if section.settings.show_payment_icons 
+    unless shop.enabled_payment_types == empty 
+      assign show_payment_icons = true
+    endunless 
+  endif 
+
+  if simple_footer
+    assign show_payment_icons = false
+    assign show_selectors = false
+  endif
+-%}
+
+{% style %}
+  #shopify-section-site-footer {
+    --c-bg: {{ section.settings.color_bg }};
+    --c-bg--rgb: {{ section.settings.color_bg | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --c-text: {{ section.settings.color_text }};
+  }
+
+  #shopify-section-site-footer .social-icon .btn {
+    color: {{ social_icon_color -}};
+{% endstyle %}
+
+{%- capture localization_form -%}
+  {%- form 'localization', class: 'selectors-form', data-disclosure-form: '' -%}
+    {%- if show_locale_selector -%}
+      <div class="selectors-form__item">
+        <h2 class="sr-only" id="lang-heading">
+          {{ 'general.language.dropdown_label' | t }}
+        </h2>
+
+        <div class="disclosure" data-disclosure-locale>
+          <button type="button" class="disclosure-toggle" aria-expanded="false" aria-controls="lang-list" aria-describedby="lang-heading" data-disclosure-toggle>
+            {{ form.current_locale.endonym_name }}
+          </button>
+          <ul id="lang-list" class="list disclosure-list" data-disclosure-list>
+            {% for locale in form.available_locales %}
+              <li class="disclosure-list__item {% if locale.iso_code == form.current_locale.iso_code %}disclosure-list__item--current{% endif %}">
+                <a class="disclosure-list__option" href="#" lang="{{ locale.iso_code }}" {% if locale.iso_code == form.current_locale.iso_code %}aria-current="true"{% endif %} data-value="{{ locale.iso_code }}" data-disclosure-option>
+                  {{ locale.endonym_name }}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+          <input type="hidden" name="locale_code" id="LocaleSelector" value="{{ form.current_locale.iso_code }}" data-disclosure-input/>
         </div>
-      {% endif %}
-
-      {% comment %} JavaScript form submission {% endcomment %}
-      <div
-        id="form-response"
-        class="banner mt-4 hidden"
-        data-success="{{ 'customer.newsletter_form.confirmation' | t }}"
-        data-error="{{ 'customer.newsletter_form.submit_error' | t }}">
       </div>
+    {%- endif -%}
 
-    {% endform %}
-  {% endunless %}
+    {%- if show_currency_selector -%}
+      <div class="selectors-form__item">
+        <h2 class="sr-only" id="currency-heading">
+          {{ 'general.currency.dropdown_label' | t }}
+        </h2>
 
-  <p>{{ 'layout.footer.copyright' | t }} &copy; {{ 'now' | date: '%Y' }}, {{ shop.name | link_to: '/' }}</p>
+        <div class="disclosure" data-disclosure-currency>
+          <button type="button" class="disclosure-toggle" aria-expanded="false" aria-controls="currency-list" aria-describedby="currency-heading" data-disclosure-toggle>
+            {{ form.current_currency.iso_code }} {%- if form.current_currency.symbol -%}{{ form.current_currency.symbol }}{%- endif -%}
+          </button>
+          <ul id="currency-list" class="list disclosure-list" data-disclosure-list>
+            {% for currency in form.available_currencies %}
+              <li class="disclosure-list__item {% if currency.iso_code == form.current_currency.iso_code %}disclosure-list__item--current{% endif %}">
+                <a class="disclosure-list__option" href="#" {% if currency.iso_code == form.current_currency.iso_code %}aria-current="true"{% endif %} data-value="{{ currency.iso_code }}" data-disclosure-option>
+                  {{ currency.iso_code }} {%- if currency.symbol -%}{{ currency.symbol }}{%- endif -%}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+          <input type="hidden" name="currency_code" id="CurrencySelector" value="{{ form.current_currency.iso_code }}" data-disclosure-input/>
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endform -%}
+{%- endcapture -%}
 
+<section class="container critical-hidden" 
+  data-section-id="{{ section.id }}" 
+  data-section-type="footer-section"
+  role="contentinfo"
+>
+  <div class="{% render 'columns-classes' with columns: section.settings, count: section.blocks.size %} {% if social_icons -%}mb-0{%- endif -%}">
+  {% unless simple_footer -%}
+    {%- for block in section.blocks -%}
+      {%- assign column_classes = ' site-footer-item site-footer-item--' | append: block.type | replace: '_', '-' -%}
+      <div class="{% render 'column-classes' with  column: block.settings, columns: section.settings %} {{ column_classes }}" {{ block.shopify_attributes }}>
+        {% if block.settings.title -%}
+          <h3 class="h4 site-footer-title">{{ block.settings.title | escape | replace: '&amp;', '&' }}</h3>
+        {%- endif %}
+
+        {%- case block.type -%}
+          {%- when 'newsletter' -%}
+            {%- assign form_id = 'subscribe-footer' -%}
+            <div class="newsletter-signup">
+              {%- if block.settings.text != blank -%}
+                <div class="content prose">
+                    {{ block.settings.text }}
+                </div>
+              {%- endif -%}
+              {% form 'customer', id: form_id, novalidate: 'novalidate', class: 'form' %}
+                {%- if form.posted_successfully? -%}
+                  <p class="banner is-success" tabindex="-1" data-form-status>
+                    {{ 'general.newsletter.confirmation' | t }}
+                  </p>
+                {%- endif -%}
+                <input type="hidden" name="contact[tags]" value="newsletter">
+                <div class="field has-addons">
+                  <label for="{{ form_id }}-email" class="label sr-only">
+                    {{ 'general.newsletter.email_placeholder' | t }}
+                  </label>
+                  <div class="control expanded has-icons-right">
+                    <input type="email"
+                      name="contact[email]"
+                      id="{{ form_id }}-email"
+                      class="input {% if form.errors -%}is-error{%- endif -%}"
+                      value="{{ form.email }}"
+                      placeholder="{{ 'general.newsletter.email_placeholder' | t }}"
+                      aria-label="{{ 'general.newsletter.email_placeholder' | t }}"
+                      aria-required="true"
+                      required
+                      autocorrect="off"
+                      autocapitalize="off"
+                      {% if form.errors %}
+                        aria-invalid="true"
+                        aria-describedby="{{ form_id }}-email-error"
+                        data-form-status
+                      {% endif %}
+                    >
+                    {% if form.errors -%}
+                      <span class="icon is-right">
+                        <i class="material-icons-outlined">error</i>
+                      </span>
+                    {%- endif %}
+                  </div>
+                  <div class="control">
+                    <button type="submit" class="btn is-dark" name="commit">
+                      {{ 'general.newsletter.submit' | t }}
+                    </button>
+                  </div>
+                </div>
+                {% if form.errors contains 'email' %}
+                  <p id="{{ form_id }}-email-error" class="help is-error">
+                    <span class="sr-only">{{ 'general.accessibility.error' | t }}</span>
+                    <span class="site-footer-newsletter-error">{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}.</span>
+                  </p>
+                {% endif %}
+              {% endform %}
+            </div>
+
+          {%- when 'text' -%}
+            {%- if block.settings.text != blank -%}
+              <div class="prose">
+                {{ block.settings.text }}
+              </div>
+            {%- endif -%}
+
+          {%- when 'link_list' -%}
+            {%- assign footer_linklist = block.settings.menu -%}
+              <ul class="list site-footer-list">
+                {%- for link in linklists[footer_linklist].links -%}
+                  <li class="list-item">
+                    <a href="{{ link.url }}" {% if link.current -%}aria-current="page"{%- endif -%}>
+                      {{ link.title | escape }}
+                    </a>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            
+          {%- else -%}
+        {%- endcase -%}
+      </div>
+    {%- endfor %}
+  {%- endunless %}
+
+    {% if show_social_accounts -%}
+      <div class="column wide site-footer-item site-footer-social">
+        <span class="site-footer-title h{{- social_account_title_size -}}">{{ 'general.social.join' | t }}</span>
+        <ul class="list row social-icons">
+          {% for social in social_networks -%}
+            {%- assign social_link = social | prepend: 'social_' | append: '_link' | downcase -%}
+            {%- if settings[social_link] != blank -%}
+              <li class="social-icon">
+                <a class="btn small is-ghost" target="_blank" title="{{ 'general.social.platform' | t: name: shop.name, platform: social }}" href="{{ settings[social_link] | escape }}">
+                  <svg class="icon svg-icon sz-{{- social_icon_size -}}" viewBox="0 0 32 32">
+                    <use xlink:href="#{{- social | downcase -}}" />
+                  </svg>
+                </a>
+              </li>
+            {%- endif -%}
+          {%- endfor %}
+          {%- if request.page_type == 'blog' or request.page_type == 'article' -%}
+            <li class="social-icon">
+              <a class="btn is-small is-ghost" href="{{ shop.url }}{{ blog.url }}.atom">
+                <span class="icon">
+                  <span class="sr-only">RSS</span>
+                  <i class="material-icons-outlined sz-{{- social_icon_size -}}">rss</i>
+                </span>
+              </a>
+            </li>
+          {%- endif -%}
+        </ul>
+      </div>
+    {%- endif %}
+  </div>
+
+  <hr class="my-1 hr">
+
+  <div class="{% render 'columns-classes' with columns: section.settings %}">
+    <nav class="column mobile:full {% if simple_footer -%}full h-center{%- endif -%}" role="navigation">
+      <ul class="list row site-footer-legal">
+        <li class="copyright">
+          &copy; {{ 'now' | date: "%Y" }} {{ shop.name }}
+        </li>
+        {% if show_legal_menu -%}
+          {%- for link in legal_menu.links -%}
+            <li class="policy">
+              <a class="policy-link" href="{{ link.url }}">{{ link.title | escape }}</a>
+            </li>
+          {% endfor %}
+        {%- endif %}
+      </ul>
+    </nav>
+
+    {% if show_locale_selector or show_currency_selector -%}
+      <div class="column narrow mobile:wide">
+        {{ localization_form }}
+      </div>
+    {%- endif %}
+
+    {% if show_payment_icons -%}
+      <div class="column narrow mobile:wide">
+        <ul class="list row payment-icons">
+          <li class="payment-icons__title sr-only">
+            <h5>{{ 'general.payment_options.label' | t }}</h5>
+          </li>
+          {% for type in shop.enabled_payment_types -%}
+            <li class="payment-icon">
+              {{ type | payment_type_svg_tag: class: payment_icon_class  }}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif %}
+  </div>
 </section>
 
 {% schema %}
-  {
-    "name": "Site Footer",
-    "tag": "footer"
-    "settings": []
-  }
+{
+  "name": "Site Footer",
+  "max_blocks": 6,
+  "tag": "footer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "color_bg",
+      "label": "Background Colour",
+      "default": "#f6f6f6"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Text Colour",
+      "default": "#333232"
+    },
+    {
+      "type": "header",
+      "content": "Content Columns",
+      "info": "A width of -1 will make columns as wide as their content, 0 will size all columns equally with no limit per row"
+    },
+    {
+      "type": "range",
+      "id": "column_width",
+      "label": "Columns Per Row (Mobile)",
+      "default": 2,
+      "min": -1,
+      "max": 4,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "column_width_tablet",
+      "label": "Columns Per Row (Tablet)",
+      "default": 4,
+      "min": -1,
+      "max": 6,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "column_width_desktop",
+      "label": "Columns Per Row (Desktop)",
+      "default": 4,
+      "min": -1,
+      "max": 6,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "columns_gap_mobile",
+      "label": "Column Spacing (Mobile)",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_gap",
+      "label": "Column Spacing (Desktop)",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Social Media Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social_accounts",
+      "label": "Show Social Media Icons",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "social_accounts_title",
+      "label": "Title",
+      "placeholder": "Follow us on socal media"
+    },
+    {
+      "type": "range",
+      "id": "social_accounts_icon_size",
+      "label": "Icon Size",
+      "default": 24,
+      "min": 16,
+      "max": 72,
+      "step": 8,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "social_accounts_icon_color",
+      "label": "Icon Colour",
+      "default": "#3b3b3b"
+    },
+    {
+      "type": "header",
+      "content": "Language Selector",
+      "info": "To add a language, go to your [language settings.](/admin/settings/languages)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_locale_selector",
+      "label": "Show language selector",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Currency Selector",
+      "info": "To add a currency, go to your [payment settings.](/admin/settings/payments)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_currency_selector",
+      "label": "Show currency selector",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Legal Pages Menu",
+      "info": "Legal policy pages to display along with copyright notice"
+    },
+    {
+      "type": "checkbox",
+      "id": "footer_legal_show",
+      "label": "Show Menu"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_legal_menu",
+      "label": "Menu"
+    },
+    {
+      "type": "header",
+      "content": "Payment methods"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show Payment Icons",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "payment_icon_size",
+      "label": "Icon Size",
+      "default": 32,
+      "min": 16,
+      "max": 72,
+      "step": 8,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "lazyload",
+      "label": "Lazyload section",
+      "default": false,
+      "info": "Delay loading this section?"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link_list",
+      "name": "Menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Help"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu",
+          "default": "footer"
+        },
+        {
+          "type": "header",
+          "content": "Column width",
+          "info": "A width of -1 will make columns as wide as their content, 0 will size all columns equally with no limit per row"
+        },
+        {
+          "type": "checkbox",
+          "id": "column_width_enabled",
+          "label": "Enable column width overrides",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "column_width",
+          "label": "Column width (Mobile)",
+          "min": -1,
+          "max": 12,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "column_width_tablet",
+          "label": "Column width (Tablet)",
+          "min": -1,
+          "max": 12,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "column_width_desktop",
+          "label": "Column width (Desktop)",
+          "min": -1,
+          "max": 12,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Visibility"
+        },
+        {
+          "type": "checkbox",
+          "id": "invisible",
+          "label": "Hide on mobile",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "invisible_tablet",
+          "label": "Hide on tablet",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "invisible_desktop",
+          "label": "Hide on desktop",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Talk about your business"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Share store details, promotions, or brand content with your customers.</p>"
+        },
+        {
+          "type": "header",
+          "content": "Column width",
+          "info": "A width of -1 will make columns as wide as their content, 0 will size all columns equally with no limit per row"
+        },
+        {
+          "type": "checkbox",
+          "id": "column_width_enabled",
+          "label": "Enable column width overrides",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "column_width",
+          "label": "Column width (Mobile)",
+          "min": -1,
+          "max": 12,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "column_width_tablet",
+          "label": "Column width (Tablet)",
+          "min": -1,
+          "max": 12,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "column_width_desktop",
+          "label": "Column width (Desktop)",
+          "min": -1,
+          "max": 12,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Visibility"
+        },
+        {
+          "type": "checkbox",
+          "id": "invisible",
+          "label": "Hide on mobile",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "invisible_tablet",
+          "label": "Hide on tablet",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "invisible_desktop",
+          "label": "Hide on desktop",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "limit": 1,
+      "name": "Newsletter signup",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "info": "Subscribers will be added to your “accepts marketing” [customer list.](/admin/customers?query=&accepts_marketing=1)",
+          "default": "Newsletter"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Share store details, promotions, or brand content with your customers.</p>"
+        },
+        {
+          "type": "header",
+          "content": "Column width",
+          "info": "A width of -1 will make columns as wide as their content, 0 will size all columns equally with no limit per row"
+        },
+        {
+          "type": "checkbox",
+          "id": "column_width_enabled",
+          "label": "Enable column width overrides",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "column_width",
+          "label": "Column width (Mobile)",
+          "min": -1,
+          "max": 12,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "column_width_tablet",
+          "label": "Column width (Tablet)",
+          "min": -1,
+          "max": 12,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "column_width_desktop",
+          "label": "Column width (Desktop)",
+          "min": -1,
+          "max": 12,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Visibility"
+        },
+        {
+          "type": "checkbox",
+          "id": "invisible",
+          "label": "Hide on mobile",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "invisible_tablet",
+          "label": "Hide on tablet",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "invisible_desktop",
+          "label": "Hide on desktop",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "spacer",
+      "name": "Spacer",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Layout"
+        },
+        {
+          "type": "checkbox",
+          "id": "column_width_enabled",
+          "label": "Enable column width overrides",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "column_width",
+          "label": "Column width (Mobile)",
+          "min": -1,
+          "max": 12,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "column_width_tablet",
+          "label": "Column width (Tablet)",
+          "min": -1,
+          "max": 12,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "column_width_desktop",
+          "label": "Column width (Desktop)",
+          "min": -1,
+          "max": 12,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Visibility"
+        },
+        {
+          "type": "checkbox",
+          "id": "invisible",
+          "label": "Hide on mobile",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "invisible_tablet",
+          "label": "Hide on tablet",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "invisible_desktop",
+          "label": "Hide on desktop",
+          "default": false
+        }
+      ]
+    }
+  ]
+}
 {% endschema %}

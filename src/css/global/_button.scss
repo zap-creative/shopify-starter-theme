@@ -1,94 +1,492 @@
-.btn,
-.btn-outlined,
-.btn-text {
-  border-radius: 4px;
-  border-style: solid;
-  border-width: 1px;
-  display: inline-block;
-  font-size: 1rem;
-  font-weight: 700;
-  line-height: 1.2;
-  padding: 1em 1.5em;
-  text-align: center;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  user-select: none;
-  width: auto;
+@import '../mixins/utilities';
+@import '../mixins/controls';
+
+$button-color: $text-strong !default;
+$button-background-color: $scheme-main !default;
+$button-family: false !default;
+
+$button-border-color: $border !default;
+$button-border-width: $control-border-width !default;
+$button-border-radius: $control-border-radius !default;
+
+$button-padding-vertical: calc(0.5em - #{$button-border-width}) !default;
+$button-padding-horizontal: 1em !default;
+
+$button-hover-color: $link-hover !default;
+$button-hover-border-color: $link-hover !default;
+
+$button-focus-color: $link-focus !default;
+$button-focus-border-color: $link-focus !default;
+$button-focus-box-shadow-size: 0 0 0 0.125em !default;
+$button-focus-box-shadow-color: rgba($link, 0.25) !default;
+
+$button-active-color: $link-active !default;
+$button-active-border-color: $link-active !default;
+
+$button-text-color: $text !default;
+$button-text-decoration: underline !default;
+$button-text-hover-background-color: $scheme-main-light !default;
+$button-text-hover-color: $text-strong !default;
+
+$button-ghost-background: transparent !default;
+$button-ghost-border-color: transparent !default;
+$button-ghost-color: $link !default;
+$button-ghost-decoration: none !default;
+$button-ghost-hover-color: $link !default;
+$button-ghost-hover-decoration: none !default;
+
+$button-disabled-background-color: $scheme-main !default;
+$button-disabled-border-color: $border !default;
+$button-disabled-shadow: none !default;
+$button-disabled-opacity: 0.5 !default;
+
+$button-static-color: $text-light !default;
+$button-static-background-color: $scheme-main-light !default;
+$button-static-border-color: $border !default;
+
+$button-colors: $colors !default;
+
+%button-small {
+  &:not(.rounded) {
+    @apply rounded-sm;
+  }
+
+  font-size: $f-size-small;
+}
+
+%button-normal {
+  font-size: $f-size-normal;
+}
+
+%button-medium {
+  font-size: $f-size-medium;
+}
+
+%button-large {
+  font-size: $f-size-large;
 }
 
 .btn {
-  background-color: var(--c-primary);
-  border-color: var(--c-primary);
-  color: #fff;
+  @include control;
+
+  align-items: center;
+  background-color: $button-background-color;
+  border-color: $button-border-color;
+  border-radius: $button-border-radius;
+  border-width: $button-border-width;
+  color: $button-color;
+  cursor: pointer;
+  font-weight: $f-weight-bold;
+  justify-content: center;
+  padding-bottom: $button-padding-vertical;
+  padding-left: $button-padding-horizontal;
+  padding-right: $button-padding-horizontal;
+  padding-top: $button-padding-vertical;
+  text-align: center;
+  white-space: nowrap;
+
+  @extend %unselectable;
+
+  @if $button-family {
+    font-family: $button-family;
+  }
+
+  strong {
+    color: inherit;
+  }
+
+  .icon {
+    line-height: $control-line-height;
+
+    &:first-child:not(:last-child) {
+      @include ltr-property('margin', calc(#{-1 / 2 * $button-padding-horizontal} - #{$button-border-width}), false);
+      @include ltr-property('margin', $button-padding-horizontal / 4);
+    }
+
+    &:last-child:not(:first-child) {
+      @include ltr-property('margin', $button-padding-horizontal / 4, false);
+      @include ltr-property('margin', calc(#{-1 / 2 * $button-padding-horizontal} - #{$button-border-width}));
+    }
+
+    &:first-child:last-child {
+      margin-left: calc(#{-1 / 2 * $button-padding-horizontal} - #{$button-border-width});
+      margin-right: calc(#{-1 / 2 * $button-padding-horizontal} - #{$button-border-width});
+    }  // States
+  }
+
+  &:hover,
+  &.hovered {
+    border-color: $button-hover-border-color;
+    color: $button-hover-color;
+  }
+
+  &:focus,
+  &.focused {
+    border-color: $button-focus-border-color;
+    color: $button-focus-color;
+
+    &:not(:active) {
+      box-shadow: $button-focus-box-shadow-size $button-focus-box-shadow-color;
+    }
+  }
+
+  &:active,
+  &.active {
+    border-color: $button-active-border-color;
+    color: $button-active-color;
+  }
+
+  &.is-text {
+    background-color: transparent;
+    border-color: transparent;
+    color: $button-text-color;
+    text-decoration: $button-text-decoration;
+
+    &:hover,
+    &.hovered,
+    &:focus,
+    &.focused {
+      background-color: $button-text-hover-background-color;
+      color: $button-text-hover-color;
+    }
+
+    &:active,
+    &.active {
+      background-color: darken($button-text-hover-background-color, 5%);
+      color: $button-text-hover-color;
+    }
+
+    &[disabled],
+    fieldset[disabled] & {
+      background-color: transparent;
+      border-color: transparent;
+      box-shadow: none;
+    }
+  }
+
+  &.is-ghost {
+    background-color: $button-ghost-background;
+    border-color: $button-ghost-border-color;
+    color: $button-ghost-color;
+    text-decoration: $button-ghost-decoration;
+
+    &:hover,
+    &.hovered {
+      color: $button-ghost-hover-color;
+      text-decoration: $button-ghost-hover-decoration;
+    }
+
+    &[disabled],
+    fieldset[disabled] & {
+      background-color: transparent;
+      border-color: transparent;
+      box-shadow: none;
+    }
+  }
+
+  @each $name, $set in $button-colors {
+    $background: nth($set, 1);
+    $text: nth($set, 2);
+    $background-light: nth($set, 1);
+    $background-dark: nth($set, 1);
+    $text-light: nth($set, 2);
+    $text-dark: nth($set, 2);
+
+    @if length($set) > 3 {
+      $background-light: nth($set, 3);
+      $text-light: nth($set, 4);
+    }
+
+    @if length($set) > 5 {
+      $background-dark: nth($set, 5);
+      $text-dark: nth($set, 6);
+    }
+
+    &.is-#{$name} {
+      background-color: $background;
+      border-color: transparent;
+      color: $text;
+
+      &:hover,
+      &.hovered {
+        background-color: $background-light;
+        border-color: transparent;
+        color: $text-light;
+      }
+
+      &:focus,
+      &.focused {
+        background-color: $background-light;
+        border-color: transparent;
+        color: $text-light;
+
+        &:not(:active) {
+          box-shadow: $button-focus-box-shadow-size $background-dark;
+        }
+      }
+
+      &:active,
+      &.active {
+        background-color: $background-dark;
+        border-color: transparent;
+        color: $text-dark;
+      }
+
+      &[disabled],
+      fieldset[disabled] & {
+        border-color: transparent;
+        box-shadow: none;
+      }
+
+      &.inverted {
+        background-color: $text;
+        color: $background;
+
+        &:hover,
+        &.hovered {
+          background-color: $text-light;
+          color: $background-light;
+        }
+
+        &[disabled],
+        fieldset[disabled] & {
+          border-color: transparent;
+          box-shadow: none;
+        }
+      }
+
+      &.loading {
+        &::after {
+          border-color: transparent transparent $text $text !important;
+        }
+      }
+
+      &.outlined {
+        background-color: transparent;
+        border-color: $background;
+        color: $background;
+
+        &:hover,
+        &.hovered,
+        &:focus,
+        &.focused {
+          background-color: $background;
+          border-color: $background;
+          color: $text;
+        }
+
+        &.loading {
+          &::after {
+            border-color: transparent transparent $background $background !important;
+          }
+
+          &:hover,
+          &.hovered,
+          &:focus,
+          &.focused {
+            &::after {
+              border-color: transparent transparent $text $text !important;
+            }
+          }
+        }
+
+        &[disabled],
+        fieldset[disabled] & {
+          background-color: transparent;
+          border-color: $background;
+          box-shadow: none;
+          color: $background;
+        }
+      }
+
+      &.inverted.outlined {
+        background-color: transparent;
+        border-color: $text;
+        color: $text;
+
+        &:hover,
+        &.hovered,
+        &:focus,
+        &.focused {
+          background-color: $text;
+          color: $background;
+        }
+
+        &.loading {
+          &:hover,
+          &.hovered,
+          &:focus,
+          &.focused {
+            &::after {
+              border-color: transparent transparent $background $background !important;
+            }
+          }
+        }
+
+        &[disabled],
+        fieldset[disabled] & {
+          background-color: transparent;
+          border-color: $text;
+          box-shadow: none;
+          color: $text;
+        }
+      }
+    }
+  }
+
+  &.small {
+    @extend %button-small;
+  }
+
+  &.medium {
+    @extend %button-medium;
+  }
+
+  &.large {
+    @extend %button-large;
+  }
+
+  &[disabled],
+  fieldset[disabled] & {
+    background-color: $button-disabled-background-color;
+    border-color: $button-disabled-border-color;
+    box-shadow: $button-disabled-shadow;
+    opacity: $button-disabled-opacity;
+  }
+
+  &.full {
+    display: flex;
+    width: 100%;
+  }
+
+  &.loading {
+    color: transparent !important;
+    pointer-events: none;
+
+    &::after {
+      position: absolute !important;
+
+      @extend %loader;
+    }
+  }
+
+  &.is-static {
+    background-color: $button-static-background-color;
+    border-color: $button-static-border-color;
+    box-shadow: none;
+    color: $button-static-color;
+    pointer-events: none;
+  }
+
+  &.rounded {
+    @apply rounded;
+
+    padding-left: calc(#{$button-padding-horizontal} + 0.25em);
+    padding-right: calc(#{$button-padding-horizontal} + 0.25em);
+  }
 }
 
-.btn:hover,
-.btn:active {
-  background-color: var(--c-primary-dark);
-  color: #fff;
-}
+.btns {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 
-.btn:disabled,
-.btn:disabled[disabled] {
-  background-color: theme('colors.gray.500');
-  border-color: theme('colors.gray.500');
-  cursor: not-allowed;
-  opacity: 0.5;
-}
+  .btn {
+    margin-bottom: 0.5rem;
 
-.btn-outlined {
-  background-color: transparent;
-  border-color: var(--c-primary);
-  color: var(--c-link);
-}
+    &:not(:last-child):not(.full) {
+      @include ltr-property('margin', 0.5rem);
+    }
+  }
 
-.btn-outlined:hover {
-  background-color: theme('colors.blue.100');
-  color: var(--c-link-dark);
-}
+  &:last-child {
+    margin-bottom: -0.5rem;
+  }
 
-.btn-text {
-  background-color: transparent;
-  border-color: transparent;
-  color: var(--c-link);
-}
+  &:not(:last-child) {
+    margin-bottom: 1rem;
+  }
 
-.btn-text:hover {
-  background-color: theme('colors.blue.100');
-  color: var(--c-link-dark);
-}
+  &.are-small {
+    .btn:not(.normal):not(.medium):not(.large) {
+      @extend %button-small;
+    }
+  }
 
-.btn--sm {
-  @apply text-sm;
+  &.are-medium {
+    .btn:not(.small):not(.normal):not(.large) {
+      @extend %button-medium;
+    }
+  }
 
-  padding: 0.6em 1em;
-}
+  &.are-large {
+    .btn:not(.small):not(.normal):not(.medium) {
+      @extend %button-large;
+    }
+  }
 
-/* A button that looks like a link */
+  &.has-addons {
+    .btn {
+      &:not(:first-child) {
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+      }
 
-.btn-link {
-  background-color: transparent;
-  color: var(--c-link);
-}
+      &:not(:last-child) {
+        border-bottom-right-radius: 0;
+        border-top-right-radius: 0;
 
-.btn-link:hover {
-  color: var(--c-link-dark);
-}
+        @include ltr-property('margin', -1px);
+      }
 
-/* Icons buttons */
-.btn-icon {
-  background: transparent;
-  border: 0;
-  padding: 0;
-}
+      &:last-child {
+        @include ltr-property('margin', 0);
+      }
 
-/* For material icons in button */
-.btn-icon i {
-  vertical-align: bottom;
-}
+      &:hover,
+      &.hovered {
+        z-index: 2;
+      }
 
-.btn-icon:hover,
-.btn-icon:focus,
-.btn-icon:active {
-  color: var(--c-primary);
+      &:focus,
+      &.focused,
+      &:active,
+      &.active,
+      &.selected {
+        z-index: 3;
+
+        &:hover {
+          z-index: 4;
+        }
+      }
+
+      &.expanded {
+        flex-grow: 1;
+        flex-shrink: 1;
+      }
+    }
+  }
+
+  &.a-center {
+    justify-content: center;
+
+    &:not(.has-addons) {
+      .btn:not(.full) {
+        margin-left: 0.25rem;
+        margin-right: 0.25rem;
+      }
+    }
+  }
+
+  &.a-right {
+    justify-content: flex-end;
+
+    &:not(.has-addons) {
+      .btn:not(.full) {
+        margin-left: 0.25rem;
+        margin-right: 0.25rem;
+      }
+    }
+  }
 }

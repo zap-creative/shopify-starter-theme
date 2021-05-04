@@ -1,58 +1,267 @@
-<style>
-  /* stylelint-disable */
-  @media (min-width: 768px) {
-    #hero--{{ section.id }} .hero__content-block {
-      background: rgba(255, 255, 255, {{ section.settings.background_opacity }});
-    }
-    {%- if section.settings.content_theme == "dark" -%}
-    #hero--{{ section.id }}.hero--dark .hero__content-block {
-      background: rgba(0, 0, 0, {{ section.settings.background_opacity }});
-    }
-    {%- endif -%}
+{% liquid
+  assign id = section.settings.html_id | default: section.id | handleize
+  assign lazyload = section.settings.lazyload
+
+  assign width = section.settings.width
+  assign height = section.settings.height
+
+  assign horizontal_layout = section.settings.horizontal_position
+  assign vertical_layout = section.settings.vertical_position
+
+  assign hero_bg = section.settings.bg
+  assign hero_image = section.settings.bg_image
+  assign hero_bg_size = section.settings.bg_size
+  assign hero_bg_blend = section.settings.bg_blend
+  assign hero_bg_opacity = section.settings.bg_opacity | divided_by: 100.0
+  assign hero_bg_alignment = section.settings.bg_alignment
+
+  assign hero_medium = 300
+
+  case height
+    when "h-medium"
+      assign hero_height = 300
+    when "h-xsmall"
+      assign hero_height = hero_medium | times: 0.3333333 | floor
+    when "h-small"
+    when "h-large"
+      assign hero_height = hero_medium | times: 1.3333333 | floor
+    when "h-xlarge"
+      assign hero_height = hero_medium | times: 1.6666667 | floor
+  endcase
+-%}
+
+{% style %}
+  #section-hero-{{- id }} {
+    background-color: {{ hero_bg -}};
   }
-  /* stylelint-enable */
-</style>
 
-<section id="hero--{{ section.id }}" class="hero hero--{{ section.settings.content_theme }}{% if section.settings.full_height %} hero--full{% endif %} bg-gray-200">
-    {%- if section.settings.image != blank -%}
-      {% render 'responsive-image' with 
-        image: section.settings.image, 
-        image_class: 'hero__image' 
-      %}
-    {%- else -%}
-      {{ 'image' | placeholder_svg_tag: 'placeholder-svg hero__image' }}
-    {%- endif -%}
+  {% if hero_image -%}
+    #section-hero-{{- id }} .hero-background {
+      background-position: {{ hero_bg_alignment -}};
+      mix-blend-mode: {{ hero_bg_blend -}};
 
-    <div class="hero__content {{ section.settings.horizontal_position }} {{ section.settings.vertical_position }}">
-      <div class="hero__content-block">
-        {%- if section.settings.title != blank -%}
-          <h1 class="m-0 text-4xl md:text-5xl">{{ section.settings.title | escape }}</h1>
-        {%- endif -%}
-        {%- if section.settings.text != blank -%}
-          {{ section.settings.text }}
-        {%- endif -%}
-        {%- if section.settings.button_label != blank -%}
-          <div class="mt-8"><a href="{{ section.settings.button_link }}" class="btn">{{ section.settings.button_label }}</a></div>
-        {%- endif -%}
+      opacity: {{ hero_bg_opacity -}};
+    }
+  {%- endif %}
+
+  
+  {% if tablet_height -%}
+    @media (min-width: 768px){
+      #section-hero-{{ id }} {
+        max-height: {{- tablet_height -}}px;
+      }
+    }
+  {%- elsif grow_tablet -%}
+    @media (min-width: 768px) and (max-width: 1007px){
+      #section-hero-{{ id }} {
+        height: auto;
+        max-height: {{- hero_height | times: hero_tablet_ratio | times: 2 | round -}}px;
+      }
+    }
+  {%- endif %}
+
+  {% if desktop_height -%}
+    @media (min-width: 1008px){
+      #section-hero-{{ id }} {
+        max-height: {{- desktop_height -}}px;
+      }
+    }
+  {%- elsif grow_desktop -%}
+    @media (min-width: 768px){
+      #section-hero-{{ id }} {
+        height: auto;
+        max-height: {{- hero_height | times: hero_desktop_ratio | times: 2 | round -}}px;
+      }
+    }
+  {%- endif %}
+{% endstyle %}
+
+<div id="section-hero-{{ id -}}"
+  class="section-hero hero {{ height }} {{ width }} {{ section.settings.classes }}"
+  data-section-id="{{- id -}}"
+  data-section-type="hero"
+>
+  {% if hero_image -%}
+    <div class="hero-background lazyload {% unless lazy -%}lazypreload{%- endunless %} js"
+      data-bg="{{- hero_image | img_url: '16x9' -}}"
+      data-bgset="{% render 'bgset', image: hero_image %}"
+      data-sizes="auto"
+      data-parent-fit="{{- hero_bg_size -}}"
+      {% unless hero_image.alt == blank -%}
+        aria-label="{{- hero_image.alt | escape -}}"
+        role="img"
+      {%- endunless %}
+    ></div>
+    <noscript>
+      <div class="hero-background"
+        style="background-image: url('{{- hero_image | img_url: '1920x' -}}');"
+        {% unless hero_image.alt == blank %}
+          aria-label="{{- hero_image.alt | escape -}}"
+          role="img"
+        {% endunless %}
+      ></div>
+    </noscript>
+  {%- else -%}
+    {{ 'image' | placeholder_svg_tag: 'placeholder-svg hero-background' }}
+  {%- endif %}
+
+    <div class="hero-body">
+      <div class="columns {{ horizontal_layout }} {{ vertical_layout }}">
+        <div class="column narrow">
+          {%- if section.settings.title != blank -%}
+            <h1 class="m-0 text-4xl md:text-5xl">{{ section.settings.title | escape }}</h1>
+          {%- endif -%}
+          {%- if section.settings.text != blank -%}
+            {{ section.settings.text }}
+          {%- endif -%}
+          {%- if section.settings.button_label != blank -%}
+            <div class="mt-8"><a href="{{ section.settings.button_link }}" class="btn">{{ section.settings.button_label }}</a></div>
+          {%- endif -%}
+        </div>
       </div>
     </div>
-</section>
+</div>
 
 {% schema %}
 {
   "name": "Hero",
+  "tag": "section",
   "settings": [
     {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "color",
+      "id": "bg",
+      "label": "Color"
+    },
+    {
       "type": "image_picker",
-      "id": "image",
+      "id": "bg_image",
       "label": "Image"
     },
     {
-      "type": "checkbox",
-      "id": "full_height",
-      "label": "Full height",
-      "info": "Adjust to the full height of the browser window. Image cropping occurs from the center. Does not apply to small screens.",
-      "default": false
+      "type": "select",
+      "id": "bg_size",
+      "label": "Image size",
+      "default": "cover",
+      "options": [
+        {
+        "value": "cover",
+        "label": "Cover (default)"
+        },
+        {
+        "value": "contain",
+        "label": "Contain"
+        },
+        {
+        "value": "auto",
+        "label": "Auto"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "bg_alignment",
+      "label": "Image alignment",
+      "default": "center",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "bg_blend",
+      "label": "Image blend mode",
+      "default": "normal",
+      "options": [
+        {
+        "value": "normal",
+        "label": "Normal (default)"
+        },
+        {
+        "value": "multiply",
+        "label": "Multiply"
+        },
+        {
+        "value": "screen",
+        "label": "Screen"
+        },
+        {
+        "value": "overlay",
+        "label": "Overlay"
+        },
+        {
+        "value": "darken",
+        "label": "Darken"
+        },
+        {
+        "value": "lighten",
+        "label": "Lighten"
+        },
+        {
+        "value": "color-dodge",
+        "label": "Color-Dodge"
+        },
+        {
+        "value": "color-burn",
+        "label": "Color-Burn"
+        },
+        {
+        "value": "hard-light",
+        "label": "Hard-Light"
+        },
+        {
+        "value": "soft-light",
+        "label": "Soft-Light"
+        },
+        {
+        "value": "difference",
+        "label": "Difference"
+        },
+        {
+        "value": "exclusion",
+        "label": "Exclusion"
+        },
+        {
+        "value": "hue",
+        "label": "Hue"
+        },
+        {
+        "value": "saturation",
+        "label": "Saturation"
+        },
+        {
+        "value": "color",
+        "label": "Color"
+        },
+        {
+        "value": "luminosity",
+        "label": "Luminosity"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "bg_opacity",
+      "label": "Image opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100
     },
     {
       "type": "header",
@@ -62,7 +271,7 @@
       "type": "text",
       "id": "title",
       "label": "Heading",
-      "default": "Hero Title"
+      "default": "Title"
     },
     {
       "type": "richtext",
@@ -72,120 +281,141 @@
     {
       "type": "text",
       "id": "button_label",
-      "label": "Button label"
+      "label": "Button Label"
     },
     {
       "type": "url",
       "id": "button_link",
-      "label": "Button link"
+      "label": "Button Link"
     },
     {
       "type": "header",
-      "content": "Content"
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "",
+      "options": [
+        {
+          "label": "Full width (default)",
+          "value": ""
+        },
+        {
+          "label": "Fixed width",
+          "value": "fixed"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Height",
+      "default": "medium",
+      "options": [
+        {
+          "label": "Adapt to content",
+          "value": "adapt"
+        },
+        {
+          "label": "Extra Small",
+          "value": "xsmall"
+        },
+        {
+          "label": "Small",
+          "value": "small"
+        },
+        {
+          "label": "Medium (default)",
+          "value": "medium"
+        },
+        {
+          "label": "Large",
+          "value": "large"
+        },
+        {
+          "label": "Extra Large",
+          "value": "xlarge"
+        },
+        {
+          "label": "Full screen",
+          "value": "full"
+        }
+      ]
     },
     {
       "type": "select",
       "id": "horizontal_position",
-      "label": "Horizontal position",
-      "default": "hero__content--left",
+      "label": "Horizontal Alignment",
+      "default": "h-center",
       "options": [
         {
-          "label": "Left",
-          "value": "hero__content--left"
+          "label": "Start",
+          "value": "h-start"
         },
         {
-          "label": "Center",
-          "value": "hero__content--center"
+          "label": "Middle",
+          "value": "h-center"
         },
         {
-          "label": "Right",
-          "value": "hero__content--right"
+          "label": "End",
+          "value": "h-end"
+        },
+        {
+          "label": "Space Between",
+          "value": "h-between"
+        },
+        {
+          "label": "Space Around",
+          "value": "h-around"
         }
       ]
     },
     {
       "type": "select",
       "id": "vertical_position",
-      "label": "Vertical position",
-      "default": "hero__content--top",
+      "label": "Vertical Alignment",
+      "default": "v-center",
       "options": [
         {
-          "label": "Top",
-          "value": "hero__content--top"
+          "label": "Start",
+          "value": "v-start"
         },
         {
           "label": "Middle",
-          "value": "hero__content--middle"
+          "value": "v-center"
         },
         {
-          "label": "Bottom",
-          "value": "hero__content--bottom"
+          "label": "End",
+          "value": "v-end"
+        },
+        {
+          "label": "Stretch",
+          "value": "v-stretch"
         }
       ]
     },
     {
-      "type": "select",
-      "id": "content_theme",
-      "label": "Theme",
-      "default": "light",
-      "options": [
-        {
-          "label": "Dark",
-          "value": "dark"
-        },
-        {
-          "label": "Light",
-          "value": "light"
-        }
-      ]
+      "type": "header",
+      "content": "Advanced"
     },
     {
-      "type": "select",
-      "id": "background_opacity",
-      "label": "Background Opacity",
-      "default": "0.5",
-      "options": [
-        {
-          "label": "90%",
-          "value": "0.9"
-        },
-        {
-          "label": "80%",
-          "value": "0.8"
-        },
-        {
-          "label": "70%",
-          "value": "0.7"
-        },
-        {
-          "label": "60%",
-          "value": "0.6"
-        },
-        {
-          "label": "50%",
-          "value": "0.5"
-        },
-        {
-          "label": "40%",
-          "value": "0.4"
-        },
-        {
-          "label": "30%",
-          "value": "0.3"
-        },
-        {
-          "label": "20%",
-          "value": "0.2"
-        },
-        {
-          "label": "10%",
-          "value": "0.1"
-        },
-        {
-          "label": "0%",
-          "value": "0"
-        }
-      ]
+      "type": "text",
+      "id": "html_id",
+      "label": "Element Id"
+    },
+    {
+      "type": "text",
+      "id": "html_classes",
+      "label": "Element Classes"
+    },
+    {
+      "type": "checkbox",
+      "id": "lazyload",
+      "label": "Lazyload Section",
+      "default": true,
+      "info": "Delay loading this section?"
     }
   ],
   "presets": [

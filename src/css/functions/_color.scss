@@ -1,0 +1,150 @@
+@use 'sass:math';
+
+@import './utilities';
+
+// Adapted from: https://github.com/jhogue/automated-a11y-sass
+@function get-ratio($level: 'AA', $size: 16, $bold: false) {
+  $ratio: 4.5;
+
+  @if $level == 'AAA' {
+    $ratio: 7;
+  }
+
+  @if unit($size) == 'em' or unit($size) == 'rem' {
+    $size: strip-unit($size * $size-body);
+  }
+
+  @else {
+    $size: strip-unit($size);
+  }
+
+  @if $size < 24 {
+    @if $size >= 19 and $bold == true {
+      @if $level == 'AAA' {
+        $ratio: 4.5;
+      }
+
+      @else {
+        $ratio: 3;
+      }
+    }
+  }
+
+  @else {
+    $ratio: 3;
+
+    @if $level == 'AAA' {
+      $ratio: 4.5;
+    }
+  }
+
+  @return $ratio;
+}
+
+@function color-luminance($color) {
+  $colors: (
+    'red': red($color),
+    'green': green($color),
+    'blue': blue($color)
+  );
+
+  @each $name, $value in $colors {
+    $value: $value / 255;
+
+    @if $value < 0.03928 {
+      $value: $value / 12.92;
+    }
+
+    @else {
+      $value: ($value + 0.055) / 1.055;
+      $value: math.pow($value, 2.4);
+    }
+
+    $colors: map-merge($colors, ($name: $value));
+  }
+
+  @return (map-get($colors, 'red') * 0.2126) + (map-get($colors, 'green') * 0.7152) + (map-get($colors, 'blue') * 0.0722);
+}
+
+// Adapted from: https://github.com/LeaVerou/contrast-ratio/blob/gh-pages/color.js
+@function color-contrast($color1, $color2) {
+  $luminance1: color-luminance($color1) + 0.05;
+  $luminance2: color-luminance($color2) + 0.05;
+  $ratio: $luminance1 / $luminance2;
+
+  @if $luminance2 > $luminance1 {
+    $ratio: 1 / $ratio;
+  }
+  $ratio: round($ratio * 100) / 100;
+
+  @return $ratio;
+}
+
+@function color-to-rgb($color) {
+  @return #{red($color), green($color), blue($color)};
+}
+
+@function adaptive-color($color, $background: false) {
+  $lightness: lightness($color);
+  $adapted: $color;
+
+  @if $lightness < 64 {
+    @if $background {
+      $adapted: lighten($color, 10%);
+    }
+
+    @else {
+      $adapted: lighten($color, 15%);
+    }
+  }
+
+  @else {
+    @if $background {
+      $adapted: darken($color, 5%);
+    }
+
+    @else {
+      $adapted: darken($color, 10%);
+    }
+  }
+
+  @if $lightness < 26 {
+    @if $background {
+      $adapted: lighten($color, 15%);
+    }
+
+    @else {
+      $adapted: lighten($color, 25%);
+    }
+  }
+
+  @return $adapted;
+}
+
+@function contrast-color($color, $dark: #000000, $light: #ffffff, $level: 'AA', $size: 16, $bold: false) {
+  $ratio: get-ratio($level, $size, $bold);
+  $contrast-dark: color-contrast($dark, $color);
+  $contrast-light: color-contrast($light, $color);
+
+  $step: 2%;
+
+  @if $contrast-dark >= $contrast-light {
+    @if $contrast-dark >= $ratio {
+      @return $dark;
+    }
+
+    @while color-contrast($dark, $color) < $ratio {
+      $dark: scale-color($dark, $lightness: $step, $saturation: $step/2);
+    }
+
+    @return $dark;
+  }
+
+  @else {
+    @while color-contrast($light, $color) < $ratio {
+      $light: scale-color($light, $lightness: $step, $saturation: $step/2);
+    }
+
+    @return $light;
+  }
+}

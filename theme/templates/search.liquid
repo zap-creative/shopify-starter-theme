@@ -1,22 +1,98 @@
-{% paginate search.results by 10 %}
-  <form action="/search" method="get" role="search">
-    <input type="search" name="q" value="{{ search.terms | escape }}">
-    <button type="submit">search</button>
-  </form>
+{% liquid 
+  assign title = 'general.search.title' | t
+  if search.performed
+    assign title = 'general.search.results_with_count' | t: count: search.results_count, terms: search.terms
+  endif
+-%}
 
+{% paginate search.results by 12 -%}
+
+<header class="hero adapt">
+  {% if hero_image -%}
+    <div class="hero-background js-enabled lazyload {% unless lazy -%}lazypreload{%- endunless -%}"
+      data-bg="{{- hero_image | img_url: '16x9' -}}"
+      data-bgset="{% render 'bgset', image: hero_image %}"
+      data-sizes="auto"
+      data-parent-fit="{{- hero_bg_size -}}"
+      {% unless hero_image.alt == blank -%}
+        aria-label="{{- hero_image.alt | escape -}}"
+        role="img"
+      {%- endunless %}
+    ></div>
+    <noscript>
+      <div class="hero-background"
+        style="background-image: url('{{- hero_image | img_url: '1920x' -}}');"
+        {% unless hero_image.alt == blank %}
+          aria-label="{{- hero_image.alt | escape -}}"
+          role="img"
+        {% endunless %}
+      ></div>
+    </noscript>
+  {%- else -%}
+    {{ 'image' | placeholder_svg_tag: 'placeholder-svg hero-background' }}
+  {%- endif %}
+  <div class="hero-body">
+    <div class="container {{ title_align -}}">
+      <h1 class="h5 text-center">{{- title -}}</h1>
+      <form action="/search" method="get" 
+        role="search"
+        class="form search-form"
+      >
+        <div class="control has-icons-right has-icons-left">
+          <input type="hidden" name="options[prefix]" value="last" aria-hidden="true" />
+          <input type="search" name="q"
+            placeholder="{{- 'general.search.placeholder' | t -}}"
+            value="{{- search.terms | escape -}}"
+            spellcheck="false"
+            autocorrect="false"
+            class="input"
+          />
+          <button type="reset" {% if search.terms.size == 0 -%}disabled{%- endif %}
+            class="btn is-ghost icon is-left"
+            aria-label="{{- 'general.search.clear' |  t -}}"
+          >
+            <i class="material-icons-outlined">close</i>
+          </button>
+          <button type="submit"
+            class="btn is-ghost icon is-right"
+            aria-label="{{- 'general.search.submit' | t -}}"
+          >
+            <i class="material-icons-outlined">search</i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</header>
+
+<div class="desktop:container">
   {% if search.performed %}
-    {% for item in search.results %}
+    <ul class="list tablet:grid tablet:grid-cols-2 desktop:grid-cols-3 widescreen:grid-cols-4 results-list">
+    {% for item in search.results -%}
+      <li class="search-result">
       {% if item.featured_image %}
         <a href="{{ item.url | within: collection }}" title="{{ item.title | escape }}">
           {{ item.featured_image.src | img_url: 'medium' | img_tag: item.featured_image.alt }}
         </a>
       {% endif %}
-      <h5>{{ item.title | link_to: item.url }}</h5>
-      <p>{{ item.content | strip_html | truncatewords: 50 }}</p>
+      <h5>{{ item.title | highlight: search.terms | link_to: item.url }}</h5>
+      <p>{{ item.content | strip_html | truncatewords: 50 | highlight: search.terms }}</p>
+    </li>
     {% else %}
-      no results
+      <li class="search-result empty">
+        {{- 'general.search.no_results' | t -}}
+      </li>
     {% endfor %}
+    </ul>
   {% endif %}
+  
+  {% if paginate.pages > 1 -%}
+    {% render 'pagination' with
+      paginate: paginate,
+      show_pages: true, 
+      center: true,
+    %}
+  {%- endif %}
+</div>
 
-  {% if paginate.pages > 1 %}{{ paginate | default_pagination }}{% endif %}
-{% endpaginate %}
+{%- endpaginate %}

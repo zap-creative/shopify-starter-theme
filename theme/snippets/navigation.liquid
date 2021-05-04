@@ -22,11 +22,11 @@
     {% endif %}
 
     {% if link.links != blank %}
-      <li class="dropdown is-hoverable nav-item nav-item--dropdown {% if link.active -%}is-active{%- endif -%}"
+      <li class="dropdown hoverable nav-item nav-item--dropdown {% if link.active -%}active{%- endif -%}"
         data-has-dropdowns
       >
         <button type="button"
-          class="button nav-link nav-link--main nav-link--button {% if link.child_active -%}is-active{%- endif -%}"
+          class="btn nav-link nav-link--main nav-link--button {% if link.child_active -%}active{%- endif -%}"
           aria-controls="navigation-dropdown-{{ child_list_handle }}"
           aria-expanded="false"
           aria-haspopup="true"
@@ -36,14 +36,14 @@
         </button>
 
         <div id="navigation-dropdown-{{ child_list_handle }}"
-          class="dropdown-menu has-text-left site-nav__dropdown"
+          class="dropdown-menu text-left site-nav__dropdown"
         >
-          <div class="dropdown-content is-radiusless menu nav-menu" role="menu">
+          <div class="dropdown-content radiusless menu nav-menu" role="menu">
             {% if three_level_nav %}
               <ul class="menu-list nav-menu__list">
                 {% if link.links != blank %}
                   {% for secondlink in link.links %}
-                    <li class="nav-item nav-item--secondary {% if secondlink.active -%}is-active{%- endif -%}">
+                    <li class="nav-item nav-item--secondary {% if secondlink.active -%}active{%- endif -%}">
                       {% if secondlink.links == blank %}
                         <a href="{{ secondlink.url }}" class="nav-link nav-link--secondary nav-link--parent"
                           {% if secondlink.current %} aria-current="page"{% endif %}
@@ -58,7 +58,7 @@
 
                         <ul class="menu-list nav-menu__list nav-menu__list--tertiary">
                           {% for thirdlink in secondlink.links %}
-                            <li class="nav-item nav-item--tertiary {% if thirdlink.active -%}is-active{%- endif -%}">
+                            <li class="nav-item nav-item--tertiary {% if thirdlink.active -%}active{%- endif -%}">
                               <a href="{{ thirdlink.url }}"
                               class="nav-link nav-link--child"
                               {% if thirdlink.current %} aria-current="page"{% endif %}
@@ -93,8 +93,8 @@
         </div>
       </li>
     {% else %}
-      <li class="nav-item {% if link.current -%}is-active{%- endif -%}">
-        <a href="{{ link.url }}" class="nav-link nav-link--main {% if link.current -%}is-active{%- endif -%}"
+      <li class="nav-item {% if link.current -%}active{%- endif -%}">
+        <a href="{{ link.url }}" class="nav-link nav-link--main {% if link.current -%}active{%- endif -%}"
           {% if link.current %} aria-current="page"{% endif %}
         >
           <span class="nav-label">{{ link.title | escape }}</span>

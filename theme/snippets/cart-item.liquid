@@ -1,13 +1,13 @@
 {%- comment -%}
   Accepts:
   - item: {Object} Cart Item object
-  - line_number: {Number} The line number of the Cart Item
+  - line_number: {Number} The line number of the cart item
 
   Usage:
   {% render 'cart-item' with item: cart_item, line_number: forloop.index %}
 {%- endcomment -%}
 
-<li class="cart-item"
+<li class="card shadowless radiusless cart-item"
   data-cart-item
   data-cart-item-key="{{ item.key }}"
   data-cart-item-url="{{ item.url }}"
@@ -15,8 +15,8 @@
   data-cart-item-index="{{ line_number }}"
   data-cart-item-quantity="{{ item.quantity }}"
 >
-  <div class="cart-item__content">
-    <figure class="cart-item__image">
+  <div class="card-content cart-item-content">
+    <figure class="cart-item-image">
       {%- if item.image != blank -%}
         {% render 'responsive-image' with 
           image: item.image,
@@ -27,16 +27,16 @@
       {%- endif -%}
     </figure>
 
-    <div class="cart-item__details">
-      <div class="cart-item__meta">
-        <h3 class="cart-item__title" data-cart-item-title>
+    <div class="cart-item-details">
+      <div class="meta">
+        <h4 class="title" data-cart-item-title>
           {{ item.product.title }}
-        </h3>
+        </h4>
 
-        <p class="subtitle is-size-7">
+        <p class="subtitle">
           <a href="/cart/change?line={{ line_number }}&amp;quantity=0"
             class="cart-item__remove"
-            aria-label="{{ 'cart.label.remove' | t: product: item.title }}"
+            aria-label="{{ 'cart.label.remove' | t: name: item.title }}"
             data-cart-remove
           >
             {{ 'cart.general.remove' | t }}
@@ -101,151 +101,172 @@
           {%- endfor -%}
         </ul>
       </div>
+    </div>
 
-      <div class="cart-item__price">
-        {%- assign hasDiscount = false -%}
-        {%- if item.original_price != item.final_price -%}
-          {%- assign hasDiscount = true -%}
-        {%- endif -%}
+    <div class="cart-item-price">
+      {% liquid
+        if item.original_price != item.final_price
+          assign item_discounted = true
+        endif
+      -%}
 
-        <div data-cart-item-price>
-          <dl data-cart-item-price-list>
-            {%- comment -%}
-              Markup template for discount item
-            {%- endcomment -%}
-            <div class="{% unless hasDiscount %}hidden{% endunless %}"
-              data-cart-item-discounted-price-group
-            >
-              <dt><span class="sr-only">{{ 'products.product.sale_price' | t }}</span></dt>
-              <dd><strong class="order-discount" data-cart-item-final-price>{{ item.final_price | money }}</strong></dd>
-              <dt><span class="sr-only">{{ 'products.product.regular_price' | t }}</span></dt>
-              <dd class="fine-print">(<span data-cart-item-original-price>{{ item.original_price | money }}</span> {{ 'products.product.value' | t }})</dd>
-            </div>
+      <div class="item-price" data-cart-item-price>
+        <dl data-cart-item-price-list>
+          {% comment -%}Markup template for discount item{%- endcomment -%}
+          <div data-cart-item-discounted-price-group
+            {% unless item_discounted -%}hidden{%- endunless -%}
+          >
+            <dt class="sr-only">{{- 'products.product.sale_price' | t -}}</dt>
+            <dd class="item-discount font-bold" data-cart-item-final-price>
+              {{- item.final_price | money -}}
+            </dd>
+            <dt class="sr-only">{{- 'products.product.regular_price' | t -}}</dt>
+            <dd data-cart-item-original-price>
+              {%- assign original_price = item.original_price | money -%}
+              {{- 'products.product.value_price' | t: value: original_price -}}
+            </dd>
+          </div>
 
-            {%- comment -%}
-              Markup template for regular price item
-            {%- endcomment -%}
-            <div class="{% if hasDiscount %}hidden{% endif %}" data-cart-item-regular-price-group>
-              <dt><span class="sr-only">{{ 'products.product.regular_price' | t }}</span></dt>
-              <dd><strong data-cart-item-regular-price>{{ item.original_price | money }}</strong></dd>
-            </div>
+          {% comment -%}Markup template for regular price item{%- endcomment -%}
+          <div data-cart-item-regular-price-group
+            {% if item_discounted -%}hidden{%- endif -%}
+          >
+            <dt class="sr-only">{{- 'products.product.regular_price' | t -}}</dt>
+            <dd data-cart-item-regular-price>{{- item.original_price | money -}}</dd>
+          </div>
 
-            {%- comment -%}
-              Markup template for unit price
-            {%- endcomment -%}
-            <div {% unless item.unit_price_measurement -%}class="hidden"{%- endunless %}data-unit-price-group>
-              <dt>
-                <span class="sr-only">{{ 'products.product.unit_price_label' | t }}</span>
-              </dt>
-              <dd>
-                <span class="price-unit-price">
-                  {%- capture unit_price_separator -%}
-                    <span aria-hidden="true">/</span><span class="sr-only">{{ 'products.product.unit_price_separator' | t }}&nbsp;</span>
-                  {%- endcapture -%}
-                  {%- capture unit_price_base_unit -%}
-                    {%- if item.unit_price_measurement.reference_value != 1 -%}
-                      {{- item.unit_price_measurement.reference_value -}}
-                    {%- endif -%}
-                    {{ item.unit_price_measurement.reference_unit }}
-                  {%- endcapture -%}
-
-                  <span data-unit-price>{{ item.unit_price | money }}</span>{{- unit_price_separator -}}<span data-unit-price-base-unit>{{- unit_price_base_unit -}}</span>
-                </span>
-              </dd>
-            </div>
-          </dl>
-        </div>
-
-        {%- assign itemDiscounts = 'template ' | split: ' ' -%}
-        {%- if item.line_level_discount_allocations != blank -%}
-          {%- assign itemDiscounts = item.line_level_discount_allocations -%}
-        {%- endif -%}
-
-        <ul class="list list--spaced item-discounts item-discounts--cart{% if item.line_level_discount_allocations == blank %} hidden{% endif %}" 
-          aria-label="{{ 'customer.order.discount' | t }}"
-          data-cart-item-discount-list
-        >
-          {%- for discount in itemDiscounts -%}
-            <li class="item-discount" data-cart-item-discount>
-              <span class="tag is-dark item-discount__title">
-                <i class="material-icons-outlined">sell</i>
-                <span data-cart-item-discount-title>
-                  {{- discount.discount_application.title -}}
-                </span>
-              </span>
-              (-<span class="item-discount__value" data-cart-item-discount-amount>{{ discount.amount | money }}</span>)
-            </li>
-          {%- endfor -%}
-        </ul>
+          {% comment -%}Markup template for unit price{%- endcomment -%}
+          <div data-unit-price-group
+            {% unless item.unit_price_measurement -%}hidden{%- endunless -%}
+          >
+            <dt class="sr-only">{{- 'products.product.unit_price_label' | t -}}</dt>
+            <dd class="price-unit-price">
+              {% liquid 
+                assign unit_base_unit = item.unit_price_measurement.reference_unit
+                if item.unit_price_measurement.reference_value != 1
+                 assign unit_base_unit = unit_base_unit | append : item.unit_price_measurement.reference_value
+                endif
+              -%}
+              <span data-unit-price>{{- item.unit_price | money -}}</span>
+              <span aria-label="{{- 'products.product.unit_price_separator' | t -}}">/</span>
+              <span data-unit-price-base-unit>{{- unit_base_unit -}}</span>
+            </dd>
+          </div>
+        </dl>
       </div>
 
-      <div class="cart-item__quantity">
+      {% liquid
+        assign item_discounts = 'template ' | split: ' '
+        if item.line_level_discount_allocations != blank
+          assign item_discounts = item.line_level_discount_allocations
+          assign item_line_discount = true
+        endif
+      -%}
+
+      <ul class="list item-discounts {% unless item_line_discount -%}hidden{%- endunless -%}"
+        {% unless item_line_discount -%}hidden{%- endunless %}
+        data-cart-item-discount-list
+        aria-label="{{- 'customer.order.discount' | t -}}"
+      >
+        {% for discount in item_discounts -%}
+          <li class="item-discount"
+            data-cart-item-discount
+            aria-label="{{ 'customer.order.discount' | t }}"
+          >
+            <span class="tags normal has-addons">
+              <span class="tag is-black">
+                <i class="icon sz-16 material-icons">sell</i>
+              </span>
+              <span class="tag is-black is-light text-caps"
+                data-cart-item-discount-amount
+              >
+                {% if discount.value_type == 'percentage' %}
+                  {%- assign amt = discount.value | round  -%}
+                  {{- 'numbers.money.percent_off' | t: value: amt -}}
+                {%- else -%}
+                  {%- assign amt = discount.value | money -%}
+                  {{- 'numbers.money.value_off' | t: value: amt -}}
+                {% endif %}
+                {{- discount.discount_application.title -}}
+              </span>
+            </span>
+            <span data-cart-item-discount-title>{{- discount.title -}}</span>
+          </li>
+        {%- endfor %}
+      </ul>
+
+      <div class="field">
         <label for="updates_{{ item.key }}" class="sr-only" data-quantity-label>
           {{ 'cart.label.quantity' | t }}
         </label>
-        <div class="control js">
-          <button type="button" class="button" 
-            data-quantity-button
-            data-quantity-decrement
-            data-quantity-item="{{ line_number }}"
-          >
-            <i class="material-icons-outlined">remove</i>
-          </button>
-        </div>
-        <div class="control">
-          <input type="number"
-            name="updates[]"
-            id="updates_{ item.key }}"
-            class="input input--quantity"
+        <div class="control has-icons-right has-icons-left">
+          <input type="number" name="updates[]"
             value="{{- item.quantity -}}"
             pattern="[0-9]*"
             min="1"
+            id="updates_{ item.key }}"
+            class="input input--quantity"
             data-quantity-input
             data-quantity-item="{{ line_number }}"
           >
-        </div>
-        <div class="control js">
-          <button type="button" class="button"
-            data-quantity-button
-            data-quantity-increment
+          <button type="button" class="btn is-ghost icon is-left js-enabled" 
             data-quantity-item="{{ line_number }}"
+            data-quantity-decrement
+            data-quantity-button
+          >
+            <i class="material-icons-outlined">remove</i>
+          </button>
+          <button type="button" class="btn is-ghost icon is-right js-enabled"
+            data-quantity-item="{{ line_number }}"
+            data-quantity-increment
+            data-quantity-button
           >
             <i class="material-icons-outlined">add</i>
           </button>
         </div>
 
-        <div class="help cart__qty-error-message-wrapper desktop:hidden" role="alert" data-cart-quantity-error-message-wrapper>
+        <div class="help cart__qty-error-message-wrapper hidden" role="alert" data-cart-quantity-error-message-wrapper>
           <span class="sr-only">{{ 'general.accessibility.error' | t }}</span>
-          <i class="material-icons-outlined">error</i>
+          <i class="icon material-icons-outlined">error</i>
           <span class="cart__qty-error-message" data-cart-quantity-error-message></span>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="cart-item__footer">
-    <span class="cart-item__final-price-label">{{ 'cart.label.product_total' | t }}&nbsp;</span>
-    <div class="cart-item__final-price" data-cart-item-line-price>
-      {%- comment -%}
-        Markup template for discount item
-      {%- endcomment -%}
-      <dl {% unless item.original_line_price != item.final_line_price -%}class="hidden"{% endunless %}
-        data-cart-item-discounted-price-group
-      >
-        <dt><span class="sr-only">{{ 'cart.label.discounted_total' | t }}</span></dt>
-        <dd><strong class="order-discount" data-cart-item-final-price>{{ item.final_line_price | money }}</strong></dd>
-        <dt><span class="sr-only">{{ 'cart.label.regular_total' | t }}</span></dt>
-        <dd class="fine-print">(<span data-cart-item-original-price>{{ item.original_line_price | money }}</span> {{ 'products.product.value' | t }})</dd>
-      </dl >
+  <footer class="card-footer cart-item-footer">
+    <span class="text-caps">{{- 'cart.label.product_total' | t -}}&nbsp;</span>
+    <div class="cart-item-final-price" data-cart-item-line-price>
 
-      {%- comment -%}
-        Markup template for regular price item
-      {%- endcomment -%}
-      <div {% if item.original_line_price != item.final_line_price -%}class="hidden"{%- endif %}
-        data-cart-item-regular-price-group
+      {% comment -%}Markup template for discount item{%- endcomment -%}
+      {%- if item.original_line_price != item.final_line_price -%}
+        {%- assign item_on_sale = true -%}
+      {%- endif -%}
+      <dl class="list row {% unless item_on_sale -%}hidden{%- endunless -%}"
+        data-cart-item-discounted-price-group
+        {% unless item_on_sale -%}hidden{%- endunless -%}
       >
-        <strong data-cart-item-regular-price>{{ item.original_line_price | money }}</strong>
+        <dt class="sr-only">
+          {{- 'cart.label.discounted_total' | t -}}
+        </dt>
+        <dd class="order-discount font-bold" data-cart-item-final-price>
+          {{- item.final_line_price | money -}}
+        </dd>
+        <dt class="sr-only">
+          {{- 'cart.label.regular_total' | t -}}
+        </dt>
+        <dd data-cart-item-original-price>
+          {%- assign original_price = item.original_line_price | money -%}
+          {{- 'products.product.value_price' | t: value: original_price -}}
+        </dd>
+      </dl>
+
+      {% comment -%}Markup template for regular price item{%- endcomment -%}
+      <div data-cart-item-regular-price-group {% if item_on_sale -%}hidden{%- endif -%}>
+        <strong data-cart-item-regular-price>
+          {{ item.original_line_price | money }}
+        </strong>
       </div>
     </div>
-  </div>
+  </footer>
 </li>

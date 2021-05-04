@@ -1,0 +1,8 @@
+.reset-card {
+  .card-header {
+    @apply py-6;
+
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

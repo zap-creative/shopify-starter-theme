@@ -1,0 +1,18 @@
+{%- comment -%}
+  Accepts:
+  - color: {Mixed} Color type
+
+  Usage:
+  {% render 'inverse-color' with color: color %}
+{%- endcomment -%}
+{% liquid
+  assign r = color | extract: 'red'
+  assign g = color | extract: 'green'
+  assign b = color | extract: 'blue'
+
+  assign inverted_r = 255 - r
+  assign inverted_g = 255 - g
+  assign inverted_b = 255 - b
+
+  echo color | color_modify: 'red', inverted_r | color_modify: 'green', inverted_g | color_modify: 'blue', inverted_b
+-%}

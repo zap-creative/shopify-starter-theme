@@ -1,24 +1,111 @@
-a { 
-  color: var(--c-primary);
+a {
+  color: $c-link;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover,
+  &.hovered {
+    color: $c-link-hover;
+  }
+
+  &:focus,
+  &.focused {
+    color: $c-link-focus;
+  }
+
+  &:active,
+  &.active {
+    color: $c-link-active;
+  }
 }
 
-a:hover {
-  color: var(--c-primary-dark);
+h1,
+.h1,
+h2,
+.h2,
+h3,
+.h3,
+h4,
+.h4,
+h5,
+.h5,
+h6,
+.h6 {
+  color: $c-text-header;
+  font-family: $f-family-header;
+  line-height: $f-height-header;
+
+  &:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
+}
+
+h1,
+.h1 {
+  font-size: $f-size-h1;
+}
+
+h2,
+.h2 {
+  font-size: $f-size-h2;
+}
+
+h3,
+.h3 {
+  font-size: $f-size-h3;
+}
+
+h4,
+.h4 {
+  font-size: $f-size-h4;
+}
+
+h5,
+.h5 {
+  font-size: $f-size-h5;
+}
+
+h6,
+.h6 {
+  font-size: $f-size-h6;
+}
+
+.prose {
+  @apply mx-auto max-w-3xl;
+
+  &.narrow {
+    @apply max-w-lg;
+  }
+
+  &.wide {
+    @apply max-w-7xl;
+  }
+
+  * {
+    color: inherit;
+  }
+}
+
+.asterisk {
+  color: $c-error;
+  font-size: $f-size-medium;
+  font-weight: $f-weight-bold;
 }
 
 .text-caps {
-  font-size: 12px;
-  font-weight: 700;
+  font-family: $f-family;
+  font-size: $size-7 * 1em;
+  font-weight: $f-weight-bold;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
 
-.text-sep {
-  color: var(--c-text-light);
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+.title {
+  margin-bottom: 1.25em;
 }
 
-.c-text-light {
-  color: var(--c-text-light);
+.subtitle {
+  .title + & {
+    margin-top: -0.5em;
+  }
 }

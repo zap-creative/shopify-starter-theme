@@ -1,14 +1,195 @@
+{% liquid 
+  assign form_id = 'ContactForm'
+
+-%}
+
 <h1>{{ page.title }}</h1>
-{% form 'contact' %}
-  {% if form.posted_successfully? %} Thank you for your contact {% endif %}
-  {{ form.errors | default_errors }}
-  <label for="ContactFormName">name</label>
-  <input type="text" id="ContactFormName" name="contact[name]">
-  <label for="ContactFormEmail">email</label>
-  <input type="email" id="ContactFormEmail" name="contact[email]">
-  <label for="ContactFormPhone">phone</label>
-  <input type="tel" id="ContactFormPhone" name="contact[phone]">
-  <label for="ContactFormMessage">message</label>
-  <textarea rows="10" id="ContactFormMessage" name="contact[body]"></textarea>
-  <input type="submit" value="send">
-{% endform %}
+<section class="widescreen:container">
+  <div class="columns">
+    <div class="column tablet:cols-6 widescreen:cols-5 tablet:offset-1 widescreen:offset-3">
+      <div class="contact-form">
+        {% form 'contact', id: form_id, 
+          novalidate: 'novalidate', 
+          class: 'form' 
+        %}
+          {% render 'form-status' with form: form, form_id: form_id %}
+          <div class="field">
+            {% liquid 
+              if form[name]
+                assign name_value = form[name]
+              else if customer
+                assign name_value = customer.name
+              endif
+            -%}
+            <label class="label" for="{{- form_id -}}-email">
+              {{- 'contact.form.name' | t }} <span class="asterisk" aria-hidden="true">*</span>
+            </label>
+            <div class="control">
+              <input type="text" name="contact[name]"
+                placeholder="{{- 'contact.form.name' | t -}}"
+                value="{{- name_value -}}"
+                id="{{- form_id -}}-name"
+                class="input"
+                aria-required="true"
+                required
+              >
+            </div>
+          </div>
+          <div class="field">
+            {% liquid 
+              if form[email]
+                assign email_value = form[email]
+              else if customer
+                assign email_value = customer.email
+              endif
+
+              if form.errors contains 'email'
+                assign email_error = true
+              endif
+            -%}
+            <label class="label" for="{{- form_id -}}-email">
+              {{- 'contact.form.email' | t }} <span class="asterisk" aria-hidden="true">*</span>
+            </label>
+            <div class="control">
+              <input type="email" name="contact[email]"
+                placeholder="{{ 'contact.form.email' | t }}"
+                value="{{- email_value -}}"
+                autocapitalize="off"
+                autocorrect="off"
+                id="{{- form_id -}}-email"
+                class="input {% if email_error -%}is-error{%- endif -%}"
+                aria-required="true"
+                required
+                {% if email_error -%}
+                  aria-describedby="{{- form_id -}}-email-error"
+                  aria-invalid="true"
+                {%- endif %}
+              >
+            </div>
+            {% if email_error -%}
+              <p id="{{- form_id -}}-email-error" class="help is-error">
+                <i class="material-icons-outlined" 
+                  aria-label="{{- 'general.accessibility.error' | t -}}"
+                >error</i>
+                <span>
+                  {{- form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] -}}
+                </span>
+              </p>
+            {%- endif %}
+          </div>
+          <div class="field">
+            {% liquid 
+              if form[phone]
+                assign phone_value = form[phone]
+              else if customer
+                assign phone_value = customer.phone
+              endif
+
+              if form.errors contains 'phone'
+                assign phone_error = true
+              endif
+            -%}
+            <label class="label" for="{{- form_id -}}-phone">
+              {{- 'contact.form.phone' | t -}}
+            </label>
+            <div class="control">
+              <input type="tel" name="contact[phone]"
+                placeholder="{{- 'contact.form.phone' | t -}}"
+                value="{{- phone_value -}}"
+                pattern="[0-9\-]*"
+                id="{{- form_id -}}-phone"
+                class="input {% if phone_error -%}is-error{%- endif -%}"
+              >
+            </div>
+          </div>
+          <div class="field">
+            {% liquid 
+              if form[reason]
+                assign reason_value = form[reason]
+              endif
+            -%}
+            <label class="label" for="{{- form_id -}}-reason">
+              {{- 'contact.form.reason' | t -}}
+            </label>
+            <div class="control expanded">
+              <div class="select">
+                <select name="contact[reason]"
+                  id="{{- form_id -}}-reason"
+                  class="select" 
+                >
+                  <option value="Urgent Change">
+                    {{- 'contact.reasons.urgent_address' | t -}}
+                  </option>
+                  <option value="Orders/Delivery">
+                    {{- 'contact.reasons.order_delivery' | t -}}
+                  </option>
+                  <option value="Product Question">
+                    {{- 'contact.reasons.product_details' | t -}}
+                  </option>
+                  <option value="Press & Media">
+                    {{- 'contact.reasons.press_media' | t -}}
+                  </option>
+                  <option value="Other">
+                    {{- 'contact.reasons.other' | t -}}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            {% liquid 
+              if form[order_number]
+                assign order_value = form[order_number]
+              endif
+
+              if form.errors contains 'order_number'
+                assign order_error = true
+              endif
+            -%}
+            <label class="label" for="{{- form_id -}}-order_number">
+              {{- 'contact.form.order_number' | t }} {{ 'contact.form.if_applicable' | t -}}
+            </label>
+            <div class="control">
+              <input type="text" name="contact[order_number]"
+                placeholder="{{- 'contact.form.order_number' | t -}}"
+                value="{{- order_value -}}"
+                id="{{- form_id -}}-order_number"
+                class="input {% if order_error -%}is-error{%- endif -%}"
+              >
+            </div>
+          </div>
+          <div class="field">
+            {% liquid 
+              if form[message]
+                assign message_value = form[message]
+              endif
+
+              if form.errors contains 'message'
+                assign message_error = true
+              endif
+            -%}
+            <label class="label" for="{{- form_id -}}-message">
+              {{- 'contact.form.message' | t -}}
+            </label>
+            <div class="control">
+              <textarea rows="10" name="contact[message]"
+                id="{{- form_id -}}-message"
+                class="textarea {% if message_error -%}is-error{%- endif -%}"
+              >
+                {% if form.body %}{{ form.body }}{% endif %}
+              </textarea>
+            </div>
+          </div>
+          <div class="field">
+            <div class="control text-center">
+              <input type="submit"
+                value="{{- 'contact.form.submit' | t -}}"
+                class="btn full is-black"
+              >
+            </div>
+          </div>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</section>

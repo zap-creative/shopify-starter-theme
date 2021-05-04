@@ -1,0 +1,132 @@
+@import '../keyframes';
+
+@mixin ltr {
+  @if not $rtl {
+    @content;
+  }
+}
+
+@mixin rtl {
+  @if $rtl {
+    @content;
+  }
+}
+
+@mixin ltr-property($property, $spacing, $right: true) {
+  $normal: if($right, 'right', 'left');
+  $opposite: if($right, 'left', 'right');
+
+  @if $rtl {
+    #{$property}-#{$opposite}: $spacing;
+  }
+
+  @else {
+    #{$property}-#{$normal}: $spacing;
+  }
+}
+
+@mixin ltr-position($spacing, $right: true) {
+  $normal: if($right, 'right', 'left');
+  $opposite: if($right, 'left', 'right');
+
+  @if $rtl {
+    #{$opposite}: $spacing;
+  }
+
+  @else {
+    #{$normal}: $spacing;
+  }
+}
+
+@mixin placeholder {
+  $placeholders: ':-moz' ':-webkit-input' '-moz' '-ms-input';
+
+  @each $placeholder in $placeholders {
+    &:#{$placeholder}-placeholder {
+      @content;
+    }
+  }
+}
+
+%arrow {
+  border: 3px solid currentColor;
+  border-radius: 2px;
+  border-right: 0;
+  border-top: 0;
+  content: ' ';
+  display: block;
+  height: 0.625em;
+  margin-top: -0.4375em;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: rotate(-45deg);
+  transform-origin: center;
+  width: 0.625em;
+}
+
+%hidden-scroll-x {
+  -ms-overflow-style: none;  /* IE 10+ */
+  overflow-x: scroll;
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    background: transparent; /* Chrome/Safari/Webkit */
+    width: 0;
+  }
+}
+
+%hidden-scroll-y {
+  -ms-overflow-style: none;  /* IE 10+ */
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    background: transparent; /* Chrome/Safari/Webkit */
+    width: 0;
+  }
+}
+
+%unselectable {
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+%loader {
+  min-height: 24px;
+  min-width: 24px;
+  overflow: hidden;
+  position: relative;
+
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+  }
+
+  &::before {
+    backdrop-filter: blur(2px);
+    background: rgba(255, 255, 255, 0.8);
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+  }
+
+  &::after {
+    animation: loadingspin 1s infinite linear;
+    border-color: rgba(26, 115, 232, 0.2);
+    border-bottom-color: rgba(26, 115, 232, 1);
+    border-radius: 50%;
+    border-style: solid;
+    border-width: 4px;
+    height: 24px;
+    left: 50%;
+    margin-left: -12px;
+    margin-top: -12px;
+    position: absolute;
+    top: 50%;
+    width: 24px;
+    z-index: 2;
+  }
+}

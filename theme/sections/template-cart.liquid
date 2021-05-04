@@ -1,70 +1,115 @@
-{%- liquid
+{% liquid
   assign title = section.settings.title
+  if title == blank
+    assign title = 'cart.general.title' | t
+  endif
+
   assign title_size = section.settings.title_level
   assign title_align = section.settings.title_align
-
-  assign hero_variant = title_align | append: ' section-header--fullhd'
 
   assign hero_bg = section.settings.hero_bg
   assign hero_color = section.settings.hero_color
   assign hero_image = section.settings.hero_image
   assign hero_bg_size = section.settings.hero_image_size
   assign hero_bg_blend = section.settings.hero_bg_blend
-  assign hero_bg_opacity = section.settings.hero_image_opacity
+  assign hero_bg_opacity = section.settings.hero_image_opacity | divided_by: 100.0
   assign hero_bg_alignment = section.settings.hero_image_alignment
--%}
 
-{%- if title == blank -%}
-  {%- capture title -%}{{ 'cart.general.title' | t }}{%- endcapture -%}
-{%- endif -%}
-{%- capture text -%}
-  <p>
-    <a aclass="fine-print" href="{{ routes.all_products_collection_url }}">
-      {{ 'cart.general.continue_shopping' | t }}
-    </a>
-  </p>
-{%- endcapture -%}
+  assign cart_notes_enabled = section.settings.cart_notes_enable
+  assign cart_ajax_enabled = section.settings.cart_ajax_enable
+  unless cart.item_count > 0
+    assign cart_is_empty = true
+  endunless
+
+  assign taxes_shipping_checkout = 'cart.general.taxes_and_shipping_at_checkout' | t
+  if shop.taxes_included and shop.shipping_policy.body != blank
+    assign taxes_shipping_checkout = 'cart.general.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url
+  elsif shop.taxes_included
+    assign taxes_shipping_checkout = 'cart.general.taxes_included_but_shipping_at_checkout' | t
+  elsif shop.shipping_policy.body != blank
+    assign taxes_shipping_checkout = 'cart.general.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url
+  endif
+
+  if cart.cart_level_discount_applications.size > 0
+    assign has_cart_level_discount = true
+  endif
+-%}
 
 {% style -%}
   .cart-header {
-    {% unless hero_color == 'rgba(0, 0, 0, 0)' %}
+    {% unless hero_color == 'rgba(0, 0, 0, 0)' -%}
       color: {{ hero_color -}};
-    {% endunless %}
+    {%- endunless %}
 
-    {% unless hero_bg == 'rgba(0, 0, 0, 0)' %}
-    background-color: {{ hero_bg -}};
-    {% endunless %}
+    {% unless hero_bg == 'rgba(0, 0, 0, 0)' -%}
+      background-color: {{ hero_bg -}};
+    {%- endunless %}
   }
 
-  {% if hero_image %}
-    {%- assign opacity = hero_bg_opacity | divided_by: 100.0 -%}
+  {% if hero_image -%}
     .cart-header .hero-background {
-        background-position: {{ hero_bg_alignment -}};
-        mix-blend-mode: {{ hero_bg_blend | default: 'normal' -}};
-
-        opacity: {{ opacity -}};
+      background-position: {{ hero_bg_alignment -}};
+      mix-blend-mode: {{ hero_bg_blend | default: 'normal' -}};
+      opacity: {{ hero_bg_opacity -}};
     }
-  {% endif %}
+  {%- endif %}
 {%- endstyle %}
 
-<div class="container mx-auto"
-  data-section-id="{{ section.id }}"
+<div class="section-template-cart"
+  data-section-id="shopify-section-{{ section.id }}"
   data-section-type="cart-template"
 >
-  <div class="section empty-page-content has-text-centered {% if cart.item_count > 0 %}hidden{% endif %}" data-empty-page-content>
+  <header class="hero small">
+    {% if hero_image -%}
+      <div class="hero-background js-enabled lazyload {% unless lazy -%}lazypreload{%- endunless -%}"
+        data-bg="{{- hero_image | img_url: '16x9' -}}"
+        data-bgset="{% render 'bgset', image: hero_image %}"
+        data-sizes="auto"
+        data-parent-fit="{{- hero_bg_size -}}"
+        {% unless hero_image.alt == blank -%}
+          aria-label="{{- hero_image.alt | escape -}}"
+          role="img"
+        {%- endunless %}
+      ></div>
+      <noscript>
+        <div class="hero-background"
+          style="background-image: url('{{- hero_image | img_url: '1920x' -}}');"
+          {% unless hero_image.alt == blank %}
+            aria-label="{{- hero_image.alt | escape -}}"
+            role="img"
+          {% endunless %}
+        ></div>
+      </noscript>
+    {%- else -%}
+      {{ 'image' | placeholder_svg_tag: 'placeholder-svg hero-background' }}
+    {%- endif %}
+    <div class="hero-body">
+      <div class="container {{ title_align -}}">
+        <h1>{{- title -}}</h1>
+        <a class="btn is-black" href="{{- routes.all_products_collection_url -}}">
+          {{ 'cart.general.continue_shopping' | t }}
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="empty-page-content supports-cookies"
+    data-empty-page-content
+    {% unless cart_is_empty -%}hidden{%- endunless -%}
+  >
     <h1 class="title">{{ 'cart.general.title' | t }}</h1>
     <p class="subtitle cart-empty-message">{{ 'cart.general.empty' | t }}</p>
-    <div class="cookie-message">
+    <div class="cookie-message supports-no-cookies">
       <p>{{ 'cart.general.cookies_required' | t }}</p>
     </div>
-    <a href="{{ routes.root_url }}" class="button is-dark cart__continue-btn">
+    <a href="{{ routes.root_url }}" class="btn is-dark supports-cookies">
       <span>{{ 'general.404.link' | t }}</span>
       <i class="material-icons-outlined">arrow_right_alt</i>
     </a>
     {% unless section.settings.empty_image == blank -%}
       {%- assign empty_image = section.settings.empty_image -%}
       {%- assign img_url = empty_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
-      <div class="lazy-image__wrapper"
+      <div class="lazy-image-wrapper"
         style="max-width: {{ empty_image.width -}}px;"
         data-loading-animation
       >
@@ -91,226 +136,65 @@
     {%- endunless %}
   </div>
 
-  <div class="cart {% if cart.item_count == 0 %}hidden{% endif %}" data-cart-wrapper>
-    <header class="hero is-small cart-header">
-      {% if hero_image -%}
-        <div class="hero-background lazyload lazypreload js"
-          data-bg="{{ hero_image | img_url: '640x480' }}"
-          data-bgset="{% render 'bgset', image: hero_image %}"
-          data-sizes="auto"
-          data-parent-fit="{{ hero_bg_size }}"
-          {% unless hero_image.alt == blank -%}
-            aria-label="{{ hero_image.alt | escape }}"
-            role="img"
-          {%- endunless %}
-        ></div>
-        <noscript>
-          <div class="hero-background no-js"
-            style="background-image: url('{{ hero_image | img_url: '1920x' }}');"
-            {% unless hero_image.alt == blank %}
-              aria-label="{{ hero_image.alt | escape }}"
-              role="img"
-            {% endunless %}
-          ></div>
-        </noscript>
-      {%- endif %}
-      <div class="hero-body">
-        {% comment %} {% render 'section-header', 
-          title: title,
-          title_level: title_size,
-          title_page: true,
-          text: text
-          size: text_size,
-          variant: hero_variant
-        %} {% endcomment %}
-      </div>
-    </header>
-    
-    <form action="{{ routes.cart_url }}" method="post" novalidate class="form columns m-0 cart-form">
-      <div class="w-full tablet:hidden cart-column cart-column--mobile-checkout">
-        <div class="cart-summary">
-          <div class="card cart-actions">
-            <div class="card-content">
-              <div class="table-container">
-                <table class="table is-fullwidth summary-table summary-table--cart">
-                  <tfoot>
-                    <tr class="summary-row summary-row--total cart-total">
-                      <th class="cart-total__title" scope="row">
-                        <strong>{{ 'cart.label.total' | t }}</strong>
-                      </th>
-                      <td class="has-no-wrap cart-total__price has-text-right"
-                        data-label="{{ 'cart.label.total' | t }}"
+  <div class="widescreen:container cart" data-cart-wrapper 
+    {% if cart_is_empty -%}hidden{%- endif -%}
+  >
+    <form action="{{ routes.cart_url }}" method="post"
+      class="form cart-form columns multiline gapless widescreen:variable-3 fullhd:variable-6"
+      novalidate
+    >
+      <div class="column wide desktop:hidden mobile-checkout">
+        <div class="card shadowless cart-actions">
+          <div class="card-content">
+            <div class="table-container summary-table">
+              <table class="table wide is-ghost">
+                <tbody>
+                  <tr class="summary-row cart-total">
+                    <th valign="middle" scope="row">
+                      <strong>{{ 'cart.label.total' | t }}</strong>
+                    </th>
+                    <td align="right"
+                      aria-label="{{ 'cart.label.total' | t }}"
+                    >
+                      <strong data-cart-total>
+                        {{ cart.total_price | money_with_currency }}
+                      </strong>
+                    </td>
+                  </tr>
+                  {% if taxes_shipping_checkout -%}
+                    <tr class="summary-row cart-taxes">
+                      <td align="right" colspan="2"
+                        aria-label="{{- 'cart.label.taxes' | t -}}"
+                        class="font-bold"
                       >
-                        <strong data-cart-total>{{ cart.total_price | money_with_currency }}</strong>
+                        {{- taxes_shipping_checkout -}}
                       </td>
                     </tr>
-                  </tfoot>
-                </table>
-              </div>
-        
-              {%- capture taxes_shipping_checkout -%}
-                {%- if shop.taxes_included and shop.shipping_policy.body != blank -%}
-                  {{ 'cart.general.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
-                {%- elsif shop.taxes_included -%}
-                  {{ 'cart.general.taxes_included_but_shipping_at_checkout' | t }}
-                {%- elsif shop.shipping_policy.body != blank -%}
-                  {{ 'cart.general.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
-                {%- else -%}
-                  {{ 'cart.general.taxes_and_shipping_at_checkout' | t }}
-                {%- endif -%}
-              {%- endcapture -%}
-              <div class="content fine-print has-text-centered cart-shipping">{{ taxes_shipping_checkout }}</div>
-              <div class="cart-buttons">
-                <div class="field is-grouped">
-                  {%- unless section.settings.cart_ajax_enable -%}
-                  <div class="control">
-                    <input type="submit" name="update"
-                        class="button is-primary is-outlined cart-button cart-button--update"
-                        value="{{ 'cart.general.update' | t }}">
-                    </div>
-                  {%- endunless -%}
-                  <div class="control is-expanded">
-                    <input type="submit" name="checkout"
-                      class="button is-dark is-fullwidth cart-buttion cart-button--submit"
-                      value="{{ 'cart.general.checkout' | t }}">
-                  </div>
-                </div>
-              </div>
-      
-              {%- if additional_checkout_buttons -%}
-                <div class="additional-checkout-buttons">{{ content_for_additional_checkout_buttons }}</div>
-              {%- endif -%}
-      
-              <div class="notification is-danger is-light cart-error-message hidden"
-                data-cart-error-message-wrapper
-                role="alert"
-              >
-                <span class="sr-only">{{ 'general.accessibility.error' | t }} </span>
-                <i class="material-icons-outlined">error</i>
-                <span class="cart__error-message" data-cart-error-message></span>
-              </div>
+                  {%- endif %}
+                </tbody>
+              </table>
             </div>
           </div>
-        </div>
-      </div>
-      
-      <div class="column is-7 cart-column cart-column--items-list">
-        <ul class="list cart-item-list" data-cart-line-items>
-          {%- for item in cart.items -%}
-            {% render 'cart-item' with 
-              item: item,
-              line_number: forloop.index
-            %}
-          {%- endfor -%}
-        </ul>
-      </div>
-
-      <div class="column is-5-tablet is-4-desktop is-3-fullhd cart-column cart-column--summary">
-        <div class="cart-summary">
-          {% if section.settings.cart_notes_enable -%}
-            <div class="field">
-              <label for="CartSpecialInstructions" class="label label--note has-text-centered-mobile">
-                {{ 'cart.general.note' | t }}
-              </label>
-              <div class="control">
-                <textarea name="note" id="CartSpecialInstructions"
-                  class="textarea textarea--note"
-                  data-cart-notes
-                >
-                  {{- cart.note -}}
-                </textarea>
-              </div>
-            </div>
-          {%- endif %}
-  
-          <div class="card is-shadowless cart-actions">
-            <div class="card-content">
-              <div class="table-container">
-                <table class="table is-fullwidth summary-table summary-table--cart">
-                  <tbody class="cart-subtotal {% if cart.cart_level_discount_applications.size == 0 %}hidden{% endif %}">
-                    <tr class="summary-row summary-row--subtotal cart-subtotal">
-                      <th class="cart-subtotal__title" scope="row">
-                        {{ 'cart.label.subtotal' | t }}
-                      </th>
-                      <td class="has-no-wrap cart-subtotal__price has-text-right"
-                        data-label="{{ 'cart.label.subtotal' | t }}"
-                        data-cart-subtotal
-                      >
-                        {{ cart.original_total_price | money_with_currency }}
-                      </td>
-                    </tr>
-                  </tbody>
-                  <tbody class="cart-discounts {% if cart.cart_level_discount_applications.size == 0 %}hidden{% endif %}"
-                    data-cart-discount-wrapper
-                  >
-                    {%- assign cartDiscounts = 'template ' | split: ' ' -%}
-                    {%- if cart.cart_level_discount_applications.size > 0 -%}
-                      {%- assign cartDiscounts = cart.cart_level_discount_applications -%}
-                    {%- endif -%}
-  
-                    {% for discount in cartDiscounts -%}
-                    <tr class="summary-row summary-row--discount cart-discount" data-cart-discount>
-                      <th scope="row">
-                        <span class="tag is-dark cart-discount__title">
-                          <i class="material-icons-outlined">sell</i>
-                          <span data-cart-discount-title>{{- discount.title -}}</span>
-                          <span class="sr-only">{{ 'customer.order.discount' | t }}:</span>
-                        </span>
-                      </th>
-                      <td class="cart-discount__value has-text-right">
-                        (-<span data-cart-discount-amount>{{ discount.total_allocated_amount | money }}</span>)
-                      </td>
-                    </tr>
-                    {%- endfor %}
-                  </tbody>
-                  <tfoot>
-                    <tr class="summary-row summary-row--total cart-total">
-                      <th class="cart-total__title" scope="row">
-                        <strong>{{ 'cart.label.total' | t }}</strong>
-                      </th>
-                      <td class="has-no-wrap cart-total__price has-text-right"
-                        data-label="{{ 'cart.label.total' | t }}"
-                      >
-                        <strong data-cart-total>{{ cart.total_price | money_with_currency }}</strong>
-                      </td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-      
-            {%- capture taxes_shipping_checkout -%}
-              {%- if shop.taxes_included and shop.shipping_policy.body != blank -%}
-                {{ 'cart.general.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
-              {%- elsif shop.taxes_included -%}
-                {{ 'cart.general.taxes_included_but_shipping_at_checkout' | t }}
-              {%- elsif shop.shipping_policy.body != blank -%}
-                {{ 'cart.general.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
-              {%- else -%}
-                {{ 'cart.general.taxes_and_shipping_at_checkout' | t }}
-              {%- endif -%}
-            {%- endcapture -%}
-            <div class="content fine-print has-text-centered cart-shipping">{{ taxes_shipping_checkout }}</div>
+          <footer class="card-footer">
             <div class="cart-buttons">
-              <div class="field is-grouped">
-                {% unless section.settings.cart_ajax_enable -%}
-                <div class="control">
-                  <input type="submit" name="update"
-                      class="button is-primary is-outlined cart-button cart-button--update"
-                      value="{{ 'cart.general.update' | t }}">
+              <div class="field grouped">
+                <div class="control expanded">
+                  <input type="submit" name="checkout"
+                    class="btn is-primary cart-button"
+                    value="{{ 'cart.general.checkout' | t }}"
+                  >
+                </div>
+                {% unless cart_ajax_enabled -%}
+                  <div class="control">
+                    <input type="submit" name="update"
+                      class="btn is-ghost cart-button"
+                      value="{{ 'cart.general.update' | t }}"
+                    >
                   </div>
                 {%- endunless %}
-                <div class="control is-expanded">
-                  <input type="submit" name="checkout"
-                    class="button is-dark is-fullwidth cart-buttion cart-button--submit"
-                    value="{{ 'cart.general.checkout' | t }}">
-                </div>
               </div>
             </div>
-      
-            {% if additional_checkout_buttons -%}
-              <div class="additional-checkout-buttons">{{ content_for_additional_checkout_buttons }}</div>
-            {%- endif %}
-      
+    
             <div class="notification is-danger is-light cart-error-message hidden"
               data-cart-error-message-wrapper
               role="alert"
@@ -319,12 +203,159 @@
               <i class="material-icons-outlined">error</i>
               <span class="cart__error-message" data-cart-error-message></span>
             </div>
+          </footer>
+        </div>
+      </div>
+      
+      <div class="column cart-items">
+        <ul class="list cart-item-list" data-cart-line-items>
+          {% for item in cart.items -%}
+            {% render 'cart-item' with 
+              item: item,
+              line_number: forloop.index
+            %}
+          {%- endfor %}
+        </ul>
+      </div>
+
+      <div class="column wide desktop:cols-5 fullhd:cols-4">
+        <div class="cart-summary">
+          {% if cart_notes_enabled -%}
+            <div class="field">
+              <label for="CartSpecialInstructions" class="label mobile:text-center">
+                {{ 'cart.general.note' | t }}
+              </label>
+              <div class="control">
+                <textarea name="note"
+                  id="CartSpecialInstructions"
+                  class="textarea"
+                  data-cart-notes
+                >
+                  {{- cart.note -}}
+                </textarea>
+              </div>
+            </div>
+          {%- endif %}
+  
+          
+          <div class="card shadowless cart-actions">
+            <div class="card-content">
+              <div class="table-container summary-table">
+                <table class="table wide is-ghost">
+                  <tbody class="cart-subtotal" 
+                    {% unless has_cart_level_discount -%}hidden{%- endunless -%}
+                  >
+                    <tr class="summary-row cart-subtotal">
+                      <th valign="middle" scope="row">{{- 'cart.label.subtotal' | t -}}</th>
+                      <td align="right" data-cart-subtotal
+                        aria-label="{{ 'cart.label.subtotal' | t }}"
+                      >
+                        {{ cart.original_total_price | money_with_currency }}
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tbody class="cart-discounts" 
+                    data-cart-discount-wrapper
+                    {% unless has_cart_level_discount -%}hidden{%- endunless -%}
+                  >
+                    {% assign cartDiscounts = 'template ' | split: ' ' -%}
+                    {%- if has_cart_level_discount -%}
+                      {%- assign cartDiscounts = cart.cart_level_discount_applications -%}
+                    {%- endif -%}
+  
+                    {% for discount in cartDiscounts -%}
+                    <tr class="summary-row cart-discount" data-cart-discount>
+                      <th valign="middle" scope="row" class="font-normal">
+                        <span class="tags normal has-addons" aria-label="{{ 'customer.order.discount' | t }}">
+                          <span class="tag is-black">
+                            <i class="icon sz-16 material-icons">sell</i>
+                          </span>
+                          <span class="tag is-black is-light text-caps">
+                            {% if discount.value_type == 'percentage' %}
+                              {%- assign amt = discount.value | round  -%}
+                              {{- 'numbers.money.percent_off' | t: value: amt -}}
+                            {%- else -%}
+                              {%- assign amt = discount.value | money -%}
+                              {{- 'numbers.money.value_off' | t: value: amt -}}
+                            {% endif %}
+                          </span>
+                        </span>
+                       <span data-cart-discount-title>{{ discount.title }}</span>
+                      </th>
+                      <td align="right" data-cart-discount-amount>
+                        {%- assign amt = discount.total_allocated_amount | money -%}
+                        {{- 'cart.label.discounted_value' | t: value: amt -}}
+                      </td>
+                    </tr>
+                    {%- endfor %}
+                  </tbody>
+                  <tfoot>
+                    <tr class="summary-row cart-total">
+                      <th valign="middle" scope="row">{{- 'cart.label.total' | t -}}</th>
+                      <td align="right" data-cart-total
+                        aria-label="{{- 'cart.label.total' | t -}}"
+                        class="font-bold"
+                      >
+                        {{- cart.total_price | money_with_currency -}}
+                      </td>
+                    </tr>
+                    {% if taxes_shipping_checkout -%}
+                      <tr class="summary-row cart-taxes">
+                        <td align="right" colspan="2"
+                          aria-label="{{- 'cart.label.taxes' | t -}}"
+                          class="font-bold"
+                        >
+                          {{- taxes_shipping_checkout -}}
+                        </td>
+                      </tr>
+                    {%- endif %}
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            <footer class="card-footer">
+              <div class="cart-buttons">
+                <div class="field grouped">
+                  <div class="control expanded">
+                    <input type="submit" name="checkout"
+                      class="btn is-primary full cart-button"
+                      value="{{ 'cart.general.checkout' | t }}"
+                    >
+                  </div>
+                  {% unless cart_ajax_enabled -%}
+                    <div class="control">
+                      <input type="submit" name="update"
+                        class="btn is-ghost cart-button"
+                        value="{{ 'cart.general.update' | t }}"
+                      >
+                    </div>
+                  {%- endunless %}
+                </div>
+              </div>
+        
+              {% if additional_checkout_buttons -%}
+                <div class="additional-checkout-buttons">
+                  {{ content_for_additional_checkout_buttons }}
+                </div>
+              {%- endif %}
+        
+              <div class="notification is-error is-light cart-error-message"
+                data-cart-error-message-wrapper
+                aria-hidden="true"
+                role="alert"
+                hidden
+              >
+                <span class="sr-only">{{ 'general.accessibility.error' | t }} </span>
+                <i class="icon material-icons-outlined">error</i>
+                <span class="cart__error-message" data-cart-error-message></span>
+              </div>
+            </footer>
           </div>
         </div>
       </div>
     </form>
 
-    <p class="sr-only" data-cart-status aria-live="polite" role="status" ></p>
+    <p class="sr-only" data-cart-status aria-live="polite" role="status"></p>
   </div>
 </div>
 
@@ -474,12 +505,12 @@
     },
     {
       "type": "header",
-      "content": "Hero Content"
+      "content": "Title Heading"
     },
     {
       "type": "color",
       "id": "hero_color",
-      "label": "Text color",
+      "label": "Text Color",
       "default": "#ffffff"
     },
     {
@@ -490,7 +521,7 @@
     {
       "type": "range",
       "id": "title_level",
-      "label": "Heading level",
+      "label": "Heading Level",
       "min": 1,
       "max": 6,
       "step": 1,
@@ -499,35 +530,39 @@
     {
       "type": "select",
       "id": "title_align",
-      "label": "Text alignment",
-      "default": "has-text-centered",
+      "label": "Heading Alignment",
+      "default": "text-center",
       "options": [
         {
           "label": "Left",
-          "value": "has-text-left"
+          "value": "text-left"
         },
         {
           "label": "Centered (default)",
-          "value": "has-text-centered"
+          "value": "text-center"
         },
         {
           "label": "Right",
-          "value": "has-text-right"
+          "value": "text-right"
         },
         {
           "label": "Justify",
-          "value": "has-text-justified"
+          "value": "text-justify"
         }
       ]
     },
     {
       "type": "header",
-      "content": "Cart Options"
+      "content": "Empty Cart"
     },
     {
       "type": "image_picker",
       "id": "empty_image",
-      "label": "Empty cart image"
+      "label": "Empty Cart Image"
+    },
+    {
+      "type": "header",
+      "content": "Cart Options"
     },
     {
       "type": "checkbox",

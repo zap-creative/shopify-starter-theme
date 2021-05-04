@@ -1,0 +1,153 @@
+$select-colors: $form-colors !default;
+
+.select {
+  display: inline-block;
+  max-width: 100%;
+  position: relative;
+  vertical-align: top;
+
+  &:not(.multiple) {
+    height: $input-height;
+  }
+
+  &:not(.multiple):not(.loading) {
+    &::after {
+      border-color: $input-arrow;
+      z-index: 4;
+
+      @include ltr-position(1.125em);
+
+      @extend %arrow;
+    }
+  }
+
+  &.rounded {
+    select {
+      @apply rounded;
+
+      @include ltr-property('padding', 1em, false);
+    }
+  }
+
+  .expanded > & {
+    width: 100%;
+
+    select {
+      width: 100%;
+    }
+  }
+
+  select {
+    cursor: pointer;
+    display: block;
+    font-size: 1em;
+    max-width: 100%;
+    outline: none;
+
+    &::-ms-expand {
+      display: none;
+    }
+
+    &[disabled]:hover,
+    fieldset[disabled] &:hover {
+      border-color: $input-disabled-border-color;
+    }
+
+    &:not([multiple]) {
+      @include ltr-property('padding', 2.5em);
+    }
+
+    &[multiple] {
+      height: auto;
+      padding: 0;
+
+      option {
+        padding: 0.5em 1em;
+      }
+    }
+
+    @extend %input;
+  }
+
+  &:not(.multiple):not(.loading):hover {
+    &::after {
+      border-color: $input-hover-color;
+    }
+  }
+
+  @each $name, $pair in $select-colors {
+    $color: nth($pair, 1);
+    $shadow: nth($pair, 3);
+    &.is-#{$name} {
+      &:not(:hover)::after {
+        border-color: $color;
+      }
+
+      select {
+        border-color: $color;
+
+        &:hover,
+        &.hovered {
+          border-color: $color;
+        }
+
+        &:focus,
+        &.focused,
+        &:active,
+        &.active {
+          box-shadow: $input-focus-box-shadow-size $shadow;
+        }
+      }
+    }
+  }
+
+  &.small {
+    @extend %control-small;
+  }
+
+  &.medium {
+    @extend %control-medium;
+  }
+
+  &.large {
+    @extend %control-large;
+  }
+
+  &.disabled {
+    &::after {
+      border-color: $input-disabled-color;
+    }
+  }
+
+  &.wide {
+    &,
+    select {
+      width: 100%;
+    }
+  }
+
+  &.loading {
+    &::after {
+      margin-top: 0;
+      position: absolute;
+      top: 0.625em;
+      transform: none;
+
+      @include ltr-position(0.625em);
+
+      @extend %loader;
+    }
+
+    &.small::after {
+      font-size: $f-size-small;
+    }
+
+    &.medium::after {
+      font-size: $f-size-medium;
+    }
+
+    &.large::after {
+      font-size: $f-size-large;
+    }
+  }
+}

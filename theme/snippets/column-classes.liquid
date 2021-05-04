@@ -1,0 +1,95 @@
+{%- liquid
+  assign mobile_columns = columns.columns_mobile | default: true
+
+  assign classes = 'column'
+  assign widths = widths | default: 'mobile tablet desktop' | split: ' '
+
+  for width in widths
+    assign breakpoint = 'column_width_' | append: width | remove: '_mobile'
+    assign width_override = column.column_width_enabled | default: force_column_override
+
+    if width_override and column[breakpoint]
+      case column[breakpoint]
+        comment
+          Cases for column widths that are defined by column size
+        endcomment
+
+        when -1
+          assign classes = classes | append: ' ' | append: width | append: ':narrow'
+        when 1
+          assign classes = classes | append: ' ' | append: width | append: ':cols-1'
+        when 2
+          assign classes = classes | append: ' ' | append: width | append: ':cols-2'
+        when 3
+          assign classes = classes | append: ' ' | append: width | append: ':one-quarter'
+        when 4
+          assign classes = classes | append: ' ' | append: width | append: ':one-third'
+        when 5
+          assign classes = classes | append: ' ' | append: width | append: ':cols-5'
+        when 6
+          assign classes = classes | append: ' ' | append: width | append: ':half'
+        when 7
+          assign classes = classes | append: ' ' | append: width | append: ':cols-7'
+        when 8
+          assign classes = classes | append: ' ' | append: width | append: ':two-thirds'
+        when 9
+          assign classes = classes | append: ' ' | append: width | append: ':three-quarters'
+        when 10
+          assign classes = classes | append: ' ' | append: width | append: ':cols-10'
+        when 11
+          assign classes = classes | append: ' ' | append: width | append: ':cols-11'
+        when 12
+          assign classes = classes | append: ' ' | append: width | append: ':wide'
+
+        else
+      endcase
+
+    else if columns[breakpoint]
+      case columns[breakpoint]
+        comment
+          Cases for columns widths that are defined by numbers of columns per row
+        endcomment
+        
+        when -1
+          assign classes = classes | append: ' ' | append: width | append: ':narrow'
+        when 1
+          assign classes = classes | append: ' ' | append: width | append: ':wide'
+        when 2
+          assign classes = classes | append: ' ' | append: width | append: ':half'
+        when 3
+          assign classes = classes | append: ' ' | append: width | append: ':one-third'
+        when 4
+          assign classes = classes | append: ' ' | append: width | append: ':one-quarter'
+        when 5
+          assign classes = classes | append: ' ' | append: width | append: ':one-fifth'
+        when 6
+          assign classes = classes | append: ' ' | append: width | append: ':cols-2'
+        
+        else
+      endcase
+
+    endif
+
+    unless mobile_columns
+      assign classes = classes | remove: 'mobile:'
+    endunless
+
+  endfor
+
+  assign visibility = ''
+  if column.invisible_desktop
+    assign visibility = ' desktop:hidden'
+  endif
+  if column.invisible_tablet
+    assign visibility = visibility | append: ' tablet-only:hidden'
+  endif
+  if column.invisible
+    assign visibility = visibility | append: ' mobile:hidden'
+  endif
+  assign visibility = visibility | replace: 'desktop:hidden tablet-only:hidden mobile:hidden', 'hidden'
+  assign visibility = visibility | replace: 'desktop:hidden tablet-only:hidden', 'tablet:hidden'
+  assign visibility = visibility | replace: 'tablet-only:hidden mobile:hidden', 'tablet-down:hidden'
+
+  assign classes = classes | append: visibility
+-%}
+{{- classes -}}

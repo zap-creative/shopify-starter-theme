@@ -15,9 +15,19 @@ const featuredImage = document.querySelector('[data-featured-image]');
 const stockMessages = document.querySelectorAll('[data-stock-message]');
 const thumbnailLinks = document.querySelectorAll('[data-thumbnail-links]');
 
-const themeStrings = window.theme.strings;
-const themeSettings = window.theme.settings;
-const themeMoneyFormat = window.theme.moneyFormat;
+const {
+  numbers: {
+    money_format = '${{value}}',
+  },
+  settings: {
+    ajaxEnabled = false,
+  },
+  strings: {
+    add_to_cart = 'Add to cart',
+    sold_out = 'Sold out',
+    unavailable = 'Unavailable',
+  },
+} = window.theme;
 
 register('product', {
   async onLoad() {
@@ -84,12 +94,15 @@ register('product', {
     const { variant } = event.dataset;
 
     // Hide all stock message.
-    stockMessages.forEach((stockMessage) => stockMessage.classList.add('hidden'));
+    stockMessages.forEach((stockMessage) => {
+      stockMessage.classList.add('hidden');
+      stockMessage.setAttribute('aria-hidden', true);
+    });
 
     // Return and reset if we don't have a variant,
     if (!variant) {
       addToCartBtn.disabled = true;
-      addToCartBtn.innerHTML = themeStrings.unavailable;
+      addToCartBtn.innerHTML = unavailable;
       return;
     }
 
@@ -97,6 +110,7 @@ register('product', {
     let stockMessage = document.getElementById(`stock-message-${variant.id}`);
     if (stockMessage) {
       stockMessage.classList.remove('hidden');
+      stockMessage.removeAttribute('aria-hidden');
     }
 
     // Update feature image
@@ -105,17 +119,20 @@ register('product', {
     }
 
     if (variant === null) {
-      // The combination of selected options does not have a matching variant
+      // The combination of selected options
+      // does not have a matching variant
       addToCartBtn.disabled = true;
-      addToCartBtn.innerHTML = themeStrings.unavailable;
+      addToCartBtn.innerHTML = unavailable;
     } else if (variant && !variant.available) {
-      // The combination of selected options has a matching variant but it is currently unavailable
+      // The combination of selected options has
+      // a matching variant but it is currently unavailable
       addToCartBtn.disabled = true;
-      addToCartBtn.innerHTML = themeStrings.soldOut;
+      addToCartBtn.innerHTML = sold_out;
     } else if (variant && variant.available) {
-      // The combination of selected options has a matching variant and it is available
+      // The combination of selected options has
+      // a matching variant and it is available
       addToCartBtn.disabled = false;
-      addToCartBtn.innerHTML = `${themeStrings.addToCart} &middot; ${formatMoney(variant.price, themeMoneyFormat)}`;
+      addToCartBtn.innerHTML = `${add_to_cart} &middot; ${formatMoney(variant.price, money_format)}`;
     }
   },
 
@@ -124,11 +141,15 @@ register('product', {
 
     addToCartBtn.classList.add('loading');
 
-    const { id } = event.dataset.variant;
-    const { quantity } = event.dataset;
-    const { properties } = event.dataset;
+    const { 
+      variant: {
+        id, 
+      },
+      properties,
+      quantity,
+    } = event.dataset;
     
-    if(!themeSettings.ajaxEnabled) {
+    if(!ajaxEnabled) {
       formElement.submit();
       return;
     }

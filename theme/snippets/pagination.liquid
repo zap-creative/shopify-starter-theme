@@ -1,0 +1,96 @@
+{% comment %}
+    Renders a pagination bar
+
+    Accepts:
+    - paginate: {Object} Paginate Liquid object (required)
+    - show_pages: {Boolean} Show pages or current page text (optional; default: false)
+    - center: {Boolean} Center pages or page count (optional; default: false)
+
+    Usage:
+    {% render 'pagination', paginate: paginate %}
+{% endcomment %}
+
+{%- liquid 
+  assign page_count = paginate.pages
+  assign has_next = paginate.next.is_link
+  assign has_previous = paginate.previous.is_link
+-%}
+
+<nav class="pagination {% if center -%}centered{%- endif -%}"
+  role="navigation"
+  aria-label="{{- 'general.pagination.title' | t -}}"
+>
+  {% unless has_previous -%}
+    <button class="pagination-previous" disabled aria-hidden="true">
+      <i class="material-icons-outlined">arrow_back</i>
+    </button>
+    {%- else -%}
+    <a href="{{- paginate.previous.url -}}" class="pagination-previous"
+      aria-label="{{- 'general.pagination.previous' | t -}}"
+    >
+      <i class="material-icons-outlined">arrow_back</i>
+    </a>
+  {%- endunless %}
+  <ul class="list row pagination-list">
+    {% unless show_pages -%}
+      <li>
+        <span class="pagination-ellipsis">
+          {{ 'general.pagination.current_page' | t: current: paginate.current_page, total: paginate.pages }}
+        </span>
+      </li>
+    {%- else -%}
+      {% for part in paginate.parts %}
+        {%- assign index = part.title | times: 1 -%}
+        {%- case index -%}
+          {%- when 1 -%} {%- comment -%} first page {%- endcomment -%}
+            {%- if part.is_link -%}
+              <li>
+                <a class="pagination-link" href="{{ part.url }}" aria-label="{{ 'general.meta.page' | t: page: part.title}}">{{ part.title }}</a>
+              </li>
+            {%- else -%}
+              <li>
+                <button class="pagination-link current" disabled>{{ part.title }}</button>
+              </li>
+            {%- endif -%}
+
+          {%- when page_count -%} {%- comment -%} last page {%- endcomment -%}
+            {%- if part.is_link -%}
+              <li>
+                <a class="pagination-link" href="{{ part.url }}" aria-label="{{ 'general.meta.page' | t: page: part.title}}">{{ part.title }}</a>
+              </li>
+            {%- else -%}
+              <li>
+                <button class="pagination-link current" disabled>{{ part.title }}</button>
+              </li>
+            {%- endif -%}
+
+          {%- else -%} {%- comment -%} middle pages {%- endcomment -%}
+            {%- if part.is_link -%}
+              <li>
+                <a class="pagination-link" href="{{ part.url }}" aria-label="{{ 'general.meta.page' | t: page: part.title}}">{{ part.title }}</a>
+              </li>
+            {%- elsif part.title == index -%}  {%- comment -%} the current page {%- endcomment -%}
+              <li>
+                <button class="pagination-link current" disabled>{{ part.title }}</button>
+              </li>
+            {%- else -%}
+              <li>
+                <span class="pagination-ellipsis">&hellip;</span>
+              </li>
+            {%- endif -%}
+        {%- endcase -%} 
+      {% endfor %}
+    {%- endunless %}
+  </ul>
+  {% unless has_next -%}
+    <button class="pagination-next" disabled aria-hidden="true">
+      <i class="material-icons-outlined">arrow_forward</i>
+    </button>
+  {%- else -%}
+    <a class="pagination-next" href="{{- paginate.next.url -}}"
+      aria-label="{{- 'general.pagination.next' | t -}}"
+    >
+      <i class="material-icons-outlined">arrow_forward</i>
+    </a>
+  {%- endunless %}
+</nav>

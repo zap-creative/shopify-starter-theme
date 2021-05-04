@@ -1,3 +1,29 @@
 #shopify-section-site-footer {
-  margin-top: auto;
+  @apply mt-auto pt-4;
+
+  background-color: var(--footer-bg);
+  color: var(--footer-color);
+
+  .payment-icons {
+    @screen desktop {
+      float: right;
+    }
+  }
+}
+
+.site-footer-social {
+  align-items: center;
+  display: flex;
+  flex-direction: row wrap;
+  justify-content: center;
+
+  .site-footer-title {
+    @apply mr-4;
+  }
+}
+
+.site-footer-legal {
+  li {
+    white-space: nowrap;
+  }
 }

@@ -1,0 +1,277 @@
+@import '../functions/utilities';
+@import '../mixins/utilities';
+
+$column-gap: 0.75rem !default;
+$column-gap-step: 0.25rem !default;
+$column-gap-steps: 8 !default;
+
+@mixin columns-alignments($size: '') {
+  &.#{$size}h-start {
+    justify-content: unless-rtl(flex-start, flex-end);
+  }
+
+  &.#{$size}h-center {
+    justify-content: center;
+  }
+
+  &.#{$size}h-end {
+    justify-content: unless-rtl(flex-end, flex-start);
+  }
+
+  &.#{$size}h-around {
+    justify-content: space-around;
+  }
+
+  &.#{$size}h-between {
+    justify-content: space-between;
+  }
+
+  &.#{$size}v-start {
+    align-items: flex-start;
+  }
+
+  &.#{$size}v-center {
+    align-items: center;
+  }
+
+  &.#{$size}v-end {
+    align-items: flex-end;
+  }
+
+  &.#{$size}v-stretch {
+    align-items: stretch;
+  }
+}
+
+@mixin column-alignments($size: '') {
+  &.#{$size}h-start {
+    align-items: unless-rtl(flex-start, flex-end);
+  }
+
+  &.#{$size}h-center {
+    align-items: center;
+  }
+
+  &.#{$size}h-end {
+    align-items: unless-rtl(flex-end, flex-start);
+  }
+
+  &.#{$size}h-stretch {
+    align-items: stretch;
+  }
+
+  &.#{$size}v-start {
+    justify-content: flex-start;
+  }
+
+  &.#{$size}v-center {
+    justify-content: center;
+  }
+
+  &.#{$size}v-end {
+    justify-content: flex-end;
+  }
+
+  &.#{$size}v-around {
+    justify-content: space-around;
+  }
+
+  &.#{$size}v-between {
+    justify-content: space-between;
+  }
+}
+
+@mixin column-rules-at($size: '') {
+  &.#{$size}h-center,
+  &.#{$size}h-start,
+  &.#{$size}h-end,
+  &.#{$size}h-stretch,
+  &.#{$size}v-center,
+  &.#{$size}v-top,
+  &.#{$size}v-bottom,
+  &.#{$size}v-stretch {
+    display: flex;
+    flex-flow: column nowrap;
+  }
+
+  @include column-alignments($size);
+
+  &.#{$size}narrow {
+    flex: none;
+    width: unset;
+  }
+
+  &.#{$size}wide {
+    flex: none;
+    width: 100%;
+  }
+
+  &.#{$size}three-quarters {
+    flex: none;
+    width: 75%;
+  }
+
+  &.#{$size}two-thirds {
+    flex: none;
+    width: 66.6666%;
+  }
+
+  &.#{$size}half {
+    flex: none;
+    width: 50%;
+  }
+
+  &.#{$size}one-third {
+    flex: none;
+    width: 33.3333%;
+  }
+
+  &.#{$size}one-quarter {
+    flex: none;
+    width: 25%;
+  }
+
+  &.#{$size}one-fifth {
+    flex: none;
+    width: 20%;
+  }
+
+  &.#{$size}two-fifths {
+    flex: none;
+    width: 40%;
+  }
+
+  &.#{$size}three-fifths {
+    flex: none;
+    width: 60%;
+  }
+
+  &.#{$size}four-fifths {
+    flex: none;
+    width: 80%;
+  }
+
+  &.#{$size}offset-three-quarters {
+    @include ltr-property('margin', 75%, false);
+  }
+
+  &.#{$size}offset-two-thirds {
+    @include ltr-property('margin', 66.6666%, false);
+  }
+
+  &.#{$size}offset-half {
+    @include ltr-property('margin', 50%, false);
+  }
+
+  &.#{$size}offset-one-third {
+    @include ltr-property('margin', 33.3333%, false);
+  }
+
+  &.#{$size}offset-one-quarter {
+    @include ltr-property('margin', 25%, false);
+  }
+
+  &.#{$size}offset-one-fifth {
+    @include ltr-property('margin', 20%, false);
+  }
+
+  &.#{$size}offset-two-fifths {
+    @include ltr-property('margin', 40%, false);
+  }
+
+  &.#{$size}offset-three-fifths {
+    @include ltr-property('margin', 60%, false);
+  }
+
+  &.#{$size}offset-four-fifths {
+    @include ltr-property('margin', 80%, false);
+  }
+
+  @for $i from 0 through 12 {
+    &.#{$size}cols-#{$i} {
+      flex: none;
+      width: percentage($i / 12);
+    }
+    &.#{$size}offset-#{$i} {
+      @include ltr-property('margin', percentage($i / 12), false);
+    }
+  }
+}
+
+.columns {
+  @include columns-alignments;
+
+  @for $i from 0 through $column-gap-steps {
+    &.variable-#{$i} {
+      --column-gap: #{$i * $column-gap-step};
+    }
+  }
+
+  &.multiline {
+    flex-wrap: wrap;
+  }
+
+  &.is-mobile {
+    display: flex;
+    flex-flow: unless-rtl(row, roreverse) nowrap;
+
+    &.gapless {
+      --column-gap: 0;
+    }
+  }
+
+  @screen tablet {
+    display: flex;
+    flex-flow: unless-rtl(row, roreverse) nowrap;
+
+    &.gapless {
+      --column-gap: 0;
+    }
+  }
+
+  @each $breakpoint in $breakpoints {
+    $size: '#{$breakpoint}\\:';
+
+    @screen #{$breakpoint} {
+      @include columns-alignments($size);
+
+      @for $i from 0 through $column-gap-steps {
+        &.#{$breakpoint}\:variable-#{$i} {
+          --column-gap: #{$i * $column-gap-step};
+        }
+      }
+
+      &.#{$breakpoint}\:gapless {
+        --column-gap: 0;
+      }
+    }
+  }
+}
+
+.column {
+  display: block;
+  flex-basis: 0;
+  flex-grow: 1;
+  flex-shrink: 1;
+  padding: var(--column-gap, $column-gap);
+
+  &.narrow {
+    width: auto;
+  }
+
+  .is-mobile > & {
+    @include column-rules-at;
+  }
+
+  @screen tablet {
+    @include column-rules-at;
+  }
+
+  @each $breakpoint in $breakpoints {
+    $size: '#{$breakpoint}\\:';
+
+    @screen #{$breakpoint} {
+      @include column-rules-at($size);
+    }
+  }
+}

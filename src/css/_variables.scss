@@ -1,0 +1,396 @@
+@import './functions/color';
+
+$rtl: false !default;
+
+// defaults from TailwindCSS
+
+$breakpoints: small tablet desktop widescreen fullhd small-only tablet-only desktop-only widescreen-only widescreen-down desktop-down tablet-down mobile touch !default;
+
+$black:        rgb(10, 10, 10) !default;
+$black-bis:    rgb(18, 18, 18) !default;
+$black-ter:    rgb(36, 36, 36) !default;
+
+$grey-darker:  rgb(54, 54, 54) !default;
+$grey-dark:    rgb(74, 74, 74) !default;
+$grey:         rgb(122, 122, 122) !default;
+$grey-light:   rgb(181, 181, 181) !default;
+$grey-lighter: rgb(219, 219, 219) !default;
+$grey-lightest: rgb(237, 237, 237) !default;
+
+$white-ter:    rgb(245, 245, 245) !default;
+$white-bis:    rgb(250, 250, 250) !default;
+$white:        rgb(255, 255, 255) !default;
+
+$orange:       rgb(255, 71, 15) !default;
+$yellow:       rgb(255, 224, 138) !default;
+$green:        rgb(72, 199, 142) !default;
+$turquoise:    rgb(0, 209, 178) !default;
+$cyan:         rgb(62, 142, 208) !default;
+$blue:         rgb(72, 95, 199) !default;
+$purple:       rgb(184, 107, 255) !default;
+$red:          rgb(241, 70, 104) !default;
+
+$darken-amt: 9%;
+$lighten-amt: 9%;
+$invert-amt: 75%;
+$bg-lighten-amt: 60%;
+
+// defaults from TailwindCSS
+
+$family-sans: -apple-system, 'BlinkMacSystemFont', 'Avenir Next', 'Avenir', 'Segoe UI', 'Helvetica Neue', 'Helvetica', 'Ubuntu', 'Roboto', 'Noto', 'Arial', sans-serif !default;
+$family-serif: 'Iowan Old Style', 'Apple Garamond', 'Baskerville', 'Times New Roman', 'Droid Serif', 'Times', 'Source Serif Pro', serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol' !default;
+$family-monospace: 'Menlo', 'Consolas', 'Monaco', 'Liberation Mono', 'Lucida Console', monospace !default;
+
+$size-body: 16px !default;
+$height-body: 1.7 !default;
+
+$height-header: 1.2 !default;
+
+$icon-size: 24 !default;
+$icon-size-min: 8 !default;
+$icon-size-max: 72 !default;
+$icon-size-scale: 8 !default;
+
+// defaults from TailwindCSS
+
+$border-radius: 0.25rem !default;
+$border-radius-sm: 0.125rem !default;
+$border-radius-md: 0.375rem !default;
+$border-radius-lg: 0.5rem !default;
+$border-radius-rounded: 9999px !default;
+
+// Reusable derived colour variables
+
+$primary: $turquoise !default;
+$accent: $cyan !default;
+
+$info: $cyan !default;
+$success: $green !default;
+$warning: $yellow !default;
+$error: $red !default;
+$sale: $primary !default;
+
+$scheme-main: $white-ter !default;
+$scheme-main-light: $white-bis !default;
+$scheme-main-lighter: $white !default;
+$scheme-invert: $black-ter !default;
+$scheme-invert-dark: $black-bis !default;
+$scheme-invert-darker: $black !default;
+
+$background: $scheme-main !default;
+
+$border: $grey-lighter !default;
+$border-hover: $grey-light !default;
+$border-dark: $grey-darker !default;
+$border-dark-hover: $grey-dark !default;
+
+$text: $grey-dark !default;
+$text-light: $grey !default;
+$text-lighter: $grey-light !default;
+$text-strong: $grey-darker !default;
+$text-stronger: $black-ter !default;
+$text-invert: invert($text, $invert-amt) !default;
+$text-invert-strong: invert($text-strong, $invert-amt) !default;
+
+$link: $blue !default;
+$link-hover: lighten($link, $lighten-amt) !default;
+$link-focus: lighten($link, $lighten-amt) !default;
+$link-active: darken($link, $darken-amt) !default;
+$link-visited: $purple !default;
+
+// Major Third Scale
+
+$size-1: 3.0517578125 !default;
+$size-2: 2.44140625 !default;
+$size-3: 1.953125 !default;
+$size-4: 1.5625 !default;
+$size-5: 1.25 !default;
+$size-6: 1 !default;
+$size-7: 0.8 !default;
+
+$weight-light: 300 !default;
+$weight-normal: 400 !default;
+$weight-medium: 500 !default;
+$weight-semibold: 600 !default;
+$weight-bold: 700 !default;
+$weight-bolder: 900 !default;
+
+$transition-duration: 350ms !default;
+$transition-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94) !default;
+
+// Variables referenced from Shopify theme variables with sensible defaults
+
+$f-size-normal: var(--f-sz-body, #{$size-body}) !default;
+$f-size-small: var(--f-sz-body-sm, floor($size-body * $size-7)) !default;
+$f-size-medium: var(--f-sz-body-md, floor($size-body * $size-5)) !default;
+$f-size-large: var(--f-sz-body-lg, floor($size-body * $size-4)) !default;
+$f-height: var(--f-lh-body, #{$height-body}) !default;
+
+$f-family: var(--f-f-body, #{$family-sans}) !default;
+$f-style: var(--f-s-body, normal) !default;
+$f-weight: var(--f-w-body, #{$weight-normal}) !default;
+$f-weight-light: var(--f-w-body--light, #{$weight-light}) !default;
+$f-weight-bold: var(--f-w-body--bold, #{$weight-bold}) !default;
+$f-weight-bolder: var(--f-w-body--bolder, #{$weight-bolder}) !default;
+
+$f-size-h1: var(--f-sz-header-1, floor($size-body * $size-1)) !default;
+$f-size-h2: var(--f-sz-header-2, floor($size-body * $size-2)) !default;
+$f-size-h3: var(--f-sz-header-3, floor($size-body * $size-3)) !default;
+$f-size-h4: var(--f-sz-header-4, floor($size-body * $size-4)) !default;
+$f-size-h5: var(--f-sz-header-5, floor($size-body * $size-5)) !default;
+$f-size-h6: var(--f-sz-header-6, floor($size-body * $size-6)) !default;
+$f-height-header: var(--f-lh-header, #{$height-header}) !default;
+
+$f-family-header: var(--f-f-header, #{$family-serif}) !default;
+$f-style-header: var(--f-s-header, normal) !default;
+$f-weight-header: var(--f-w-header, #{$weight-bold}) !default;
+$f-weight-header-light: var(--f-w-header--light, #{$weight-normal}) !default;
+$f-weight-header-bold: var(--f-w-header--bold, #{$weight-bolder}) !default;
+
+$c-primary: var(--c-primary, $primary) !default;
+$c-primary--rgb: var(--c-primary--rgb, color-to-rgb($primary)) !default;
+$c-primary-dark: var(--c-primary-dark, darken($primary, $darken-amt)) !default;
+$c-primary-light: var(--c-primary-light, lighten($primary, $lighten-amt)) !default;
+$c-primary-text: var(--c-primary-text, contrast-color($primary)) !default;
+$c-primary-bg: var(--c-primary-bg, lighten($primary, $bg-lighten-amt)) !default;
+
+$c-accent: var(--c-accent, $accent) !default;
+$c-accent--rgb: var(--c-accent--rgb, color-to-rgb($accent)) !default;
+$c-accent-dark: var(--c-accent-dark, darken($accent, $darken-amt)) !default;
+$c-accent-light: var(--c-accent-light, lighten($accent, $lighten-amt)) !default;
+$c-accent-text: var(--c-accent-text, contrast-color($accent)) !default;
+$c-accent-bg: var(--c-accent-bg, lighten($accent, $bg-lighten-amt)) !default;
+
+$c-error: var(--c-error, $error) !default;
+$c-error--rgb: var(--c-error--rgb, color-to-rgb($error)) !default;
+$c-error-dark: var(--c-error-dark, darken($error, $darken-amt)) !default;
+$c-error-light: var(--c-error-light, lighten($error, $lighten-amt)) !default;
+$c-error-text: var(--c-error-text, contrast-color($error)) !default;
+$c-error-bg: var(--c-error-bg, lighten($error, $bg-lighten-amt)) !default;
+
+$c-warning: var(--c-warning, $warning) !default;
+$c-warning--rgb: var(--c-warning--rgb, color-to-rgb($warning)) !default;
+$c-warning-dark: var(--c-warning-dark, darken($warning, $darken-amt)) !default;
+$c-warning-light: var(--c-warning-light, lighten($warning, $lighten-amt)) !default;
+$c-warning-text: var(--c-warning-text, contrast-color($warning)) !default;
+$c-warning-bg: var(--c-warning-bg, lighten($warning, $bg-lighten-amt)) !default;
+
+$c-success: var(--c-success, $success) !default;
+$c-success--rgb: var(--c-success--rgb, color-to-rgb($success)) !default;
+$c-success-dark: var(--c-success-dark, darken($success, $darken-amt)) !default;
+$c-success-light: var(--c-success-light, lighten($success, $lighten-amt)) !default;
+$c-success-text: var(--c-success-text, contrast-color($success)) !default;
+$c-success-bg: var(--c-success-bg, lighten($success, $bg-lighten-amt)) !default;
+
+$c-sale: var(--c-sale, $sale) !default;
+$c-sale--rgb: var(--c-sale--rgb, color-to-rgb($sale)) !default;
+$c-sale-dark: var(--c-sale-dark, darken($sale, $darken-amt)) !default;
+$c-sale-light: var(--c-sale-light, lighten($sale, $lighten-amt)) !default;
+$c-sale-text: var(--c-sale-text, contrast-color($sale)) !default;
+$c-sale-bg: var(--c-sale-bg, lighten($sale, $bg-lighten-amt)) !default;
+
+$c-bg: var(--c-bg, $background) !default;
+$c-bg-rgb: var(--c-bg-rgb, color-to-rgb($background)) !default;
+$c-bg-dark: var(--c-bg-dark, darken($background, $darken-amt)) !default;
+$c-bg-light: var(--c-bg-light, lighten($background, $lighten-amt)) !default;
+
+$c-border: var(--c-border, $border) !default;
+$c-border-light: var(--c-border-light, $border-hover) !default;
+$c-border-dark: var(--c-border-dark, $border-dark) !default;
+$c-border-dark--hover: var(--c-border-dark--hover, $border-dark-hover) !default;
+
+$c-text: var(--c-text, $text) !default;
+$c-text--rgb: var(--c-text--rgb, color-to-rgb($text)) !default;
+$c-text-light: var(--c-text-light, adaptive-color($text-light)) !default;
+$c-text-dark: var(--c-text-dark, adaptive-color($text-strong)) !default;
+$c-text-header: var(--c-text-header, $text-strong) !default;
+$c-text-header--rgb: var(--c-text-header--rgb, color-to-rgb($text-strong)) !default;
+$c-text-header-light: var(--c-text-header-light, adaptive-color($text)) !default;
+$c-text-header-dark: var(--c-text-header-dark, adaptive-color($text-stronger)) !default;
+
+$c-link: var(--c-link, $link) !default;
+$c-link--rgb: var(--c-link--rgb, color-to-rgb($link)) !default;
+$c-link-hover: var(--c-link--hover, $link-hover) !default;
+$c-link-focus: var(--c-link--focus, $link-focus) !default;
+$c-link-active: var(--c-link--active, $link-active) !default;
+$c-link-visited: var(--c-link--visited, $link-visited) !default;
+
+$c-btn-primary: var(--c-btn-primary, $primary) !default;
+$c-btn-primary-light: var(--c-btn-primary-light, lighten($primary, $lighten_amt)) !default;
+$c-btn-primary-dark: var(--c-btn-primary-dark, darken($primary, $darken_amt)) !default;
+$c-btn-primary-text: var(--c-btn-primary-text, contrast-color($primary)) !default;
+$c-btn-primary-text-light: var(--c-btn-primary-text-light, adaptive-color(contrast-color($primary))) !default;
+$c-btn-primary-text-dark: var(--c-btn-primary-text-dark, adaptive-color(contrast-color($primary))) !default;
+
+$c-btn-accent: var(--c-btn-accent, $accent) !default;
+$c-btn-accent-light: var(--c-btn-accent-light, lighten($accent, $lighten_amt)) !default;
+$c-btn-accent-dark: var(--c-btn-accent-dark, darken($accent, $darken_amt)) !default;
+$c-btn-accent-text: var(--c-btn-accent-text, contrast-color($accent)) !default;
+$c-btn-accent-text-light: var(--c-btn-accent-text-light, adaptive-color(contrast-color($accent))) !default;
+$c-btn-accent-text-dark: var(--c-btn-accent-text-dark, adaptive-color(contrast-color($accent))) !default;
+
+$c-form-bg: var(--c-form-bg, $scheme-main-light) !default;
+$c-form-bg--rgb: var(--c-form-bg--rgb, color-to-rgb($scheme-main-lighter)) !default;
+$c-form-headings: var(--c-form-headings, $text-strong) !default;
+$c-form-labels: var(--c-form-labels, $text) !default;
+$c-form-text: var(--c-form-text, $text-strong) !default;
+$c-form-text-dark: var(--c-form-text-dark, $text-stronger) !default;
+$c-form-text--rgb: var(--c-form-text--rgb, color-to-rgb($text-strong)) !default;
+$c-form-border: var(--c-form-border, $border) !default;
+$c-form-border-dark: var(--c-form-border-dark, $border-dark) !default;
+$c-form-border--rgb: var(--c-form-border--rgb, color-to-rgb($border)) !default;
+
+$c-image-overlay: var(--c-image-overlay, $primary) !default;
+$c-image-overlay-rgb: var(--c-image-overlay-rgb, color-to-rgb($primary)) !default;
+$c-image-overlay-text: var(--c-image-overlay-text, $text-invert) !default;
+$c-image-overlay--text-focus: var(--c-image-overlay--text-focus, $text-invert-strong) !default;
+
+$c-modal-bg: var(--c-modal-bg, $scheme-main-light) !default;
+$c-modal-text: var(--c-modal-text, $text) !default;
+$c-modal-overlay: var(--c-modal-overlay, $scheme-invert) !default;
+$c-modal-overlay--rgb: var(--c-modal-overlay--rgb, color-to-rgb($scheme-invert)) !default;
+$o-modal-overlay: var(--o-modal-overlay, 0.25) !default;
+
+$c-card-bg: var(--c-card-bg, $scheme-main-lighter) !default;
+$c-card-text: var(--c-card-text, $text) !default;
+$c-card-shadow: var(--c-card-shadow, color-to-rgb($scheme-invert)) !default;
+
+/**
+ * derived color sets
+ * 'name': (
+ *   background,
+ *   foreground,
+ *   background_light, (optional)
+ *   foreground_light, (optional)
+ *   background_dark, (optional)
+ *   foreground_dark (optional)
+ * )
+ */
+
+$colors: (
+  'black': (
+    $scheme-invert-dark,
+    $scheme-main-light,
+    $scheme-invert,
+    $scheme-main-lighter,
+    $scheme-invert-darker,
+    $scheme-main,
+    $grey-dark
+  ),
+  'white': (
+    $scheme-main-light,
+    $scheme-invert-dark,
+    $scheme-main-lighter,
+    $scheme-invert,
+    $scheme-main,
+    $scheme-invert-darker,
+    $grey-light
+  ),
+  'primary': (
+    $c-primary,
+    $c-primary-text,
+    $c-primary-light,
+    $c-primary-text,
+    $c-primary-dark,
+    $c-primary-text,
+    $c-primary-bg
+  ),
+  'accent': (
+    $c-accent,
+    $c-accent-text,
+    $c-accent-light,
+    $c-accent-text,
+    $c-accent-dark,
+    $c-accent-text,
+    $c-accent-bg
+  ),
+  'error': (
+    $c-error,
+    $c-error-text,
+    $c-error-light,
+    $c-error-text,
+    $c-error-dark,
+    $c-error-text,
+    $c-error-bg
+  ),
+  'warning': (
+    $c-warning,
+    $c-warning-text,
+    $c-warning-light,
+    $c-warning-text,
+    $c-warning-dark,
+    $c-warning-text,
+    $c-warning-bg
+  ),
+  'success': (
+    $c-success,
+    $c-success-text,
+    $c-success-light,
+    $c-success-text,
+    $c-success-dark,
+    $c-success-text,
+    $c-success-bg
+  ),
+  'sale': (
+    $c-sale,
+    $c-sale-text,
+    $c-sale-light,
+    $c-sale-text,
+    $c-sale-dark,
+    $c-sale-text,
+    $c-sale-bg
+  ),
+);
+
+/**
+ * mixins/_controls.scss
+ */
+$control-border-radius: 0;
+$control-height: 3em;
+
+/**
+ * global/form/_shared.scss
+ */
+$input-focus-border-color: $c-primary-dark;
+$input-focus-box-shadow-color: $c-primary;
+$input-icon-hover-color: $c-primary;
+
+
+/**
+* components/_modal.scss
+*/
+$modal-radius: $border-radius;
+
+/**
+* global/_button.scss
+* 'name': (background, text, hover, focus, active, disabled)
+*/
+$button-border-width: 3px;
+
+$button-ghost-color: $c-link;
+$button-ghost-hover-color: $c-link-hover;
+
+/* override the primary and accent colours for buttons */
+$button-colors: map-merge(
+  $colors,
+  (
+    'primary': (
+      $c-btn-primary,
+      $c-btn-primary-text,
+      $c-btn-primary-light,
+      $c-btn-primary-text-light,
+      $c-btn-primary-dark,
+      $c-btn-primary-text-dark,
+      $c-primary-bg
+    ),
+    'accent': (
+      $c-btn-accent,
+      $c-btn-primary-text,
+      $c-btn-accent-light,
+      $c-btn-accent-text-light,
+      $c-btn-accent-dark,
+      $c-btn-accent-text-dark,
+      $c-accent-bg
+    ),
+  )
+);

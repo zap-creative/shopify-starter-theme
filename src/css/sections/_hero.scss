@@ -1,0 +1,18 @@
+.hero[data-section-type=hero] {
+  &:not(.fixed) {
+    @apply -mx-8 px-8;
+
+    @screen widescreen {
+      @apply -mx-12 px-12;
+    }
+  }
+
+  .hero-body {
+    padding: 0;
+  }
+
+  .columns {
+    height: 100%;
+    width: 100%;
+  }
+}

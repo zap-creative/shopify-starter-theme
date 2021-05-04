@@ -1,1 +1,167 @@
-<!-- /templates/customers/account.liquid -->
+{% liquid
+  assign title_size = settings.user_pages__title_level
+  assign title_align = settings.user_pages__title_align
+
+  assign hero_variant = title_align
+  
+  assign color = settings.user_pages__hero_color
+
+  assign bg_image = settings.user_pages__hero_image
+  assign bg_opacity = settings.user_pages__login_bg_opacity | divided_by: 100.0
+  assign bg_color = settings.user_pages__hero_bg
+-%}
+
+<section class="account-section" style="background-color: {{ settings.user_pages__login_bg | default: 'var(--color-bg)'-}};">
+  {% if bg_image -%}
+    <div class="overlay background lazyload lazypreload js-enabled"
+      style="opacity: {{ bg_opacity -}};"
+      data-bg="{{ bg_image | img_url: '640x480' }}"
+      data-bgset="{% render 'bgset', image: bg_image %}"
+      data-sizes="auto"
+      data-parent-fit="cover"
+      data-loading-animation
+    >
+    </div>
+    <noscript>
+      <div class="overlay background"
+        style="background-image: url('{{- bg_image | img_url: '1920x' -}}'); opacity: {{ bg_opacity -}};"
+        {% unless bg_image.alt == blank %}
+          aria-label="{{- bg_image.alt | escape -}}"
+          role="img"
+        {% endunless %}
+      ></div>
+    </noscript>
+  {%- else -%}
+    {{ 'image' | placeholder_svg_tag: 'placeholder-svg overlay background' }}
+  {%- endif %}
+
+  <div class="hero adapt is-primary is-dark mb-10">
+    <div class="hero-body">
+      <div class="tablet:container">
+        <p class="mb-4">
+          <a href="{{- customer_logout_link -}}" class="text-gray-900">
+            &lsaquo; {{ 'general.customer.log_out' | t -}}
+          </a>
+        </p>
+        <h1 class="h2 title">{{- 'customer.account.hello' | t: name: customer.first_name -}}</h1>
+        <p class="subtitle">{{ 'customer.account.welcome' | t }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tablet:container">
+    <div class="columns account-panels">
+
+      <div class="column cols-7 account-panel">
+        {% paginate customer.orders by 6 -%}
+        <div class="account-panel-body">
+          <h2 class="h3 customer-section-title mobile:text-center">{{ 'customer.orders.title' | t }}</h2>
+          {%- if customer.orders.size != 0 -%}
+            <p>
+              <strong>{{ 'customer.orders.orders_of' | t: count: customer.orders.size, total: customer.orders_count }}</strong>
+            </p>
+            <ul class="list customer-order-list">
+              {% for order in customer.orders %}
+                {%- capture items -%}
+                  {%- if order.line_items.size > 1 -%}
+                    {{ 'customer.orders.item_count.other' | t: count: order.line_items.size }}
+                  {%- else -%}
+                    {{ 'customer.orders.item_count.one' | t: count: order.line_items.size }}
+                  {%- endif -%}
+                {%- endcapture -%}
+                {%- assign first_item = order.line_items | first -%}
+                <li class="customer-order-list__item">
+                  <div class="card is-radiusless customer-section-card">
+                    <a href="{{ order.customer_url }}" class="full-width-link">
+                      <span class="is-sr-only">{{ 'customer.orders.order_number_link' | t: number: order.name }}</span>
+                    </a>
+                    <div class="card-header">
+                      <div class="level is-mobile card-header-title">
+                        <div class="level-left">
+                          <div class="level-item" data-label="{{ 'customer.orders.date' | t }}">
+                            <span class="has-text-weight-normal">{{ order.created_at | time_tag: format: 'date' }}</span>
+                          </div>
+                        </div>
+                        <div class="level-right">
+                          <span class="level-item" data-label="{{ 'customer.orders.total' | t }}">
+                            <span class="is-size-7 has-text-weight-normal">({{ items }})</span>&nbsp;{{ order.total_price | money }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-content">
+                      <section class="columns is-mobile v-center">
+                        <div class="column cols-narrow py-0 pl-0 customer-order-list__item-image">
+                          {{ first_item | img_url: '240x', crop: 'center', scale: 2 | img_tag }}
+                        </div>
+                        <div class="column">
+                          <div class="columns multiline v-center">
+                            <div class="column cols-narrow">
+                              <p class="mt-0">
+                                <strong>{{ first_item.title }}</strong>
+                                <br>
+                                <small>{{ 'customer.orders.quantity_label' | t: quantity_count: first_item.quantity }}</small>
+                              </p>
+                            </div>
+                            {%- if order.line_items.size > 1 -%}
+                              <div class="column desktop:offset-1 text-left">
+                                <span class="link has-more-link">{{ 'customer.orders.plus_more_items' | t }}</span>
+                              </div>
+                            {%- endif -%}
+                          </div>
+                        </div>
+                      </section>
+                      <hr>
+                      <div class="level is-mobile">
+                        <div class="level-left">
+                          <span class="level-item" aria-label="{{ 'customer.orders.order_number' | t }}">
+                            {{ 'customer.orders.order_number' | t: name: order.name }}
+                          </span>
+                        </div>
+                        <div class="level-right">
+                          <a href="{{ order.customer_url }}" class="level-item" aria-label=">{{ 'customer.orders.order_number_link' | t: number: order.name }}">
+                            {{ 'customer.orders.see_details' | t }}
+                            {% render 'icon-chevron-right', size: 'lg' %}
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+            {%- if paginate.pages > 1 -%}
+            <div class="text-center">
+              {% render 'pagination', paginate: paginate, show_pages: true %}
+            </div>
+            {%- endif -%}
+        {%- else -%}
+          <p>{{ 'customer.orders.none' | t }}</p>
+        {%- endif -%}
+        </div>
+      {% endpaginate %}
+      </div>
+    
+      <div class="column">
+        <h3 class="title text-center">
+          {{- 'customer.addresses.title' | t -}}
+        </h3>
+    
+        <div class="card radiusless">
+          <section class="card-content mobile:text-center">
+            <span class="tag is-primary rounded text-caps">
+              {{- 'customer.addresses.default' | t -}}
+            </span>
+            {{- customer.default_address | format_address -}}
+          </section>
+          <footer class="card-footer">
+            <a href="{{ routes.account_addresses_url }}" class="btn full is-ghost">
+              {{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})
+            </a>
+          </footer>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,40 +1,21 @@
-:root {
-  --c-border: theme('colors.gray.300');
-  --c-error-bg: theme('colors.red.200');
-  --c-error: theme('colors.red.600');
-  --c-link-dark: theme('colors.blue.900');
-  --c-link: theme('colors.blue.600');
-  --c-primary-dark: #2a4365;
-  --c-primary: #2b6cb0;
-  --c-success-bg: theme('colors.green.200');
-  --c-success: theme('colors.green.600');
-  --c-text-light: theme('colors.gray.300');
-  --c-text-medium: theme('colors.gray.600');
-  --c-text: theme('colors.gray.900');
-}
-
 *,
 ::before,
 ::after {
   box-sizing: border-box;
 }
 
-body {
-  display: flex;
-  flex-flow: column wrap;
-  align-items: stretch;
-  justify-content: flex-start;
-
-  min-height: 100vh;
-
-  margin: 0;
+/* fast tap */
+a,
+button,
+[role='button'],
+input,
+label,
+select,
+textarea {
+  touch-action: manipulation;
 }
 
-main {
-  flex: 1;
-}
-
-/* Needed for TailwindCSS, did not want the rest of preflight */
+/* needed for TailwindCSS, did not want the rest of preflight */
 [class*='border'] {
   border-color: theme('borderColor.default', currentColor);
   border-style: solid;

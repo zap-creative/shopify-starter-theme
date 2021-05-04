@@ -1,184 +1,257 @@
 {% comment %}
   This is used to create CSS custom variables with Liquid references
 {% endcomment %}
-{% style -%}
+{% style %}
   {%- liquid
-    assign base_font = settings.type_base_font
-    assign base_font_size = settings.type_base_size
-    assign base_font_bolder = base_font | font_modify: 'weight', 'bolder'
-    assign base_font_bold = base_font | font_modify: 'weight', 'bold'
-    assign base_font_italic = base_font | font_modify: 'style', 'italic'
-    assign base_font_bold_italic = base_font_bold | font_modify: 'style', 'italic'
-    
-    assign header_font = settings.type_header_font | font_modify: 'weight': 'medium'
-    assign header_base_font_size = settings.type_header_base_size
-    assign header_font_bold = header_font | font_modify: 'weight', 'bold'
+    assign body_font = settings.type_body_font
+    assign body_font_size = settings.type_body_size
+    assign body_font_height = settings.type_body_height
+    assign body_font_light = body_font | font_modify: 'weight', 'light' 
+    assign body_font_bold = body_font | font_modify: 'weight', 'bold' 
+    assign body_font_bolder = body_font | font_modify: 'weight', 'bolder'
 
-    assign header_h1_font_size = header_base_font_size | times: 1.30
-    assign header_h2_font_size = header_base_font_size | times: 0.98
-    assign header_h3_font_size = header_base_font_size | times: 0.80
-    assign header_h4_font_size = header_base_font_size | times: 0.72
-    assign header_h5_font_size = header_base_font_size | times: 0.60
-    assign header_h6_font_size = header_base_font_size | times: 0.48
-  %}
+    assign header_font = settings.type_header_font
+    assign header_font_size = settings.type_header_size
+    if header_font_size == '2'
+      assign header_font_size = settings.type_header_size_custom  
+    endif
+    assign header_font_height = settings.type_header_height
+    assign header_font_light = header_font | font_modify: 'weight', 'normal'
+    assign header_font_bold = header_font | font_modify: 'weight', 'bolder'
+
+    assign header_levels = '1,2,3,4,5,6' | split: ',' | reverse
+    assign current_header_size = body_font_size
+
+    assign darken_amt = 9
+    assign lighten_amt = 9
+    assign bg_mix_amt = 80
+  -%}
 
   :root {
-    --font-size-base: {{ base_font_size -}};
-    --font-size-header-base: {{ header_base_font_size -}};
+    {% comment -%} Use the Major Third Scale by default {%- endcomment -%}
+    --f-sz-body: {{ body_font_size -}}px;
+    --f-sz-body-sm: {{ body_font_size | times: 0.8 | floor -}}px;
+    --f-sz-body-md: {{ body_font_size | times: 1.25 | floor -}}px;
+    --f-sz-body-lg: {{ body_font_size | times: 1.5625 | floor -}}px;
+    --f-lh-body: {{ body_font_height -}};
 
-    --font-size: {{ settings.type_base_size -}};
+    {% for lvl in header_levels -%}
+      --f-sz-header-{{- lvl }}: {{ current_header_size | floor -}}px;     
+      {%- assign current_header_size = current_header_size | times: header_font_size  %}
+    {% endfor -%}
+    --f-lh-header: {{ header_font_height -}};
 
-    --font-size-h1: {{ header_h1_font_size | divided_by: base_font_size -}};
-    --font-size-h2: {{ header_h2_font_size | divided_by: base_font_size -}};
-    --font-size-h3: {{ header_h3_font_size | divided_by: base_font_size -}};
-    --font-size-h4: {{ header_h4_font_size | divided_by: base_font_size -}};
-    --font-size-h5: {{ header_h5_font_size | divided_by: base_font_size -}};
-    --font-size-h6: {{ header_h6_font_size | divided_by: base_font_size -}};
-
-    {% if settings.type_base_enabled -%}
-      --font-stack-body: {{ base_font.family -}}, {{ base_font.fallback_families -}};
-      --font-style-body: {{ base_font.style -}};
-      --font-weight-body: {{ base_font.weight -}};
+    {% if settings.type_body_enabled -%}
+      --f-f-body: {{ body_font.family -}};
+      --f-s-body: {{ body_font.style -}};
+      --f-w-body: {{ body_font.weight -}};
+      --f-w-body--light: {{ body_font_light.weight | default: body_font.weight -}};
+      --f-w-body--bold: {{ body_font_bold.weight | default: body_font.weight -}};
+      --f-w-body--bolder: {{ body_font_bolder.weight | default: body_font.weight -}};
     {%- else -%}
-      --font-stack-body: {{ base_font.fallback_families -}};
-      --font-style-body: initial;
-      --font-weight-body: 400;
+      --f-f-body: '';
+      --f-s-body: normal;
+      --f-w-body: normal;
+      --f-w-body--light: light;
+      --f-w-body--bold: bold;
+      --f-w-body--bolder: bolder;
     {%- endif %}
-
-    --font-weight-body--bold: {{ base_font_bold.weight | default: 700 }};
-    --font-weight-body--bolder: {{ base_font_bolder.weight | default: 900 }};
 
     {% if settings.type_header_enabled -%}
-      --font-stack-header: {{ header_font.family -}}, {{ header_font.fallback_families -}};
-      --font-style-header: {{ header_font.style -}};
-      --font-weight-header: {{ header_font.weight -}};
-      --font-weight-header--bold: {{ header_font_bold.weight -}};
+      --f-f-header: {{ header_font.family -}};
+      --f-s-header: {{ header_font.style -}};
+      --f-w-header: {{ header_font.weight -}};
+      --f-w-header--light: {{ header_font_bolder.weight | default: header_font.weight -}};
+      --f-w-header--bold: {{ header_font_bolder.weight | default: header_font.weight -}};
     {%- else -%}
-      --font-stack-header: 'Proxima Nova', {{ base_font.fallback_families }};
-      --font-style-header: normal;
-      --font-weight-header: 400;
-      --font-weight-header--light: 300;
-      --font-weight-header--bold: 700;
+      --f-f-header: '';
+      --f-s-header: normal;
+      --f-w-header: bold;
+      --f-w-header--light: normal;
+      --f-w-header--bold: bolder;
     {%- endif %}
 
-    --font-rich-text-large: {{ settings.type_base_size | times: 1.15 | floor }};
-    --font-rich-text-small: {{ settings.type_base_size | times: 0.88 | floor }};
+    --c-primary: {{ settings.color_primary -}};
+    --c-primary--rgb: {{ settings.color_primary | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --c-primary-dark: {{ settings.color_primary | color_darken: darken_amt -}};
+    --c-primary-light: {{ settings.color_primary | color_lighten: lighten_amt -}};
+    --c-primary-text: {% render 'contrasting-color' with color: settings.color_primary %};
+    --c-primary-bg: {{ settings.color_body | color_mix: settings.color_primary, bg_mix_amt -}};
+    
+    --c-accent: {{ settings.color_accent -}};
+    --c-accent--rgb: {{ settings.color_accent | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --c-accent-dark: {{ settings.color_accent | color_darken: darken_amt -}};
+    --c-accent-light: {{ settings.color_accent | color_lighten: lighten_amt -}};
+    --c-accent-text: {% render 'contrasting-color' with color: settings.color_accent %};
+    --c-accent-bg: {{ settings.color_body | color_mix: settings.color_accent, bg_mix_amt -}};
+    
+    --c-error: {{ settings.color_error -}};
+    --c-error--rgb: {{ settings.color_error | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --c-error-dark: {{ settings.color_error | color_darken: darken_amt -}};
+    --c-error-light: {{ settings.color_error | color_lighten: lighten_amt -}};
+    --c-error-text: {% render 'contrasting-color' with color: settings.color_error %};
+    --c-error-bg: {{ settings.color_body | color_mix: settings.color_error, bg_mix_amt -}};
+    
+    --c-warning: {{ settings.color_warning -}};
+    --c-warning--rgb: {{ settings.color_warning | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --c-warning-dark: {{ settings.color_warning | color_darken: darken_amt -}};
+    --c-warning-light: {{ settings.color_warning | color_lighten: lighten_amt -}};
+    --c-warning-text: {% render 'contrasting-color' with color: settings.color_warning %};
+    --c-warning-bg: {{ settings.color_body | color_mix: settings.color_warning, bg_mix_amt -}};
+    
+    --c-success: {{ settings.color_success -}};
+    --c-success--rgb: {{ settings.color_success | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --c-success-dark: {{ settings.color_success | color_darken: darken_amt -}};
+    --c-success-light: {{ settings.color_success | color_lighten: lighten_amt -}};
+    --c-success-text: {% render 'contrasting-color' with color: settings.color_success %};
+    --c-success-bg: {{ settings.color_body | color_mix: settings.color_success, bg_mix_amt -}};
 
-    --color-primary: {{ settings.color_primary }};
-    --color-accent: {{ settings.color_accent }};
-    --color-primary-rgb: {{ settings.color_primary | color_to_rgb | remove: 'rgb(' | remove: ')' }};
-    --color-accent-rgb: {{ settings.color_accent | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --c-sale: {{ settings.color_sale -}};
+    --c-sale--rgb: {{ settings.color_sale | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --c-sale-dark: {{ settings.color_sale | color_darken: darken_amt -}};
+    --c-sale-light: {{ settings.color_sale | color_lighten: lighten_amt -}};
+    --c-sale-text: {% render 'contrasting-color' with color: settings.color_sale %};
+    --c-sale-bg: {{ settings.color_sale | color_mix: settings.color_sale, bg_mix_amt -}};
 
-    --color-text: {{ settings.color_text }};
-    --color-text-rgb: {{ settings.color_text | color_to_rgb | remove: 'rgb(' | remove: ')' }};
-    --color-body-text: {{ settings.color_text_body }};
-    --color-sale-text: {{ settings.color_sale_text }};
-    --color-small-button-text-border: {{ settings.color_small_button_text_border }};
-    --color-text-field: {{ settings.color_text_field }};
-    --color-text-field-text: {{ settings.color_text_field_text }};
-    --color-text-field-text-rgb: {{ settings.color_text_field_text | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --c-bg: {{ settings.color_body -}};
+    --c-bg--rgb: {{ settings.color_body | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --c-bg-dark: {{ settings.color_body | color_darken: 2 -}};
+    --c-bg-light: {{ settings.color_body | color_lighten: 2 -}};
+    
+    --c-border: {{ settings.color_borders -}};
+    --c-border-light: {{ settings.color_borders | color_lighten: lighten_amt -}};
+    --c-border-dark: {{ settings.color_borders | color_darken: darken_amt -}};
+    --c-border-dark--hover: {{ settings.color_borders -}};
 
-    --color-btn-primary: {{ settings.color_button }};
-    --color-btn-primary-darker: {{ settings.color_button | color_darken: 10 }};
-    --color-btn-primary-text: {{ settings.color_button_text }};
+    {% liquid 
+      assign text_dark = settings.color_text | color_darken: darken_amt
+      assign text_light = settings.color_text | color_lighten: lighten_amt
+      assign text_headers_dark = settings.color_text_headers | color_darken: darken_amt
+      assign text_headers_light = settings.color_text_headers | color_lighten: lighten_amt
+    -%}
+    --c-text: {{ settings.color_text -}};
+    --c-text--rgb: {{ settings.color_text | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --c-text-light: {{ text_light -}};
+    --c-text-dark: {{ text_dark -}};
+    --c-text-header: {{ settings.color_text_headers -}};
+    --c-text-header--rgb: {{ settings.color_text_headers | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --c-text-header-light: {{ text_headers_light -}};
+    --c-text-header-dark: {{ text_headers_dark -}};
+    
+    --c-link: {{ settings.color_text_links -}};
+    --c-link--rgb: {{ settings.color_text_links | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --c-link--hover: {{ settings.color_text_links | color_lighten: lighten_amt -}};
+    --c-link--focus: {{ settings.color_text_links | color_lighten: lighten_amt -}};
+    --c-link--active: {{ settings.color_text_links | color_darken: darken_amt -}};
+    --c-link--visited: {{ settings.color_text_links -}};
+    
+    --c-btn-primary: {{ settings.color_button -}};
+    --c-btn-primary-light: {{ settings.color_button | color_lighten: lighten_amt -}};
+    --c-btn-primary-dark: {{ settings.color_button | color_darken: darken_amt -}};
+    --c-btn-primary-text: {{ settings.color_button_text -}};
+    --c-btn-primary-text-light: {{ settings.color_button_text | color_lighten: lighten_amt -}};
+    --c-btn-primary-text-dark: {{ settings.color_button_text | color_darken: darken_amt -}};
 
-    --color-blankstate: {{ settings.color_text_body | color_modify: 'alpha', 0.35 }};
-    --color-blankstate-border: {{ settings.color_text_body | color_modify: 'alpha', 0.2 }};
-    --color-blankstate-background: {{ settings.color_text_body | color_modify: 'alpha', 0.1 }};
+    --c-btn-accent: {{ settings.color_small_button -}};
+    --c-btn-accent-light: {{ settings.color_small_button | color_lighten: lighten_amt -}};
+    --c-btn-accent-dark: {{ settings.color_small_button | color_darken: darken_amt -}};
+    --c-btn-accent-text: {{ settings.color_small_button_text -}};
+    --c-btn-accent-text-light: {{ settings.color_small_button_text | color_lighten: lighten_amt -}};
+    --c-btn-accent-text--dark: {{ settings.color_small_button_text | color_darken: darken_amt -}};
 
-    --color-text-focus: {%- render 'adaptive-color' with settings.color_text as color -%};
-    --color-overlay-text-focus: {%- render 'adaptive-color' with settings.color_image_overlay_text as color -%};
-    --color-btn-primary-focus: {%- render 'adaptive-color' with settings.color_button as color -%};
-    --color-btn-social-focus: {%- render 'adaptive-color' with settings.color_borders as color -%};
-    --color-small-button-text-border-focus: {%- render 'adaptive-color' with settings.color_small_button_text_border as color -%};
-    --predictive-search-focus: {%- render 'adaptive-color' with settings.color_body_bg as color, is_background_color: true -%};
+    --c-form-bg: {{ settings.color_text_field -}};
+    --c-form-bg--rgb: {{ settings.color_text_field | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --c-form-headings: {{ settings.color_text_field_titles -}};
+    --c-form-labels: {{ settings.color_text_field_labels -}};
+    --c-form-text: {{ settings.color_text_field_text -}};
+    --c-form-text-dark: {{ settings.color_text_field_text | color_darken: darken_amt -}};
+    --c-form-text--rgb: {{ settings.color_text_field_text | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --c-form-border: {{ settings.color_text_field_border -}};
+    --c-form-border-dark: {{ settings.color_text_field_border | color_darken: darken_amt}};
+    --c-form-border--rgb: {{ settings.color_text_field_border | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
 
-    --color-bg: {{ settings.color_body_bg }};
-    --color-bg-rgb: {{ settings.color_body_bg | color_to_rgb | remove: 'rgb(' | remove: ')' }};
-    --color-bg-alt: {{ settings.color_text_body | color_modify: 'alpha', 0.05 }};
-    --color-bg-currency-selector: {{ settings.color_text_body | color_modify: 'alpha', 0.2 }};
+    --c-image-overlay: {{ settings.color_image_overlay -}};
+    --c-image-overlay-rgb: {{ settings.color_image_overlay | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --c-image-overlay-text: {{ settings.color_image_overlay_text -}};
+    --c-image-overlay--text-focus: {% render 'adaptive-color' with color: settings.color_image_overlay_text %};
 
-    --color-card: {{ settings.color_card -}};
-    --color-card-rgb: {{ settings.color_card | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-    --color-card-text: {{ settings.color_card_text -}};
-    --color-card-highlight: {{ settings.color_card | color_lighten: 20 | color_modify: 'alpha', 0.75 -}};
-    --color-card-shadow: {{ settings.color_card_shadow | color_modify: 'alpha', 0.5 -}};
-    --color-card-shadow-op1: {{ settings.color_card_shadow | color_lighten: 12 | color_modify: 'alpha', 0.075 -}};
-    --color-card-shadow-op2: {{ settings.color_card_shadow | color_lighten: 18 | color_modify: 'alpha', 0.15 -}};
+    --c-modal-bg:  {{ settings.color_modal -}};
+    --c-modal-text:  {{ settings.color_modal_text -}};
+    --c-modal-overlay: {{ settings.color_modal_overlay -}};
+    --c-modal-overlay--rgb: {{ settings.color_modal_overlay | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --o-modal-overlay: {{ settings.opacity_modal_overlay | times: 0.01 -}};
 
-    --color-overlay-title-text: {{ settings.color_image_overlay_text }};
-    --color-image-overlay: {{ settings.color_image_overlay }};
-    --color-image-overlay-rgb: {{ settings.color_image_overlay | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --c-card-bg: {{ settings.color_card -}};
+    --c-card-text: {{ settings.color_card_text -}};
+    --c-card-shadow: {{ settings.color_card_shadow | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
 
-    {%- assign image_overlay_opacity = settings.image_overlay_opacity | divided_by: 100.00 -%}
-    --opacity-image-overlay: {{ image_overlay_opacity }};
-
-    {%- comment -%}
+    {% comment -%}
       Brand logo variables
     {%- endcomment -%}
-    --brand-logo-width: {{ settings.logo_max_width | escape | append: 'px'}};
-    --brand-logo-width-mobile: {{ settings.logo_max_width | times: 0.75 | escape | append: 'px'}};
+    --brand-logo-width: {{ settings.logo_max_width | append: 'px'}};
 
-    {%- comment -%}
+    {% comment -%}
       Based on the image overlay opacity, either lighten or darken the image on hover
     {%- endcomment -%}
+    {%- assign image_overlay_opacity = settings.image_overlay_opacity | divided_by: 100.00 -%}
     {%- if image_overlay_opacity > 0.85 -%}
       {%- assign image_overlay_opacity_hover = image_overlay_opacity | minus: 0.3 -%}
     {%- else -%}
       {%- assign image_overlay_opacity_hover = image_overlay_opacity | plus: 0.4 -%}
     {%- endif -%}
+    --opacity-image-overlay: {{ image_overlay_opacity }};
     --hover-overlay-opacity: {{ image_overlay_opacity_hover | at_most: 1 }};
 
-    --color-border: {{ settings.color_borders }};
-    --color-border-form: {{ settings.color_text_field_border }};
-    --color-border-form-darker: {{ settings.color_text_field_border | color_darken: 10}};
-
-    --svg-brand-icon: url({{ "icon-brand.svg" | asset_url }});
-    --svg-select-icon: url({{ "icon-select.svg" | asset_url }});
-    --slick-img-url: url({{ "ajax-loader.gif" | asset_url }});
-
-    {% comment -%} Create an appropriate poster background color based on background color and brightness {%- endcomment -%}
+    {% comment -%} 
+      Create an appropriate poster background color 
+      based on background color and brightness 
+    {%- endcomment -%}
     {%- assign color_body_bg = settings.color_body_bg -%}
     {%- assign color_body_bg_brightness = color_body_bg | color_brightness -%}
     {%- if color_body_bg_brightness <= 26 -%}
-      {%- assign background_color_poster = color_body_bg | color_lighten: 10 -%}
+      {%- assign background_color_poster = color_body_bg | color_lighten: lighten_amt -%}
     {%- elsif color_body_bg_brightness <= 65 -%}
       {%- assign background_color_poster = color_body_bg | color_lighten: 5 -%}
     {%- else -%}
       {%- assign background_color_poster = color_body_bg | color_darken: 5 -%}
     {%- endif -%}
-    --color-video-bg: {{ background_color_poster }};
+    --c-video-bg: {{ background_color_poster }};
 
     {% comment -%} Image placeholder {%- endcomment -%}
-    {% assign placeholder_alpha = settings.color_image_loader_opacity | divided_by: 100.00 -%}
-    --global-color-image-loader-primary: {{ settings.color_image_loader | color_modify: 'alpha', placeholder_alpha }};
-    --global-color-image-loader-secondary: {{ settings.color_image_loader | color_darken: 5 | color_modify: 'alpha', placeholder_alpha }};
+    {%- assign placeholder_alpha = settings.color_image_loader_opacity | divided_by: 100.00 -%}
+    --c-image-loader-primary: {{ settings.color_image_loader | color_modify: 'alpha', placeholder_alpha }};
+    --c-image-loader-secondary: {{ settings.color_image_loader | color_darken: 5 | color_modify: 'alpha', placeholder_alpha }};
+
+    {% comment -%}Banner variables{%- endcomment -%}
+    {%- capture banner_text_color -%}
+      {% render 'contrasting-color' with color: settings.color_primary -%}
+    {%- endcapture -%}
+    --c-banner-bg: {{ settings.color_primary }};
+    --c-banner-bg--hover: {% render 'adaptive-color' with color: settings.color_primary, is_background_color: true -%};
+    --c-banner-text: {{ banner_text_color -}};
+    --c-banner-text--hover: {% render 'adaptive-color' with color: banner_text_color -%};
   }
 
   @media screen and (max-width: 767px) {
     :root {
-      --font-size: {{ settings.type_base_size | times: 0.9 | floor -}};
+      --f-sz-body: {{ body_font_size | times: 0.9 | floor -}}px;
+      --f-sz-body-sm: {{ body_font_size | times: 0.9 | times: 0.875 | floor -}}px;
+      --f-sz-body-md: {{ body_font_size | times: 0.9 | times: 1.25 | floor -}}px;
+      --f-sz-body-lg: {{ body_font_size | times: 0.9 | times: 1.5 | floor -}}px;
 
-      --font-size-h1: {{ header_h1_font_size | divided_by: base_font_size | times: 0.9 -}};
-      --font-size-h2: {{ header_h2_font_size | divided_by: base_font_size | times: 0.9 -}};
-      --font-size-h3: {{ header_h3_font_size | divided_by: base_font_size | times: 0.9 -}};
-      --font-size-h4: {{ header_h4_font_size | divided_by: base_font_size | times: 0.9 -}};
-      --font-size-h5: {{ header_h5_font_size | divided_by: base_font_size | times: 0.9 -}};
-      --font-size-h6: {{ header_h6_font_size | divided_by: base_font_size | times: 0.9 -}};
-
+      {% comment -%}
+        Brand logo variables
+      {%- endcomment -%}
+      --brand-logo-width: {{ settings.logo_max_width | times: 0.75 | round | append: 'px'}};
     }
   }  
 
   @media screen and (min-width: 1408px) {
     :root {
-      --font-size: {{ settings.type_base_size | times: 1.05 | floor -}};
-
-      --font-size-h1: {{ header_h1_font_size | divided_by: base_font_size | times: 1.05 -}};
-      --font-size-h2: {{ header_h2_font_size | divided_by: base_font_size | times: 1.05 -}};
-      --font-size-h3: {{ header_h3_font_size | divided_by: base_font_size | times: 1.05 -}};
-      --font-size-h4: {{ header_h4_font_size | divided_by: base_font_size | times: 1.05 -}};
-      --font-size-h5: {{ header_h5_font_size | divided_by: base_font_size | times: 1.05 -}};
-      --font-size-h6: {{ header_h6_font_size | divided_by: base_font_size | times: 1.05 -}};
+      --f-sz-body: {{ body_font_size | times: 1.05 | floor -}}px;
+      --f-sz-body-sm: {{ body_font_size | times: 1.05 | times: 0.875 | floor -}}px;
+      --f-sz-body-md: {{ body_font_size | times: 1.05 | times: 1.25 | floor -}}px;
+      --f-sz-body-lg: {{ body_font_size | times: 1.05 | times: 1.5 | floor -}}px;
     }
   }
 {%- endstyle %}

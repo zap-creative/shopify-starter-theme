@@ -1,41 +1,58 @@
+@namespace xlink 'http://www.w3.org/1999/xlink';
+
+@charset 'utf-8';
+
 /**
- * TailwindCSS
+ * TailwindCSS base
  */
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 
-/**
- * Custom styles
- */
-
 /* Third party */
 @import 'https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined';
 
-/* Base & global styles */
+/* varables */
+@import './variables';
+
+/* base & global styles */
 @import './global/base';
-@import './global/images';
-@import './global/forms';
-@import './global/typography';
-@import './global/layout';
 @import './global/button';
+@import './global/columns';
+@import './global/display';
 @import './global/dropdown';
-@import './global/flex-list';
+@import './global/forms';
+@import './global/images';
+@import './global/layout';
+@import './global/list';
+@import './global/table';
+@import './global/typography';
 @import './global/shopify-utilites';
 
-/* Components */
-@import './components/site-header';
-@import './components/site-footer';
-@import './components/navigation';
-@import './components/mobile-navigation';
+/* components */
 @import './components/announcement';
 @import './components/banner';
+@import './components/card';
 @import './components/hero';
 @import './components/loading';
+@import './components/material-icon';
+@import './components/mobile-navigation';
+@import './components/modal';
+@import './components/navigation';
+@import './components/pagination';
 @import './components/product-listing';
 @import './components/search-drawer';
+@import './components/site-footer';
+@import './components/site-header';
+@import './components/svg-icon';
+@import './components/tag';
+
+/* sections */
+@import './sections/hero';
+
+/* global templates */
+@import './templates/captcha';
 
 /**
  * TailwindCSS utilities
- * Should be last for specificity priority
  */
 @import 'tailwindcss/utilities';

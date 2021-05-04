@@ -1,0 +1,59 @@
+@import '../mixins/icons';
+
+$svg-icon-color: inherit !default;
+
+$svg-icon-size: $icon-size !default;
+$svg-icon-size-min: $icon-size-min !default;
+$svg-icon-size-max: $icon-size-max !default;
+$svg-icon-scale: $icon-size-scale !default;
+$svg-icon-steps: ($svg-icon-size-max - $svg-icon-size-min) / $svg-icon-scale;
+
+.svg-icon {
+  aspect-ratio: 1 / 1;
+  color: $svg-icon-color;
+  height: #{$svg-icon-size}px;
+  width: #{$svg-icon-size}px;
+
+  @include icon-sizes (
+    $svg-icon-size,
+    $svg-icon-scale,
+    $svg-icon-size-min,
+    $svg-icon-steps,
+    (height, width),
+    'px'
+  );
+
+  &.is-branded {
+    use[xlink|href='#facebook'] {
+      color: #1877f2;
+    }
+
+    use[xlink|href='#instagram'] {
+      color: #e4405f;
+    }
+
+    use[xlink|href='#pinterest'] {
+      color: #bd081c;
+    }
+
+    use[xlink|href='#snapchat'] {
+      color: #fffc00;
+    }
+
+    use[xlink|href='#tumblr'] {
+      color: #36465d;
+    }
+
+    use[xlink|href='#twitter'] {
+      color: #1da1f2;
+    }
+
+    use[xlink|href='#vimeo'] {
+      color: #1ab7ea;
+    }
+
+    use[xlink|href='#youtube'] {
+      color: #f00;
+    }
+  }
+}

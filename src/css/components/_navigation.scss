@@ -4,6 +4,7 @@
 }
 
 .navigation {
+  align-items: center;
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
@@ -38,9 +39,9 @@
 }
 
 .nav-link {
-  font-family: var(--font-stack-header);
-  font-size: calc(((var(--font-h6-desktop)) / (var(--font-size-base))) * 1rem);
-  font-weight: var(--font-weight-header);
+  @apply font-heading;
+
+  font-weight: var(--f-weight-header);
   letter-spacing: 1px;
   text-transform: uppercase;
 

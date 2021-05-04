@@ -1,0 +1,16 @@
+{%- comment -%}Preload requests for the third-party font defaults{%- endcomment -%}
+{% if settings.type_header_enabled and settings.type_header_font -%}
+  <link rel="preload" as="font" href="{{ settings.type_header_font | font_url }}" type="font/woff2" crossorigin>
+{%- endif %}
+{% if settings.type_body_enabled and settings.type_body_font -%}
+  <link rel="preload" as="font" href="{{ settings.type_body_font | font_url }}" type="font/woff2" crossorigin>
+{%- endif %}
+
+{% style -%}
+  {% if settings.type_header_enabled and settings.type_header_font -%}
+    {{ settings.type_header_font | font_face: font_display: 'swap' }}
+  {%- endif %}
+  {% if settings.type_body_enabled and settings.type_body_font -%}
+    {{ settings.type_body_font | font_face: font_display: 'swap' }}
+  {%- endif %}
+{%- endstyle %}

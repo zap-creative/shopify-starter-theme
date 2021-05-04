@@ -1,0 +1,21 @@
+@mixin icon-sizes (
+  $default: $icon-size,
+  $step: $icon-size-scale,
+  $start: $icon-size-min,
+  $steps: ($icon-size-max - $icon-size) / $icon-size-scale,
+  $properties: (height, width),
+  $unit: 'px',
+  $prefix: 'sz-'
+) {
+  @for $sz from 0 through $steps {
+    $sz: #{$sz * $step + $start};
+
+    @if $sz != $default {
+      &.sz-#{$sz} {
+        @each $prop in $properties {
+          #{$prop}: #{$sz + $unit};
+        }
+      }
+    }
+  }
+}

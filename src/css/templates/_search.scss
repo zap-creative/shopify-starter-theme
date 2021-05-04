@@ -1,0 +1,20 @@
+.template-search {
+  .hero {
+    @apply mb-16;
+
+    @screen desktop {
+      @apply mb-24;
+    }
+  }
+
+  h1 {
+    @apply my-2;
+  }
+}
+
+.search-form {
+  @apply max-w-2xl my-2;
+
+  margin-left: auto;
+  margin-right: auto;
+}

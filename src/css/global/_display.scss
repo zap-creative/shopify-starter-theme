@@ -1,0 +1,32 @@
+/**
+ * Custom display classes because I want to add
+ * the ability to hide an element across all breakpoints with
+ * a single .hidden class override.
+ */
+
+.hidden {
+  display: none !important;
+}
+
+@each $breakpoint in $breakpoints {
+  $size: '#{$breakpoint}\\:';
+
+  @screen #{$breakpoint} {
+    .#{$breakpoint}\:hidden {
+      display: none !important;
+    }
+  }
+}
+
+.overlay {
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  &.background {
+    z-index: -1;
+  }
+}

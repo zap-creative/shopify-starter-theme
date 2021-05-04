@@ -1,107 +1,180 @@
+$hero-medium: 300px !default;
+$hero-xsmall: floor($hero-medium * (1 / 3)) !default;
+$hero-small: floor($hero-medium * (3 / 5)) !default;
+$hero-large: floor($hero-medium * (4 / 3)) !default;
+$hero-xlarge: floor($hero-medium * (5 / 3)) !default;
+
+$hero-colors: $colors !default;
+
 .hero {
-  position: relative;
-}
-
-.hero--md {
-  max-height: 600px;
-}
-
-.hero__image {
   height: auto;
-  object-fit: cover;
-  vertical-align: bottom;
-  width: 100%;
-}
-
-.hero__image.placeholder-svg {
-  min-height: 600px;
-}
-
-.hero__title {
-  left: 50%;
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.hero__content {
-  margin-top: -1rem;
-  padding: 0 1rem 1rem 1rem;
   position: relative;
-  z-index: 1;
-}
 
-.hero__content-block {
-  background: #fff;
-  border-top: 3px solid var(--c-primary);
-  padding: 1rem;
-}
-
-.hero--dark .hero__content-block {
-  background: #2c2e2f;
-  color: #ffff;
-}
-
-@media (min-width: 768px) {
-  .hero {
-    display: flex;
-    max-height: 100vh;
+  &.fixed {
+    @extend .container;
   }
 
-  .hero--full {
+  &.is-error {
+    background: $c-error-bg;
+  }
+
+  &.xsmall {
+    height: $hero-xsmall;
+  }
+
+  &.small {
+    height: $hero-small;
+  }
+
+  &.medium {
+    height: $hero-medium;
+  }
+
+  &.large {
+    height: $hero-large;
+  }
+
+  &.xlarge {
+    height: $hero-xlarge;
+  }
+
+  &.full {
     height: 100vh;
   }
 
-  .hero__content {
-    align-items: flex-start;
-    display: flex;
-    height: 100%;
-    left: 0;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    top: 0;
+  &.adapt {
+    height: auto;
+    max-height: 100vh;
+  }
+
+  @each $name, $set in $hero-colors {
+    $background: nth($set, 1);
+    $text: nth($set, 2);
+
+    &.is-#{$name} {
+      background-color: $background;
+      color: $text;
+
+      @if length($set) > 3 {
+        $background-light: nth($set, 3);
+        $text-light: nth($set, 4);
+
+        &.is-light {
+          background-color: $background-light;
+          color: $text-light;
+        }
+      }
+
+      @if length($set) > 5 {
+        $background-dark: nth($set, 5);
+        $text-dark: nth($set, 6);
+
+        &.is-dark {
+          background-color: $background-dark;
+          color: $text-dark;
+        }
+      }
+    }
+  }
+}
+
+.hero-body {
+  @apply py-16 px-8;
+
+  align-items: center;
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+
+  > .container {
+    flex: 0 1 auto;
+    height: auto;
     width: 100%;
   }
 
-  /* Horizontal position */
-  .hero__content--left {
-    justify-content: flex-start;
+  .adapt > &,
+  .small > &,
+  .xsmall > & {
+    @apply py-4 px-8;
   }
 
-  .hero__content--center {
-    justify-content: center;
+  .is-error > & {
+    .title,
+    .subtitle {
+      color: $c-error;
+    }
   }
+}
 
-  .hero__content--right {
-    justify-content: flex-end;
+.hero-background {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 0;
+}
+
+@screen tablet {
+  .hero {
+    &.xsmall {
+      height: ($hero-xsmall * 1.25);
+    }
+
+    &.small {
+      height: ($hero-small * 1.25);
+    }
+
+    &.medium {
+      height: ($hero-medium * 1.25);
+    }
+
+    &.large {
+      height: ($hero-large * 1.25);
+    }
+
+    &.xlarge {
+      height: ($hero-xlarge * 1.25);
+    }
+
+    &.full {
+      min-height: ($hero-xlarge * 1.25);
+    }
+
+    &.adapt {
+      height: auto;
+      max-height: 100vh;
+    }
   }
+}
 
-  /* Vertical position */
-  .hero__content--top {
-    align-items: flex-start;
-  }
+@screen widescreen {
+  .hero {
+    &.xsmall {
+      height: ($hero-xsmall * 1.55);
+    }
 
-  .hero__content--middle {
-    align-items: center;
-  }
+    &.small {
+      height: ($hero-small * 1.55);
+    }
 
-  .hero__content--bottom {
-    align-items: flex-end;
-  }
+    &.medium {
+      height: ($hero-medium * 1.55);
+    }
 
-  .hero__content-block {
-    background: rgba(255, 255, 255, 0.5);
-    border-top: 0;
-    display: inline-block;
-    margin: 2rem;
-    max-width: 520px;
-    padding: 1.5rem 2rem 1.5rem 1.5rem;
-    position: sticky;
-    top: 2rem;
-  }
+    &.large {
+      height: ($hero-large * 1.55);
+    }
 
-  .hero--dark .hero__content-block {
-    background: rgba(0, 0, 0, 0.5);
+    &.xlarge {
+      height: ($hero-xlarge * 1.55);
+    }
+
+    &.full {
+      min-height: ($hero-xlarge * 1.55);
+    }
   }
 }

@@ -1,1 +1,229 @@
-<!-- /templates/customers/register.liquid -->
+{% liquid 
+  assign bg_image = settings.user_pages__login_bg_image
+  assign bg_opacity = settings.user_pages__login_bg_opacity | divided_by: 100.0
+
+  assign form_id = 'RegisterForm'
+-%}
+
+<section class="customer-section" style="background-color: {{ settings.user_pages__login_bg | default: 'var(--color-bg)'-}};">
+  {% if bg_image -%}
+    <div class="overlay background lazyload lazypreload js-enabled"
+      style="opacity: {{ bg_opacity -}};"
+      data-bg="{{ bg_image | img_url: '640x480' }}"
+      data-bgset="{% render 'bgset', image: bg_image %}"
+      data-sizes="auto"
+      data-parent-fit="cover"
+      data-loading-animation
+    >
+    </div>
+    <noscript>
+      <div class="overlay background"
+        style="background-image: url('{{- bg_image | img_url: '1920x' -}}'); opacity: {{ bg_opacity -}};"
+        {% unless bg_image.alt == blank %}
+          aria-label="{{- bg_image.alt | escape -}}"
+          role="img"
+        {% endunless %}
+      ></div>
+    </noscript>
+  {%- else -%}
+    {{ 'image' | placeholder_svg_tag: 'placeholder-svg overlay background' }}
+  {%- endif %}
+    
+  <div class="tablet:container">
+    <div class="columns h-center">
+      <div class="column cols-10 desktop:cols-7 widescreen:cols-5">
+        {% form 'create_customer', id: form_id, 
+          class: 'form card register-card' 
+        %}
+          <header class="card-header">
+            <h1 class="h3 title">
+              {{- 'customer.register.title' | t -}}
+            </h1>
+          </header>
+    
+          <section class="card-content">
+            {% render 'form-status' with form: form, form_id: form_id %}
+
+            <div class="field grouped multiline">
+              {% liquid 
+                if form[first_name]
+                  assign first_name_value = form[first_name]
+                endif
+
+                if form.errors contains 'first_name'
+                  assign first_name_error = true
+                endif
+              -%}
+              <div class="control expanded">
+                <label class="label" for="{{- form_id -}}-first-name">
+                  {{- 'customer.register.first_name' | t -}}
+                </label>
+                <input type="text" name="customer[first_name]" 
+                  placeholder="{{- 'customer.register.first_name' | t -}}"
+                  value="{{- first_name_value -}}" 
+                  id="{{- form_id -}}-first-name"
+                  class="input {% if first_name_error -%}is-error{%- endif -%}"
+                  autocomplete="given-name"
+                  autocorrect="off"
+                  {% if first_name_error -%}
+                    aria-describedby="{{- form_id -}}-first-name-error"
+                    aria-invalid="true"
+                  {%- endif %}
+                >
+                {% if first_name_error -%}
+                  <p id="{{- form_id -}}-first-name-error" class="help is-error">
+                    <i class="material-icons-outlined" 
+                      aria-label="{{- 'general.accessibility.error' | t -}}"
+                    >error</i>
+                    <span>
+                      {{- form.errors.translated_fields['first_name'] | capitalize }} {{ form.errors.messages['first_name'] -}}
+                    </span>
+                  </p>
+                {%- endif %}
+              </div>
+
+              {% liquid 
+                if form[last_name]
+                  assign last_name_value = form[last_name]
+                endif
+
+                if form.errors contains 'last_name'
+                  assign last_name_error = true
+                endif
+              -%}
+              <div class="control expanded">
+                <label class="label" for="{{- form_id -}}-last-name">
+                  {{- 'customer.register.last_name' | t -}}
+                </label>
+                <input type="text" name="customer[last_name]" 
+                  placeholder="{{- 'customer.register.last_name' | t -}}"
+                  value="{{- last_name_value -}}" 
+                  id="{{- form_id -}}-last-name"
+                  class="input {% if last_name_error -%}is-error{%- endif -%}"
+                  autocomplete="family-name"
+                  autocorrect="off"
+                  {% if last_name_error -%}
+                    aria-describedby="{{- form_id -}}-last-name-error"
+                    aria-invalid="true"
+                  {%- endif %}
+                >
+                {% if last_name_error -%}
+                  <p id="{{- form_id -}}-last-name-error" class="help is-error">
+                    <i class="material-icons-outlined" 
+                      aria-label="{{- 'general.accessibility.error' | t -}}"
+                    >error</i>
+                    <span>
+                      {{- form.errors.translated_fields['last_name'] | capitalize }} {{ form.errors.messages['last_name'] -}}
+                    </span>
+                  </p>
+                {%- endif %}
+              </div>
+            </div>
+
+            <div class="field">
+              {% liquid 
+                if form[email]
+                  assign email_value = form[email]
+                endif
+
+                if form.errors contains 'email'
+                  assign email_error = true
+                endif
+              -%}
+              <div class="control">
+                <label class="label" for="{{- form_id -}}-email">
+                  {{- 'customer.register.email' | t -}}
+                </label>
+                <input type="email" name="customer[email]"
+                  placeholder="{{- 'customer.register.email' | t -}}"
+                  value="{{- email_value -}}"
+                  id="{{- form_id -}}-email"
+                  class="input {% if email_error -%}is-error{%- endif -%}"
+                  inputmode="email"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  autocomplete="email"
+                  aria-required="true"
+                  required
+                  {% if email_error -%}
+                    aria-describedby="{{- form_id -}}-email-error"
+                    aria-invalid="true"
+                  {%- endif %}
+                >
+                {% if email_error -%}
+                  <p id="{{- form_id -}}-email-error" class="help is-error">
+                    <i class="material-icons-outlined" 
+                      aria-label="{{- 'general.accessibility.error' | t -}}"
+                    >error</i>
+                    <span>
+                      {{- form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] -}}
+                    </span>
+                  </p>
+                {%- endif %}
+              </div>
+            </div>
+
+            <div class="field">
+              {% liquid 
+                if form[password]
+                  assign password_value = form[password]
+                endif
+
+                if form.errors contains 'password'
+                  assign password_error = true
+                endif
+              -%}
+              <div class="control">
+                <label class="label" for="{{- form_id -}}-password">
+                  {{- 'customer.register.password' | t -}}
+                </label>
+                <input type="password" name="customer[password]"
+                  placeholder="{{- 'customer.register.password' | t -}}"
+                  id="{{- form_id -}}-password"
+                  class="input {% if password_error -%}is-error{%- endif -%}"
+                  minlength="8"
+                  aria-required="true"
+                  required
+                  {% if password_error -%}
+                    aria-describedby="{{- form_id -}}-password-error"
+                    aria-invalid="true"
+                  {%- endif %}
+                >
+                {% if password_error -%}
+                  <p id="{{- form_id -}}-password-error" class="help is-error">
+                    <i class="material-icons-outlined" 
+                      aria-label="{{- 'general.accessibility.error' | t -}}"
+                    >error</i>
+                    <span>
+                      {{- form.errors.translated_fields['password'] | capitalize }} {{ form.errors.messages['password'] -}}
+                    </span>
+                  </p>
+                {%- endif %}
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <input type="hidden" name="return_to" 
+                  value="{{- routes.account_url -}}"
+                >
+                <input type="submit"
+                  value="{{- 'customer.register.submit' | t -}}" 
+                  class="btn is-primary full"
+                >
+              </div>
+            </div>    
+
+            <div class="field text-center">
+              <div class="control">
+                <a href="{{- routes.account_login_url -}}" class="btn is-ghost full">
+                  {{- 'customer.register.cancel' | t -}}
+                </a>
+              </div>
+            </div>
+          </section>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</section>

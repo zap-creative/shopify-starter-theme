@@ -1,7 +1,7 @@
 /**
  * Ajax newsletter form
  */
-const newsletterForm = document.getElementById('contact_form');
+const newsletterForm = document.getElementById('newsletter-form');
 
 function newsletterResponse(success) {
   const formResponse = document.getElementById('form-response');

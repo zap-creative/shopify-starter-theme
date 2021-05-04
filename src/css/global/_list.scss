@@ -1,0 +1,26 @@
+.list {
+  align-items: flex-start;
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: flex-start;
+
+  @apply space-y-3;
+
+  &.row {
+    @apply space-y-0 space-x-3;
+
+    align-items: stretch;
+    flex-flow: row wrap;
+  }
+
+  &.compact {
+    @apply space-y-0 space-x-0;
+  }
+
+  > li {
+    align-items: center;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: center;
+  }
+}

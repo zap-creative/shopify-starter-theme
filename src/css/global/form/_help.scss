@@ -1,0 +1,30 @@
+@import '../../mixins/utilities';
+
+$help-size: $f-size-small !default;
+$help-colors: $form-colors !default;
+
+.help {
+  display: flex;
+  font-size: $help-size;
+
+  @apply mt-1 p-2;
+
+  .icon {
+    @include ltr-property('margin', 0.5rem, true);
+  }
+
+  @each $name, $set in $help-colors {
+    $background: nth($set, 1);
+    $color: nth($set, 2);
+
+    @if length($set) > 3 {
+      // use the lighter background if it exists
+      $background: nth($set, 3);
+    }
+
+    &.is-#{$name} {
+      background-color: $background;
+      color: $color;
+    }
+  }
+}

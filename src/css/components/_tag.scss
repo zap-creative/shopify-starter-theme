@@ -1,0 +1,227 @@
+@import '../mixins/utilities';
+
+$tag-background-color: $background !default;
+$tag-color: $text !default;
+$tag-radius: $border-radius !default;
+$tag-delete-margin: 1px !default;
+
+$tag-colors: $colors !default;
+
+.tags {
+  align-items: center;
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+
+  .tag {
+    margin-bottom: 0.5rem;
+
+    &:not(:last-child) {
+      @include ltr-property('margin', 0.5rem);
+    }
+  }
+
+  &:last-child {
+    margin-bottom: -0.5rem;
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+
+  &.are-medium {
+    .tag:not(.normal):not(.large) {
+      font-size: $f-size-normal;
+    }
+  }
+
+  &.are-large {
+    .tag:not(.normal):not(.medium) {
+      font-size: $f-size-medium;
+    }
+  }
+
+  &.a-center {
+    justify-content: center;
+
+    .tag {
+      margin-left: 0.25rem;
+      margin-right: 0.25rem;
+    }
+  }
+
+  &.a-right {
+    justify-content: flex-end;
+
+    .tag {
+      &:not(:first-child) {
+        margin-left: 0.5rem;
+      }
+
+      &:not(:last-child) {
+        margin-right: 0;
+      }
+    }
+  }
+
+  &.has-addons {
+    .tag {
+      @include ltr-property('margin', 0);
+
+      &:not(:first-child) {
+        @include ltr-property('margin', 0, false);
+
+        @include ltr {
+          border-bottom-left-radius: 0;
+          border-top-left-radius: 0;
+        }
+
+        @include rtl {
+          border-bottom-right-radius: 0;
+          border-top-right-radius: 0;
+        }
+      }
+
+      &:not(:last-child) {
+        @include ltr {
+          border-bottom-right-radius: 0;
+          border-top-right-radius: 0;
+        }
+
+        @include rtl {
+          border-bottom-left-radius: 0;
+          border-top-left-radius: 0;
+        }
+      }
+    }
+  }
+}
+
+.tag:not(body) {
+  align-items: center;
+  background-color: $tag-background-color;
+  border-radius: $tag-radius;
+  color: $tag-color;
+  display: inline-flex;
+  font-size: $f-size-small;
+  font-weight: $f-weight;
+  height: 2em;
+  justify-content: center;
+  line-height: 1.5;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  white-space: nowrap;
+
+  .delete {
+    @include ltr-property('margin', 0.25rem, false);
+    @include ltr-property('margin', -0.375rem);
+  }
+
+  @each $name, $set in $tag-colors {
+    $background: nth($set, 1);
+    $text: nth($set, 2);
+
+    &.is-#{$name} {
+      background-color: $background;
+      color: $text;
+
+      @if length($set) > 3 {
+        $background-light: nth($set, 3);
+        $text-light: nth($set, 4);
+
+        &.is-light {
+          background-color: $background-light;
+          color: $text-light;
+        }
+      }
+
+      @if length($set) > 5 {
+        $background-dark: nth($set, 5);
+        $text-dark: nth($set, 6);
+
+        &.is-dark {
+          background-color: $background-dark;
+          color: $text-dark;
+        }
+      }
+    }
+  }
+
+  &.normal {
+    font-size: $f-size-small;
+  }
+
+  &.medium {
+    font-size: $f-size-normal;
+  }
+
+  &.large {
+    font-size: $f-size-medium;
+  }
+
+  .icon {
+    &:first-child:not(:last-child) {
+      @include ltr-property('margin', -0.375em, false);
+      @include ltr-property('margin', 0.1875em);
+    }
+
+    &:last-child:not(:first-child) {
+      @include ltr-property('margin', 0.1875em, false);
+      @include ltr-property('margin', -0.375em);
+    }
+
+    &:first-child:last-child {
+      @include ltr-property('margin', -0.375em, false);
+      @include ltr-property('margin', -0.375em);
+    }
+  }
+
+  &.is-delete {
+    @include ltr-property('margin', $tag-delete-margin, false);
+
+    padding: 0;
+    position: relative;
+    width: 2em;
+
+    &::before,
+    &::after {
+      background-color: currentColor;
+      content: '';
+      display: block;
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translateX(-50%) translateY(-50%) rotate(45deg);
+      transform-origin: center center;
+    }
+
+    &::before {
+      height: 1px;
+      width: 50%;
+    }
+
+    &::after {
+      height: 50%;
+      width: 1px;
+    }
+
+    &:hover,
+    &:focus {
+      background-color: darken($tag-background-color, 5%);
+    }
+
+    &:active {
+      background-color: darken($tag-background-color, 10%);
+    }
+  }
+
+  &.rounded {
+    border-radius: $border-radius-rounded;
+  }
+}
+
+a.tag {
+  &:hover {
+    text-decoration: underline;
+  }
+}

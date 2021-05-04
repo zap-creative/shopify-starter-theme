@@ -1,4 +1,9 @@
-{%- assign assetsPath = 'theme.bundle.js' | asset_url | split: 'theme.bundle.js' | first -%}
+{% liquid
+  assign page_type = request.page_type
+  unless page_type == 'captcha'
+    assign full_page = true
+  endunless
+-%}
 
 <!doctype html>
 <html class="no-js supports-no-cookies antialiased" lang="{{ shop.locale }}">
@@ -7,7 +12,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <title>{% include 'seo-title' %}</title>
+  <title>{% render 'seo-title' %}</title>
   {% if page_description -%}
     <meta name="description" content="{{ page_description | escape }}">
   {%- endif -%}
@@ -16,63 +21,37 @@
     <link rel="canonical" href="{{ canonical_url }}">
   {%- endif %}
 
-  {{ 'theme.bundle.css' | asset_url | stylesheet_tag }}
   {% render 'css-variables' %}
-  <script>
-    {%- comment -%} Make string translations and money formate available to scripts.{%- endcomment %}
-    window.theme = {
-      settings: {
-        ajaxEnabled: {{ settings.enable_ajax | json }},
-        predictiveSearchEnabled: {{ settings.predictive_search_enabled | json }},
-        predictiveSearchShowPrice: {{ settings.predictive_search_show_price | json }},
-        predictiveSearchShowVendor: {{ settings.predictive_search_show_vendor | json }},
-        predictiveSearchUri: {{ routes.search_url | json }},
-      },
-      breakpoints: {
-        small: 480,
-        tablet: 640,
-        desktop: 768,
-        widescreen: 1216,
-        fullhd: 1664,
-      },
-      strings: {
-        addToCart: {{ 'products.product.add_to_cart' | t | json }},
-        articles: {{ 'general.search.articles' | t | json }},
-        collections: {{ 'general.search.collections' | t | json }},
-        pages: {{ 'general.search.pages' | t | json }},
-        products: {{ 'general.search.products' | t | json }},
-        searchClose: {{ 'general.search.close' | t | json }},
-        searchFor: {{ 'general.search.search_for' | t | json }},
-        searchPlaceholder: {{ 'general.search.placeholder' | t | json }},
-        searchSubmit: {{ 'general.search.submit' | t | json }},
-        soldOut: {{ 'products.product.sold_out' | t | json }},
-        unavailable: {{ 'products.product.unavailable' | t | json }},
-      },
-      moneyFormat: {{ shop.money_format | json }},
-    };
-
-    {% comment -%} Required for lazy-loading with Webpack on Shopify CDN {%- endcomment -%}
-    window.__webpack_public_path__ = "{{ assetsPath }}";
-
-    document.documentElement.classList.replace('no-js', 'js');
-  </script>
+  {% render 'script-variables' %}
+  {% render 'webfonts' %}
+  {{ 'theme.bundle.css' | asset_url | stylesheet_tag }}
 
   <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
   <link rel="preconnect" href="https://fonts.shopify.com" crossorigin>
   <link rel="preconnect" href="https://monorail-edge.shopifysvc.com">
 
   <link rel="preload" href="{{ 'theme.bundle.js' | asset_url }}" as="script">
-  {%- case request.page_type -%}
-    {%- when 'product' -%}
-      {{- 'product.bundle.css' | asset_url | stylesheet_tag -}}
-      <link rel="preload" href="{{ 'product.bundle.js' | asset_url }}" as="script">
+  {% case page_type -%}
     {%- when 'cart' -%}
+      <link rel="preload" href="{{ 'cart.bundle.js' | asset_url }}" as="script">
       {{- 'cart.bundle.css' | asset_url | stylesheet_tag -}}
     {%- when 'collection' -%}
       <link rel="preload" href="{{ 'collection.bundle.js' | asset_url }}" as="script">
-  {%- endcase -%}
+      {{- 'collection.bundle.css' | asset_url | stylesheet_tag -}}
+    {%- when 'product' -%}
+      <link rel="preload" href="{{ 'product.bundle.js' | asset_url }}" as="script">
+      {{- 'product.bundle.css' | asset_url | stylesheet_tag -}}
+    {%- when 'search' -%}
+      <link rel="preload" href="{{ 'search.bundle.js' | asset_url }}" as="script">
+      {{- 'search.bundle.css' | asset_url | stylesheet_tag -}}
+    {%- else -%}
+      {%- if page_type contains 'customers/' -%}
+        <link rel="preload" href="{{ 'customers.bundle.js' | asset_url }}" as="script">
+        {{- 'customers.bundle.css' | asset_url | stylesheet_tag -}}
+      {%- endif -%}
+  {%- endcase %}
 
-  {%- render 'social-meta-tags'  -%}
+  {% render 'social-meta-tags'  %}
 
   {{ content_for_header }}
 </head>
@@ -97,22 +76,21 @@
 
   {% section 'site-footer' %}
 
-  {% if settings.enable_ajax -%}
+  {% if settings.enable_ajax and full_page -%}
+    {% comment %} <link rel="prefetch" href="{{ 'app-cart-init.bundle.js' | asset_url }}" as="script"> {% endcomment %}
     <aside id="app-cart"></aside>
   {%- endif %}
 
-  {% if settings.predictive_search_enabled -%}
-    <link rel="preload" href="{{ 'predictive-search-init.bundle.js' | asset_url }}" as="script">
-    <aside id="predictive-search"
-      data-search-close="{{ 'general.search.close' | t }}"
-      data-search-placeholder="{{ 'general.search.placeholder' | t }}"
-      data-search-submit="{{ 'general.search.submit' | t }}"
-      data-search-uri="{{ routes.search_url }}"
-    ></aside>
+  {% if settings.predictive_search_enabled and full_page -%}
+    {% comment %} <link rel="prefetch" href="{{ 'app-search-init.bundle.js' | asset_url }}" as="script"> {% endcomment %}
+    <aside id="app-search"></aside>
   {%- endif %}
 
+  {% render 'sprites.svg' %}
+  {% render 'a11y-helper-messages' %}
+
   {{ 'theme.bundle.js' | asset_url | script_tag }}
-  {%- case request.page_type -%}
+  {%- case page_type -%}
     {%- when 'product' -%}
       {{ 'product.bundle.js' | asset_url | script_tag }}
     {%- when 'collection' -%}
@@ -121,14 +99,9 @@
       {{ 'cart.bundle.js' | asset_url | script_tag }}
   {%- endcase -%}
 
-  {% if request.page_type contains 'customers/' -%}
+  {% if page_type contains 'customers/' -%}
     <script src="{{ 'shopify_common.js' | shopify_asset_url }}"></script>
     {{ 'customers.bundle.js' | asset_url | script_tag }}
   {%- endif -%}
-
-  <ul hidden>
-    <li id="a11y-refresh-page-message">{{ 'general.accessibility.refresh_page' | t }}</li>
-    <li id="a11y-selection-message">{{ 'general.accessibility.selection_help' | t }}</li>
-  </ul>
 </body>
 </html>

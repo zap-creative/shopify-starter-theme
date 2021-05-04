@@ -1,0 +1,220 @@
+.field {
+  @apply mb-3;
+
+  &:last-child {
+    margin-bottom: initial;
+  }
+
+  &.has-addons {
+    display: flex;
+    justify-content: flex-start;
+
+    .control {
+      &:not(:last-child) {
+        @include ltr-property('margin', -1px);
+      }
+
+      &:not(:first-child):not(:last-child) {
+        .btn,
+        .input,
+        .select select {
+          border-radius: 0;
+        }
+      }
+
+      &:first-child:not(:only-child) {
+        .btn,
+        .input,
+        .select select {
+          @include ltr {
+            border-bottom-right-radius: 0;
+            border-top-right-radius: 0;
+          }
+
+          @include rtl {
+            border-bottom-left-radius: 0;
+            border-top-left-radius: 0;
+          }
+        }
+      }
+
+      &:last-child:not(:only-child) {
+        .btn,
+        .input,
+        .select select {
+          @include ltr {
+            border-bottom-left-radius: 0;
+            border-top-left-radius: 0;
+          }
+
+          @include rtl {
+            border-bottom-right-radius: 0;
+            border-top-right-radius: 0;
+          }
+        }
+      }
+
+      .btn,
+      .input,
+      .select select {
+        &:not([disabled]) {
+          &:hover,
+          &.hovered {
+            z-index: 2;
+          }
+
+          &:focus,
+          &.focused,
+          &:active,
+          &.active {
+            z-index: 3;
+
+            &:hover {
+              z-index: 4;
+            }
+          }
+        }
+      }
+
+      &.expanded {
+        flex-grow: 1;
+        flex-shrink: 1;
+      }
+    }
+
+    &.has-addons-center {
+      justify-content: center;
+    }
+
+    &.has-addons-right {
+      justify-content: flex-end;
+    }
+
+    &.has-addons-fullwidth {
+      .control {
+        flex-grow: 1;
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  &.grouped {
+    display: flex;
+    justify-content: flex-start;
+
+    & > .control {
+      flex-shrink: 0;
+
+      &:not(:last-child) {
+        margin-bottom: 0;
+
+        @include ltr-property('margin', 0.75rem);
+      }
+
+      &.expanded {
+        flex-grow: 1;
+        flex-shrink: 1;
+      }
+    }
+
+    &.center {
+      justify-content: center;
+    }
+
+    &.right {
+      justify-content: flex-end;
+    }
+
+    &.multiline {
+      flex-wrap: wrap;
+
+      & > .control {
+        &:last-child,
+        &:not(:last-child) {
+          margin-bottom: 0.75rem;
+        }
+      }
+
+      &:last-child {
+        margin-bottom: -0.75rem;
+      }
+
+      &:not(:last-child) {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &.horizontal {
+    @screen tablet {
+      display: flex;
+    }
+  }
+}
+
+.field-label {
+  .label {
+    font-size: inherit;
+  }
+
+  @screen mobile {
+    margin-bottom: 0.5rem;
+  }
+
+  @screen tablet {
+    flex-basis: 0;
+    flex-grow: 1;
+    flex-shrink: 0;
+    text-align: right;
+
+    @include ltr-property('margin', 1.5rem);
+
+    &.small {
+      font-size: $f-size-small;
+      padding-top: 0.375em;
+    }
+
+    &.normal {
+      padding-top: 0.375em;
+    }
+
+    &.medium {
+      font-size: $f-size-medium;
+      padding-top: 0.375em;
+    }
+
+    &.large {
+      font-size: $f-size-large;
+      padding-top: 0.375em;
+    }
+  }
+}
+
+.field-body {
+  .field .field {
+    margin-bottom: 0;
+  }
+
+  @screen tablet {
+    display: flex;
+    flex-basis: 0;
+    flex-grow: 5;
+    flex-shrink: 1;
+
+    .field {
+      margin-bottom: 0;
+    }
+
+    & > .field {
+      flex-shrink: 1;
+
+      &:not(.narrow) {
+        flex-grow: 1;
+      }
+
+      &:not(:last-child) {
+        @include ltr-property('margin', 0.75rem);
+      }
+    }
+  }
+}

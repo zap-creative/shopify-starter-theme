@@ -1,18 +1,27 @@
-{% capture seo_title -%}
-  {%- if request.page_type == 'search' and search.performed == true -%}
-    {{ 'general.search.heading' | t: count: search.results_count }}: {{ 'general.search.results_with_count' | t: terms: search.terms, count: search.results_count }}
-  {%- else -%}
-    {{ page_title }}
-  {%- endif -%}
-  {%- if current_tags -%}
-    {%- assign meta_tags = current_tags | join: ', ' -%} | {{ 'general.meta.tags' | t: tags: meta_tags -}}
-  {%- endif -%}
-  {%- if current_page != 1 -%}
-    | {{ 'general.meta.page' | t: page: current_page }}
-  {%- endif -%}
-  {%- assign escaped_page_title = page_title | escape -%}
-  {%- unless escaped_page_title contains shop.name -%}
-    | {{ shop.name }}
-  {%- endunless -%}
-{%- endcapture -%}
-{{ seo_title | strip }}
+{% liquid
+  if request.page_type == 'search' and search.performed == true
+    assign title = 'general.search.results_with_count' | t: terms: search.terms, count: search.results_count
+  else
+    assign title = page_title
+  endif
+  
+  if current_tags
+    assign meta_tags = current_tags | join: ', '
+    assign meta_tags = 'general.meta.tags' | t: tags: meta_tags
+
+    assign title = title | append: ' | ' | append: meta_tags
+  endif
+
+  if current_page != 1
+    assign meta_page = 'general.meta.page' | t: page: current_page
+
+    assign title = title | append: ' | ' | append: meta_page
+  endif
+  
+  assign escaped_page_title = page_title | escape
+  unless escaped_page_title contains shop.name
+    assign title = title | append: ' | ' | append: shop.name
+  endunless
+
+  echo title | strip
+-%}

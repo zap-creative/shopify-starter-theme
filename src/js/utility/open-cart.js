@@ -1,6 +1,7 @@
-const openCart = () => import(/* webpackChunkName: "app-cart-init" */ '../apps/app-cart-init').then((module) => {
-  const appcart = module.default;
-  appcart();
+const openCart = () => import(/* webpackChunkName: "app-cart" */ '../apps/cart').then((module) => {
+  const Cart = module.default;
+  
+  Cart();
   return true;
 }).catch(() => false);
 
