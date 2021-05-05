@@ -8,11 +8,15 @@
 <section class="customer-section address-section">
   {% if bg_image -%}
     <div class="overlay background lazyload lazypreload js-enabled"
-      data-bg="{{ bg_image | img_url: '640x480' }}"
+      data-bg="{{ bg_image | img_url: '16x9' }}"
       data-bgset="{% render 'bgset', image: bg_image %}"
       data-sizes="auto"
-      data-parent-fit="cover"
+      data-parent-fit="{{- bg_image_size -}}"
       data-loading-animation
+      {% unless bg_image.alt == blank -%}
+        aria-label="{{- bg_image.alt | escape -}}"
+        role="img"
+      {%- endunless %}
     >
     </div>
     <noscript>
