@@ -1,7 +1,7 @@
 {% for collection in collections %}
   {% unless collection.handle == 'frontpage' %}
     {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}
-    <a href="{{ collection.url }}">More {{ collection_title }} &rsaquo;</a>
+    <a href="{{ collection.url }}">More {{ collection_title }} &rarr;</a>
     {% for product in collection.products limit:5 %}
       {% assign grid_item_width = 'large--one-fifth medium--one-half' %}
       <div>
