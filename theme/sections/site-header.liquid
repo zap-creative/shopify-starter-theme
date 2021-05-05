@@ -10,20 +10,21 @@
   {% if settings.logo %}
     {%- assign img_url = settings.logo | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
     {% capture logo_alt %}{{ settings.logo.alt | default: shop.name }}{% endcapture %}
-      <img class="lazyload js-enabled"
+      <img class="logo lazyload js-enabled"
         src="{{ settings.logo | img_url: '300x300' }}"
+        alt="{{ logo_alt | escape }}"
         data-src="{{ img_url }}"
         data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
         data-aspectratio="{{ settings.logo.aspect_ratio }}"
         data-sizes="auto"
-        alt="{{ logo_alt | escape }}"
-        style="max-width: {{ settings.logo_max_width }}px">
+      >
       <noscript>
         {% capture image_size %}{{ settings.logo_max_width | escape }}x{% endcapture %}
-        <img src="{{ settings.logo | img_url: image_size }}"
+        <img class="logo"
+          src="{{ settings.logo | img_url: image_size }}"
           srcset="{{ settings.logo | img_url: image_size }} 1x, {{ settings.logo | img_url: image_size, scale: 2 }} lg"
           alt="{{ settings.logo.alt | default: shop.name }}"
-          style="max-width: {{ settings.logo_max_width }}px;">
+        >
       </noscript>
       <span class="sr-only">{{ shop.name }}</span>
     </a>
@@ -35,14 +36,14 @@
 {% style -%}
   #shopify-section-site-header {
     {% unless simple_header -%}
-      --c-bg: {{ section.settings.color_bg }};
-      --c-bg--rgb: {{ section.settings.color_bg | color_to_rgb | remove: 'rgb(' | remove: ')' }};
-      --c-text: {{ section.settings.color_text }};
+      --cn-c-bg: {{ section.settings.color_bg }};
+      --cn-c-bg--rgb: {{ section.settings.color_bg | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+      --cn-c-text: {{ section.settings.color_text }};
     {%- else -%}
-      --c-bg: transparent;
-      --c-bg--rgb: transparent;
-      --c-border: transparent;
-      --c-text: {{ section.settings.color_text }};
+      --cn-c-bg: transparent;
+      --cn-c-bg--rgb: transparent;
+      --cn-border: transparent;
+      --cn-c-text: {{ section.settings.color_text }};
     {%- endunless %}
   }
 {%- endstyle %}

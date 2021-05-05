@@ -1,5 +1,5 @@
 #mobile-navigation {
-  background-color: var(--c-bg);
+  background-color: var(--cn-c-bg);
   display: none;
   left: 0;
   overflow: hidden;
@@ -89,7 +89,7 @@
 
     &__label {
       color: var(--c-body-text);
-      font-family: var(--f-stack-header);
+      font-family: var(--cn-fstack-header);
       letter-spacing: 1px;
       margin-left: 2.5em;
       text-transform: uppercase;

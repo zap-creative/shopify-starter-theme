@@ -1,6 +1,15 @@
 import { AddressForm } from '@shopify/theme-addresses';
 
+import MicroModal from 'micromodal';
+
 import '../css/customers.scss';
+
+const form_action = '/account/addresses';
+const classes = {
+  hidden: 'hidden',
+  add_address: 'add-address',
+  edit_address: 'edit-address',
+};
 
 class Customer {
   constructor(){
@@ -14,17 +23,27 @@ class Customer {
       hide_recover_form: '[data-hide-recover-form]',
       show_recover_form: '[data-show-recover-form]',
       addresses: '[data-address]',
-      address_fields: '[data-address-fields]',
-      address_toggle: '[data-address-toggle]',
-      address_form: '[data-address-form]',
+      address_add: '[data-address-add]',
+      address_data: '[data-address-data]',
       address_delete_form: '[data-address-delete-form]',
-    };
-
-    this.classes = {
-      hidden: 'hidden',
+      address_delete_confirm: '[data-address-delete-msg]',
+      address_edit: '[data-address-edit]',
+      address_fields: '[data-address-fields]',
+      address_form: '[data-address-form]',
+      modal: '[data-modal]',
+      modal_open: '[data-modal-open]',
+      modal_close: '[data-modal-close]',
     };
 
     this.cache = this.cacheSelectors(this.selectors);
+
+    this.checkUrlHash = this.checkUrlHash.bind(this);
+    this.hideRecoverPasswordForm = this.hideRecoverPasswordForm.bind(this);
+    this.initAddress = this.initAddress.bind(this);
+    this.resetAddressForm = this.resetAddressForm.bind(this);
+    this.resetPasswordSuccess = this.resetPasswordSuccess.bind(this);
+    this.setupAddressEditForm = this.setupAddressEditForm.bind(this);
+    this.showRecoverPasswordForm = this.showRecoverPasswordForm.bind(this);
 
     if(this.cache.login_form) {
       this.initLoginPage.bind(this)();
@@ -46,6 +65,8 @@ class Customer {
       hide_recover_form: document.querySelectorAll(selectors.hide_recover_form),
       show_recover_form: document.querySelectorAll(selectors.show_recover_form),
       addresses: document.querySelectorAll(selectors.addresses),
+      address_form: document.querySelector(selectors.address_form),
+      address_modal: document.querySelector(selectors.modal),
     };
   }
 
@@ -99,18 +120,42 @@ class Customer {
     }
 
     if(form_state) {
-      this.resetPasswordSuccess.bind(this)(form_state);
+      this.resetPasswordSuccess(form_state);
     }
 
-    this.checkUrlHash.bind(this)();
+    this.checkUrlHash();
   }
 
   initAddressesPage() {
-    const { addresses } = this.cache;
+    const {
+      addresses,
+      address_modal,
+    } = this.cache;
 
-    if (addresses.length) {
+    const {
+      modal_close,
+      modal_open,
+    } = this.selectors;
+
+    if (addresses.length > 0) {
       addresses.forEach((address) => {
-        this.initAddressForm.bind(this)(address);
+        this.initAddress(address);
+      });
+    }
+
+    if(address_modal) {
+      MicroModal.init({
+        openClass: 'open',
+        onShow: (modal) => {
+          document.body.classList.add('overflow-hidden');
+        },
+        onClose: (modal) => {
+          document.body.classList.remove('overflow-hidden');
+          this.resetAddressForm();
+        },
+        openTrigger: modal_open.replaceAll(/\[|\]/g, ''),
+        closeTrigger: modal_close.replaceAll(/\[|\]/g, ''),
+        awaitCloseAnimation: true,
       });
     }
   }
@@ -122,10 +167,10 @@ class Customer {
       login_form,
     } = this.cache;
 
-    recover_form.classList.remove(this.classes.hidden);
+    recover_form.classList.remove(classes.hidden);
     recover_form.removeAttribute('aria-hidden');
 
-    login_form.classList.add(this.classes.hidden);
+    login_form.classList.add(classes.hidden);
     login_form.setAttribute('aria-hidden', true);
 
     if (recover_field.getAttribute('aria-invalid') === 'true') {
@@ -139,10 +184,10 @@ class Customer {
       recover_form,
     } = this.cache;
 
-    login_form.classList.remove(this.classes.hidden);
+    login_form.classList.remove(classes.hidden);
     login_form.removeAttribute('aria-hidden');
 
-    recover_form.classList.add(this.classes.hidden);
+    recover_form.classList.add(classes.hidden);
     recover_form.setAttribute('aria-hidden', true);
   }
 
@@ -153,7 +198,7 @@ class Customer {
     }
   
     // show success message
-    form_state.classList.remove(this.classes.hidden);
+    form_state.classList.remove(classes.hidden);
     form_state.removeAttribute('aria-hidden');
     form_state.focus();
   }
@@ -163,39 +208,173 @@ class Customer {
   
     // Allow deep linking to recover password form
     if (hash === '#recover') {
-      this.showRecoverPasswordForm.bind(this)();
+      this.showRecoverPasswordForm();
     }
   }
 
-  initAddressForm(container) {
+  initAddress(container) {
     let {
+      address_data,
+      address_add,
+      address_edit,
+      address_delete_confirm,
       address_delete_form,
-      address_fields,
-      address_form,
-      address_toggle,
     } = this.selectors;
 
-    address_fields = container.querySelector(address_fields);
-    address_form = container.querySelector(address_form);
-    address_delete_form = container.querySelector(address_delete_form);
-
-    container.querySelectorAll(address_toggle).forEach((btn) => {
-      btn.addEventListener('click', () => {
-        address_form.classList.toggle(this.classes.hidden);
+    address_add = container.querySelector(address_add);
+    if(address_add) {
+      address_add.addEventListener('click', (e) => {
+        this.setupAddressAddForm();
       });
-    });
+    }
 
-    AddressForm(address_fields, 'en');
+    address_edit = container.querySelector(address_edit);
+    if(address_edit) {
+      address_edit.addEventListener('click', (e) => {
+        this.setupAddressEditForm(
+          container.getAttribute('data-address'),
+          container.querySelector(address_data)
+        );
+      });
+    }
 
+    address_delete_form = container.querySelector(address_delete_form);
     if (address_delete_form) {
       address_delete_form.addEventListener('submit', (e) => {
-        const confirm_msg = address_delete_form.getAttribute('data-confirm-message');
+        const confirm_msg = address_delete_form.getAttribute(address_delete_confirm);
 
         // eslint-disable-next-line no-alert
         if (!window.confirm(confirm_msg || 'Are you sure you wish to delete this address?')) {
           e.preventDefault();
         }
       });
+    }
+  }
+
+  setupAddressAddForm() {
+    const {
+      address_form,
+      address_modal,
+    } = this.cache;
+
+    let {
+      address_fields,
+    } = this.selectors;
+
+    this.resetAddressForm();
+    this.address_form = AddressForm(
+      address_form.querySelector(address_fields),
+      document.documentElement.getAttribute('lang')
+      ).then(() => {
+
+      address_form.setAttribute('action', `${form_action}`);
+
+      address_modal.querySelectorAll(`.${classes.add_address}`).forEach((el) => {
+        el.classList.remove('hidden')
+      });
+  
+      address_modal.querySelectorAll(`.${classes.edit_address}`).forEach((el) => {
+        el.classList.add('hidden')
+      });
+
+    });
+      
+  }
+
+  setupAddressEditForm(address_id, address_data) {
+    const {
+      address_form,
+      address_modal,
+    } = this.cache;
+
+    let {
+      address_fields,
+    } = this.selectors;
+    
+    this.resetAddressForm();
+    this.address_form = AddressForm(
+      address_form.querySelector(address_fields),
+      document.documentElement.getAttribute('lang')
+    ).then(() => {
+
+      if(parseInt(address_id) > 0){
+        if(address_data) {
+          Promise.resolve(address_data.innerHTML)
+            .then(JSON.parse)
+            .then((data) => {
+              for(const [key, val] of Object.entries(data)) {
+                if(`${key}_code` in data) {
+                  continue; //skip over the country and province for now
+                }
+  
+                const input = address_form.elements[`address[${key}]`];
+                if(input) {
+                  switch(input.type) {
+                    case 'checkbox': input.checked = !!val; break;
+                    default:         input.value = val;     break;
+                  }
+               
+                  input.dispatchEvent(new Event('change'));
+                }
+              }
+
+              if('country_code' in data) {
+                const country = address_form.elements[`address[country]`];
+                if(country) {
+                  country.value = data['country_code'];
+                  country.dispatchEvent(new Event('change'));
+                }
+              }
+
+              if('province_code' in data) {
+                const province = address_form.elements[`address[province]`];
+                if(province) {
+                  province.value = data['province_code'];
+                  province.dispatchEvent(new Event('change'));
+                }
+              }
+            });
+  
+          const method = document.createElement('input');
+          method.setAttribute('type', 'hidden');
+          method.setAttribute('name', '_method');
+          method.setAttribute('value', 'put');
+          
+          address_form.appendChild(method);
+        }
+        
+        address_form.setAttribute('action', `${form_action}/${address_id}`);
+      }
+  
+      address_modal.querySelectorAll(`.${classes.edit_address}`).forEach((el) => {
+        el.classList.remove('hidden')
+      });
+  
+      address_modal.querySelectorAll(`.${classes.add_address}`).forEach((el) => {
+        el.classList.add('hidden')
+      });
+
+    });
+
+  }
+
+  resetAddressForm() {
+    const {
+      address_form,
+    } = this.cache;
+
+    if(address_form) {
+      // clear out anything we might have stored
+      if(this.address_form) {
+        delete this.address_form;
+      }
+
+      address_form.reset();
+      address_form.setAttribute('action', form_action);
+
+      // ensure we aren't trying to update an existing address
+      const method = address_form.elements[`_method`];
+      method && method.remove();
     }
   }
 }

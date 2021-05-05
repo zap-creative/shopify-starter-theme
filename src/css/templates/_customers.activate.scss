@@ -1,3 +1,7 @@
+.activation-section {
+  @extend %customer-section-background;
+}
+
 .activation-card {
   .card-header {
     @apply py-6;

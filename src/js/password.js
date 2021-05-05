@@ -49,6 +49,7 @@ handleLazyload();
 const modals = document.querySelectorAll('[data-micromodal]');
 if(modals) {
   MicroModal.init({
+    openClass: 'open',
     openTrigger: 'data-modal-open',
     closeTrigger: 'data-modal-close',
     awaitCloseAnimation: true,

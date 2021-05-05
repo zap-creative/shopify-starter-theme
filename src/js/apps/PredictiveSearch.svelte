@@ -157,7 +157,7 @@
     @apply shadow-md;
 
     align-items: stretch;
-    background-color: var(--c-modal-bg);
+    background-color: var(--cn-modal-bg);
     display: flex;
     flex-flow: column nowrap;
     max-height: 480px;

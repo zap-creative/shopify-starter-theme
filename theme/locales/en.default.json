@@ -99,7 +99,7 @@
       "title": "Activate Account"
     },
     "addresses": {
-      "add": "Add Address",
+      "add_address": "Add Address",
       "add_new": "Add a New Address",
       "address1": "Address1",
       "address2": "Address2",

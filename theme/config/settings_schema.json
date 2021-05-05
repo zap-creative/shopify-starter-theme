@@ -22,7 +22,7 @@
       {
         "type": "range",
         "id": "logo_max_width",
-        "label": "Custom width",
+        "label": "Custom Width",
         "min": 50,
         "max": 400,
         "step": 5,
@@ -204,21 +204,31 @@
       },
       {
         "type": "color",
-        "id": "color_card",
+        "id": "card_color",
         "label": "Background",
         "default": "#f7f7f7"
       },
       {
         "type": "color",
-        "id": "color_card_text",
+        "id": "card_color_text",
         "label": "Text",
         "default": "#333232"
       },
       {
         "type": "color",
-        "id": "color_card_shadow",
+        "id": "card_color_shadow",
         "label": "Shadow",
-        "default": "rgba(0,0,0,0.01)"
+        "default": "#555555"
+      },
+      {
+        "type": "range",
+        "id": "card_shadow_opacity",
+        "label": "Shadow Opacity",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "default": 55
       },
       {
         "type": "header",
@@ -226,25 +236,25 @@
       },
       {
         "type": "color",
-        "id": "color_modal_text",
-        "label": "Text",
-        "default": "#333232"
-      },
-      {
-        "type": "color",
-        "id": "color_modal",
+        "id": "modal_color",
         "label": "Background",
         "default": "#f2f2f2"
       },
       {
         "type": "color",
-        "id": "color_modal_overlay",
+        "id": "modal_color_text",
+        "label": "Text",
+        "default": "#333232"
+      },
+      {
+        "type": "color",
+        "id": "modal_color_overlay",
         "label": "Backdrop",
         "default": "#f2f2f2"
       },
       {
         "type": "range",
-        "id": "opacity_modal_overlay",
+        "id": "modal_overlay_opacity",
         "label": "Backdrop Opacity",
         "min": 0,
         "max": 100,
@@ -254,19 +264,19 @@
       },
       {
         "type": "header",
-        "content": "Image overlays"
+        "content": "Image Overlays"
       },
       {
         "type": "color",
-        "id": "color_image_overlay_text",
-        "label": "Text",
-        "default": "#ffffff"
-      },
-      {
-        "type": "color",
-        "id": "color_image_overlay",
+        "id": "image_overlay_color",
         "label": "Background",
         "default": "#685858"
+      },
+      {
+        "type": "color",
+        "id": "image_overlay_color_text",
+        "label": "Text",
+        "default": "#ffffff"
       },
       {
         "type": "range",
@@ -305,7 +315,7 @@
     "settings": [
       {
         "type": "header",
-        "content": "Body text"
+        "content": "Body Text"
       },
       {
         "type": "checkbox",
@@ -498,7 +508,7 @@
       {
         "type": "checkbox",
         "id": "announcement__everywhere",
-        "label": "Show on all pages",
+        "label": "Show On All Pages",
         "default": false
       },
       {
@@ -559,16 +569,40 @@
         "default": "center",
         "options": [
           {
-            "value": "top",
+            "value": "center",
+            "label": "Center"
+          },
+          {
+            "value": "top left",
+            "label": "Top Left"
+          },
+          {
+            "value": "top center",
             "label": "Top"
           },
           {
-            "value": "center",
-            "label": "Middle"
+            "value": "top right",
+            "label": "Top Right"
           },
           {
-            "value": "bottom",
+            "value": "center right",
+            "label": "Right"
+          },
+          {
+            "value": "bottom right",
+            "label": "Bottom Right"
+          },
+          {
+            "value": "bottom center",
             "label": "Bottom"
+          },
+          {
+            "value": "bottom left",
+            "label": "Bottom Left"
+          },
+          {
+            "value": "center left",
+            "label": "Left"
           }
         ]
       },
@@ -730,18 +764,18 @@
       {
         "type": "color",
         "id": "policy_page__hero_bg",
-        "label": "Background color",
+        "label": "Background Color",
         "default": "#3a3a3a"
       },
       {
         "type": "image_picker",
         "id": "policy_page__hero_image",
-        "label": "Background image"
+        "label": "Background Image"
       },
       {
         "type": "select",
         "id": "policy_page__hero_image_size",
-        "label": "Image size",
+        "label": "Image Size",
         "default": "cover",
         "options": [
           {
@@ -761,27 +795,51 @@
       {
         "type": "select",
         "id": "policy_page__hero_image_alignment",
-        "label": "Background alignment",
+        "label": "Background Alignment",
         "default": "center",
         "options": [
           {
-            "value": "top",
+            "value": "center",
+            "label": "Center"
+          },
+          {
+            "value": "top left",
+            "label": "Top Left"
+          },
+          {
+            "value": "top center",
             "label": "Top"
           },
           {
-            "value": "center",
-            "label": "Middle"
+            "value": "top right",
+            "label": "Top Right"
           },
           {
-            "value": "bottom",
+            "value": "center right",
+            "label": "Right"
+          },
+          {
+            "value": "bottom right",
+            "label": "Bottom Right"
+          },
+          {
+            "value": "bottom center",
             "label": "Bottom"
+          },
+          {
+            "value": "bottom left",
+            "label": "Bottom Left"
+          },
+          {
+            "value": "center left",
+            "label": "Left"
           }
         ]
       },
       {
         "type": "select",
         "id": "policy_page__hero_image_blend",
-        "label": "Image blend mode",
+        "label": "Image Blend Mode",
         "default": "normal",
         "options": [
           {
@@ -853,7 +911,7 @@
       {
         "type": "range",
         "id": "policy_page__hero_image_opacity",
-        "label": "Background image opacity",
+        "label": "Background Image Opacity",
         "min": 0,
         "max": 100,
         "step": 1,
@@ -873,7 +931,7 @@
       {
         "type": "select",
         "id": "policy_page__title_align",
-        "label": "Heading alignment",
+        "label": "Heading Alignment",
         "default": "text-center",
         "options": [
           {
@@ -890,14 +948,14 @@
           },
           {
             "label": "Justify",
-            "value": "text-justified"
+            "value": "text-justify"
           }
         ]
       },
       {
         "type": "range",
         "id": "policy_page__title_level",
-        "label": "Heading level",
+        "label": "Heading Level",
         "min": 1,
         "max": 6,
         "step": 1,
@@ -910,7 +968,7 @@
       {
         "type": "select",
         "id": "policy_page__text_size",
-        "label": "Text size",
+        "label": "Text Size",
         "default": "",
         "options": [
           {
@@ -934,7 +992,7 @@
       {
         "type": "select",
         "id": "policy_page__text_align",
-        "label": "Text alignment",
+        "label": "Text Alignment",
         "default": "text-left",
         "options": [
           {
@@ -951,7 +1009,7 @@
           },
           {
             "label": "Justify",
-            "value": "text-justified"
+            "value": "text-justify"
           }
         ]
       }
@@ -967,17 +1025,177 @@
       {
         "type": "color",
         "id": "user_pages__login_bg",
-        "label": "Background color"
+        "label": "Background Color"
       },
       {
         "type": "image_picker",
         "id": "user_pages__login_bg_image",
-        "label": "Background image"
+        "label": "Background Image"
+      },
+      {
+        "type": "select",
+        "id": "user_pages__login_bg_size",
+        "label": "Image Size",
+        "default": "cover",
+        "options": [
+          {
+          "value": "cover",
+          "label": "Cover (default)"
+          },
+          {
+          "value": "contain",
+          "label": "Contain"
+          },
+          {
+          "value": "auto",
+          "label": "Auto"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "user_pages__login_bg_alignment",
+        "label": "Image Alignment",
+        "default": "center",
+        "options": [
+          {
+            "value": "center",
+            "label": "Center"
+          },
+          {
+            "value": "top left",
+            "label": "Top Left"
+          },
+          {
+            "value": "top center",
+            "label": "Top"
+          },
+          {
+            "value": "top right",
+            "label": "Top Right"
+          },
+          {
+            "value": "center right",
+            "label": "Right"
+          },
+          {
+            "value": "bottom right",
+            "label": "Bottom Right"
+          },
+          {
+            "value": "bottom center",
+            "label": "Bottom"
+          },
+          {
+            "value": "bottom left",
+            "label": "Bottom Left"
+          },
+          {
+            "value": "center left",
+            "label": "Left"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "user_pages__login_bg_repeat",
+        "label": "Image Repat",
+        "default": "no-repeat",
+        "options": [
+          {
+            "value": "no-repeat",
+            "label": "No Repeat"
+          },
+          {
+            "value": "repeat-x",
+            "label": "Repeat Horizontally"
+          },
+          {
+            "value": "repeat-y",
+            "label": "Repeat Vertically"
+          },
+          {
+            "value": "repeat",
+            "label": "Repeat Both Axes"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "user_pages__login_bg_blend",
+        "label": "Image Blend Mode",
+        "default": "normal",
+        "options": [
+          {
+          "value": "normal",
+          "label": "Normal (default)"
+          },
+          {
+          "value": "multiply",
+          "label": "Multiply"
+          },
+          {
+          "value": "screen",
+          "label": "Screen"
+          },
+          {
+          "value": "overlay",
+          "label": "Overlay"
+          },
+          {
+          "value": "darken",
+          "label": "Darken"
+          },
+          {
+          "value": "lighten",
+          "label": "Lighten"
+          },
+          {
+          "value": "color-dodge",
+          "label": "Color-Dodge"
+          },
+          {
+          "value": "color-burn",
+          "label": "Color-Burn"
+          },
+          {
+          "value": "hard-light",
+          "label": "Hard-Light"
+          },
+          {
+          "value": "soft-light",
+          "label": "Soft-Light"
+          },
+          {
+          "value": "difference",
+          "label": "Difference"
+          },
+          {
+          "value": "exclusion",
+          "label": "Exclusion"
+          },
+          {
+          "value": "hue",
+          "label": "Hue"
+          },
+          {
+          "value": "saturation",
+          "label": "Saturation"
+          },
+          {
+          "value": "color",
+          "label": "Color"
+          },
+          {
+          "value": "luminosity",
+          "label": "Luminosity"
+          }
+        ]
       },
       {
         "type": "range",
         "id": "user_pages__login_bg_opacity",
-        "label": "Background image opacity",
+        "label": "Image Opacity",
         "min": 0,
         "max": 100,
         "step": 1,
@@ -991,53 +1209,181 @@
       {
         "type": "color",
         "id": "user_pages__hero_bg",
-        "label": "Banner color",
+        "label": "Background Color",
         "default": "#3a3a3a"
       },
       {
         "type": "image_picker",
-        "id": "user_pages__hero_image",
-        "label": "Banner image"
+        "id": "user_pages__hero_bg_image",
+        "label": "Background Image"
       },
       {
         "type": "select",
-        "id": "user_pages__hero_image_alignment",
-        "label": "Banner image alignment",
-        "default": "center",
+        "id": "user_pages__hero_bg_size",
+        "label": "Image Size",
+        "default": "cover",
         "options": [
           {
-            "value": "top",
-            "label": "Top"
+          "value": "cover",
+          "label": "Cover (default)"
           },
           {
-            "value": "center",
-            "label": "Middle"
+          "value": "contain",
+          "label": "Contain"
           },
           {
-            "value": "bottom",
-            "label": "Bottom"
+          "value": "auto",
+          "label": "Auto"
           }
         ]
       },
       {
-        "type": "color",
-        "id": "user_pages__hero_color",
-        "label": "Heading color",
-        "default": "#ffffff"
-      },
-      {
-        "type": "range",
-        "id": "user_pages__title_level",
-        "label": "Heading level",
-        "min": 1,
-        "max": 6,
-        "step": 1,
-        "default": 1
+        "type": "select",
+        "id": "user_pages__hero_bg_alignment",
+        "label": "Image Alignment",
+        "default": "center",
+        "options": [
+          {
+            "value": "center",
+            "label": "Center"
+          },
+          {
+            "value": "top left",
+            "label": "Top Left"
+          },
+          {
+            "value": "top center",
+            "label": "Top"
+          },
+          {
+            "value": "top right",
+            "label": "Top Right"
+          },
+          {
+            "value": "center right",
+            "label": "Right"
+          },
+          {
+            "value": "bottom right",
+            "label": "Bottom Right"
+          },
+          {
+            "value": "bottom center",
+            "label": "Bottom"
+          },
+          {
+            "value": "bottom left",
+            "label": "Bottom Left"
+          },
+          {
+            "value": "center left",
+            "label": "Left"
+          }
+        ]
       },
       {
         "type": "select",
-        "id": "user_pages__title_align",
-        "label": "Text alignment",
+        "id": "user_pages__hero_bg_blend",
+        "label": "Image Blend Mode",
+        "default": "normal",
+        "options": [
+          {
+          "value": "normal",
+          "label": "Normal (default)"
+          },
+          {
+          "value": "multiply",
+          "label": "Multiply"
+          },
+          {
+          "value": "screen",
+          "label": "Screen"
+          },
+          {
+          "value": "overlay",
+          "label": "Overlay"
+          },
+          {
+          "value": "darken",
+          "label": "Darken"
+          },
+          {
+          "value": "lighten",
+          "label": "Lighten"
+          },
+          {
+          "value": "color-dodge",
+          "label": "Color-Dodge"
+          },
+          {
+          "value": "color-burn",
+          "label": "Color-Burn"
+          },
+          {
+          "value": "hard-light",
+          "label": "Hard-Light"
+          },
+          {
+          "value": "soft-light",
+          "label": "Soft-Light"
+          },
+          {
+          "value": "difference",
+          "label": "Difference"
+          },
+          {
+          "value": "exclusion",
+          "label": "Exclusion"
+          },
+          {
+          "value": "hue",
+          "label": "Hue"
+          },
+          {
+          "value": "saturation",
+          "label": "Saturation"
+          },
+          {
+          "value": "color",
+          "label": "Color"
+          },
+          {
+          "value": "luminosity",
+          "label": "Luminosity"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "user_pages__hero_bg_opacity",
+        "label": "Image Opacity",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "default": 100
+      },
+      {
+        "type": "header",
+        "content": "Account Pages Header Bar"
+      },
+      
+      {
+        "type": "color",
+        "id": "user_pages__header_bg",
+        "label": "Background Color",
+        "default": "#3a3a3a"
+      },
+      {
+        "type": "color",
+        "id": "user_pages__header_color",
+        "label": "Text Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "select",
+        "id": "user_pages__header_title_align",
+        "label": "Text Alignment",
         "default": "text-center",
         "options": [
           {
@@ -1054,9 +1400,18 @@
           },
           {
             "label": "Justify",
-            "value": "text-justified"
+            "value": "text-justify"
           }
         ]
+      },
+      {
+        "type": "range",
+        "id": "user_pages__header_title_level",
+        "label": "Heading Level",
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "default": 1
       }
     ]
   },
@@ -1065,7 +1420,7 @@
     "settings": [
       {
         "type": "header",
-        "content": "Social sharing options"
+        "content": "Social Sharing"
       },
       {
         "type": "checkbox",
@@ -1087,7 +1442,7 @@
       },
       {
         "type": "header",
-        "content": "Social accounts"
+        "content": "Social Accounts"
       },
       {
         "type": "text",

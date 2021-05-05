@@ -468,7 +468,7 @@ $button-colors: $colors !default;
     }
   }
 
-  &.a-center {
+  &.h-center {
     justify-content: center;
 
     &:not(.has-addons) {
@@ -479,7 +479,7 @@ $button-colors: $colors !default;
     }
   }
 
-  &.a-right {
+  &.h-right {
     justify-content: flex-end;
 
     &:not(.has-addons) {

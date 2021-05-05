@@ -17,8 +17,8 @@
     @apply w-20 h-20 my-2 rounded-sm;
 
     align-items: center;
-    background-color: rgba(var(--c-primary--rgb, #ddd), 0.3);
-    color: var(--c-primary, #ddd);
+    background-color: rgba(var(--cn-c-primary--rgb, #ddd), 0.3);
+    color: var(--cn-c-primary, #ddd);
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;

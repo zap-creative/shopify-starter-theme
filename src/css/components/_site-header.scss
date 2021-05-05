@@ -20,6 +20,10 @@
   &.simple-site-header {
     justify-content: center;
   }
+
+  .logo {
+    max-width: var(--cn-logo-w, 20rem);
+  }
 }
 
 .header-banner {

@@ -17,8 +17,8 @@
   a {
     @apply py-2;
 
-    background-color: var(--c-card);
-    color: var(--c-card-text);
+    background-color: var(--card);
+    color: var(--cn-card-text);
     display: flex;
     flex-flow: row wrap;
     width: 100%;

@@ -3,14 +3,14 @@
 }
 
 .announcement {
-  background-color: var(--c-banner-bg);
-  color: var(--c-banner-text);
+  background-color: var(--cn-banner-bg);
+  color: var(--cn-banner-text);
   position: relative;
   text-align: center;
 
   &:hover {
-    background-color: var(--c-banner-bg--hover);
-    color: var(--c-banner-text--hover);
+    background-color: var(--cn-banner-bg--hover);
+    color: var(--cn-banner-text--hover);
   }
 
   .link,

@@ -1,3 +1,69 @@
 .address-section {
-  @extend %customer-section;
+  @apply pb-12;
+
+  background-color: $accounts-bg;
+  padding-top: 0;
+
+  > .background {
+    background-blend-mode: $accounts-bg-blend;
+    background-color: $accounts-bg;
+    background-position: $accounts-bg-align;
+    background-repeat: $accounts-bg-repeat;
+    background-size: $accounts-bg-size;
+    opacity: $accounts-bg-opacity;
+    z-index: 0;
+  }
+
+  > :not(.background) {
+    position: relative;
+  }
+
+  .hero {
+    background-color: $accounts-bar-bg;
+    color: $accounts-bar-text;
+
+    .title,
+    .subtitle,
+    .link {
+      color: inherit;
+    }
+  }
+}
+
+#address-modal .modal-body {
+  @apply max-w-3xl;
+}
+
+.address-form {
+  .address-fields {
+    @apply -mx-2;
+
+    align-items: center;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+  }
+
+  .field {
+    @apply px-2;
+
+    flex: 1 1 auto;
+    min-width: 200px;
+    width: 100%;
+
+    &.half {
+      width: 50%;
+    }
+  }
+
+  .checkbox {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: flex-start;
+  }
+
+  [data-aria-hidden='true'] {
+    display: none;
+  }
 }

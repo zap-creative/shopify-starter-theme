@@ -110,8 +110,12 @@
     interactivity on product listings without having to fetch() the data for each 
     individual product after load. This is not cached by the browser.
   {%- endcomment -%}
-  {%- if json -%}
-    <script data-product-data="{{product.handle}}" type="application/json">{{ product | json }}</script>
-    <script data-product-option-data="{{product.handle}}" type="application/json">{{ product.options_with_values | json }}</script>
-  {%- endif -%}
+  {% if json -%}
+    <script data-product-data="{{product.handle}}" type="application/json">
+      {{- product | json -}}
+    </script>
+    <script data-product-option-data="{{product.handle}}" type="application/json">
+      -{{ product.options_with_values | json -}}
+    </script>
+  {%- endif %}
 {% endform %}

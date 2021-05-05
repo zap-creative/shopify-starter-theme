@@ -6,13 +6,13 @@
   text-align: left;
 
   .is-error {
-    background-color: rgba(var(--c-error--rgb), 0.85);
-    border-top-color: var(--c-error);
+    background-color: rgba(var(--cn-c-error--rgb), 0.85);
+    border-top-color: var(--cn-c-error);
   }
 
   .is-success {
-    background-color: rgba(var(--c-success--rgb), 0.85);
-    border-top-color: var(--c-success);
+    background-color: rgba(var(--cn-c-success--rgb), 0.85);
+    border-top-color: var(--cn-c-success);
   }
 
   ul {

@@ -29,7 +29,7 @@
   }
 
   tfoot {
-    border-top: 1px solid var(--c-border-dark);
+    border-top: 1px solid var(--cn-border-dark);
   }
 
   tr {

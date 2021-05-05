@@ -1,4 +1,8 @@
-.reset-card {
+.reset-password-section {
+  @extend %customer-section-background;
+}
+
+.reset-password-card {
   .card-header {
     @apply py-6;
 

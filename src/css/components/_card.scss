@@ -1,13 +1,11 @@
-$card-shadow: 0 2px 8px -4px;
-
 $card-colors: $colors !default;
 
 .card {
-  background-color: $c-card-bg;
-  color: $c-card-text;
+  background-color: $card-bg;
+  color: $card-text;
 
   &:not(.shadowless) {
-    box-shadow: $card-shadow rgba(#{$c-card-shadow}, 0.4);
+    box-shadow: $card-shadow rgba(#{$card-shadow--rgb}, $card-shadow-o);
   }
 
   &.hoverable:not(.shadowless) {

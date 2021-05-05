@@ -7,7 +7,7 @@
   h3 {
     @apply py-2 mb-2;
 
-    border-bottom: 1px solid var(--c-border);
+    border-bottom: 1px solid var(--cn-border);
   }
 </style>
 

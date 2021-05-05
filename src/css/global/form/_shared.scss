@@ -5,30 +5,30 @@ $form-colors: $colors !default;
 
 $input-height: $control-height !default;
 
-$input-color: $c-form-text !default;
-$input-background-color: $c-form-bg !default;
-$input-border-color: $c-form-border !default;
+$input-color: $form--text !default;
+$input-background-color: $form--bg !default;
+$input-border-color: $form--border !default;
 $input-height: $control-height !default;
-$input-shadow: inset 0 0.0625em 0.125em rgba(#{$c-form-border--rgb}, 0.5) !default;
-$input-placeholder-color: rgba(#{$c-form-text--rgb}, 0.5) !default;
+$input-shadow: inset 0 0.0625em 0.125em rgba(#{$form--border--rgb}, 0.5) !default;
+$input-placeholder-color: rgba(#{$form--text--rgb}, 0.5) !default;
 
-$input-hover-color: $c-form-text-dark !default;
-$input-hover-border-color: $c-form-border-dark !default;
+$input-hover-color: $form--text-dark !default;
+$input-hover-border-color: $form--border-dark !default;
 
-$input-focus-color: $c-form-text-dark !default;
+$input-focus-color: $form--text-dark !default;
 $input-focus-border-color: $link !default;
 $input-focus-box-shadow-size: 0 0 0 0.125em !default;
 $input-focus-box-shadow-color: rgba($link, 0.25) !default;
 
-$input-disabled-color: rgba(#{$c-form-text--rgb}, 0.25) !default;
-$input-disabled-background-color: rgba(#{$c-form-bg--rgb}, 0.25) !default;
-$input-disabled-border-color: rgba(#{$c-form-border--rgb}, 0.25) !default;
-$input-disabled-placeholder-color: rgba(#{$c-form-text--rgb}, 0.25) !default;
+$input-disabled-color: rgba(#{$form--text--rgb}, 0.25) !default;
+$input-disabled-background-color: rgba(#{$form--bg--rgb}, 0.25) !default;
+$input-disabled-border-color: rgba(#{$form--border--rgb}, 0.25) !default;
+$input-disabled-placeholder-color: rgba(#{$form--text--rgb}, 0.25) !default;
 
 $input-arrow: $c-link !default;
 
-$input-icon-color: $c-form-border !default;
-$input-icon-active-color: $c-form-border-dark !default;
+$input-icon-color: $form--border !default;
+$input-icon-active-color: $form--border-dark !default;
 $input-icon-hover-color: $c-link !default;
 
 %input {

@@ -49,9 +49,9 @@
 
 {% style %}
   #shopify-section-site-footer {
-    --c-bg: {{ section.settings.color_bg }};
-    --c-bg--rgb: {{ section.settings.color_bg | color_to_rgb | remove: 'rgb(' | remove: ')' }};
-    --c-text: {{ section.settings.color_text }};
+    --cn-c-bg: {{ section.settings.color_bg }};
+    --cn-c-bg--rgb: {{ section.settings.color_bg | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --cn-c-text: {{ section.settings.color_text }};
   }
 
   #shopify-section-site-footer .social-icon .btn {

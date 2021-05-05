@@ -1,14 +1,11 @@
 {% liquid 
   assign bg_image = settings.user_pages__login_bg_image
-  assign bg_opacity = settings.user_pages__login_bg_opacity | divided_by: 100.0
-
   assign form_id = 'RegisterForm'
 -%}
 
-<section class="customer-section" style="background-color: {{ settings.user_pages__login_bg | default: 'var(--color-bg)'-}};">
+<section class="customer-section register-section">  
   {% if bg_image -%}
     <div class="overlay background lazyload lazypreload js-enabled"
-      style="opacity: {{ bg_opacity -}};"
       data-bg="{{ bg_image | img_url: '640x480' }}"
       data-bgset="{% render 'bgset', image: bg_image %}"
       data-sizes="auto"
@@ -18,7 +15,7 @@
     </div>
     <noscript>
       <div class="overlay background"
-        style="background-image: url('{{- bg_image | img_url: '1920x' -}}'); opacity: {{ bg_opacity -}};"
+        style="background-image: url('{{- bg_image | img_url: '1920x' -}}');"
         {% unless bg_image.alt == blank %}
           aria-label="{{- bg_image.alt | escape -}}"
           role="img"
@@ -36,7 +33,7 @@
           class: 'form card register-card' 
         %}
           <header class="card-header">
-            <h1 class="h3 title">
+            <h1 class="h3 title mb-0">
               {{- 'customer.register.title' | t -}}
             </h1>
           </header>

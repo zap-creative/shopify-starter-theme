@@ -1,258 +1,278 @@
-{% comment %}
-  This is used to create CSS custom variables with Liquid references
-{% endcomment %}
-{% style %}
-  {%- liquid
-    assign body_font = settings.type_body_font
-    assign body_font_size = settings.type_body_size
-    assign body_font_height = settings.type_body_height
-    assign body_font_light = body_font | font_modify: 'weight', 'light' 
-    assign body_font_bold = body_font | font_modify: 'weight', 'bold' 
-    assign body_font_bolder = body_font | font_modify: 'weight', 'bolder'
+{%- liquid
+  assign body_font = settings.type_body_font
+  assign body_font_size = settings.type_body_size
+  assign body_font_height = settings.type_body_height
+  assign body_font_light = body_font | font_modify: 'weight', 'light' 
+  assign body_font_bold = body_font | font_modify: 'weight', 'bold' 
+  assign body_font_bolder = body_font | font_modify: 'weight', 'bolder'
 
-    assign header_font = settings.type_header_font
-    assign header_font_size = settings.type_header_size
-    if header_font_size == '2'
-      assign header_font_size = settings.type_header_size_custom  
-    endif
-    assign header_font_height = settings.type_header_height
-    assign header_font_light = header_font | font_modify: 'weight', 'normal'
-    assign header_font_bold = header_font | font_modify: 'weight', 'bolder'
+  assign header_font = settings.type_header_font
+  assign header_font_size = settings.type_header_size
+  if header_font_size == '2'
+    assign header_font_size = settings.type_header_size_custom  
+  endif
+  assign header_font_height = settings.type_header_height
+  assign header_font_light = header_font | font_modify: 'weight', 'normal'
+  assign header_font_bold = header_font | font_modify: 'weight', 'bolder'
 
-    assign header_levels = '1,2,3,4,5,6' | split: ',' | reverse
-    assign current_header_size = body_font_size
+  assign header_levels = '1,2,3,4,5,6' | split: ',' | reverse
+  assign current_header_size = body_font_size
 
-    assign darken_amt = 9
-    assign lighten_amt = 9
-    assign bg_mix_amt = 80
+  assign darken_amt = 9
+  assign lighten_amt = 9
+  assign bg_mix_amt = 80
+%}
+
+{% comment -%} create css variables to reference Liquid settings {%- endcomment -%}
+{% style -%}
+
+:root {
+  {% comment -%} Use the Major Third Scale by default {%- endcomment -%}
+  --cn-fz-body: {{ body_font_size -}}px;
+  --cn-fz-body-sm: {{ body_font_size | times: 0.8 | floor -}}px;
+  --cn-fz-body-md: {{ body_font_size | times: 1.25 | floor -}}px;
+  --cn-fz-body-lg: {{ body_font_size | times: 1.5625 | floor -}}px;
+  --cn-lh-body: {{ body_font_height -}};
+
+  {% for lvl in header_levels -%}
+    --cn-fz-header-{{- lvl }}: {{ current_header_size | floor -}}px;     
+    {%- assign current_header_size = current_header_size | times: header_font_size  %}
+  {% endfor -%}
+  --cn-lh-header: {{ header_font_height -}};
+
+  {% if settings.type_body_enabled -%}
+    --cn-ff-body: {{ body_font.family -}};
+  --cn-fs-body: {{ body_font.style -}};
+  --cn-fw-body: {{ body_font.weight -}};
+  --cn-fw-body--light: {{ body_font_light.weight | default: body_font.weight -}};
+  --cn-fw-body--bold: {{ body_font_bold.weight | default: body_font.weight -}};
+  --cn-fw-body--bolder: {{ body_font_bolder.weight | default: body_font.weight -}};
+  {%- else -%}
+    --cn-ff-body: '';
+  --cn-fs-body: normal;
+  --cn-fw-body: normal;
+  --cn-fw-body--light: light;
+  --cn-fw-body--bold: bold;
+  --cn-fw-body--bolder: bolder;
+  {%- endif %}
+
+  {% if settings.type_header_enabled -%}
+    --cn-ff-header: {{ header_font.family -}};
+  --cn-fs-header: {{ header_font.style -}};
+  --cn-fw-header: {{ header_font.weight -}};
+  --cn-fw-header--light: {{ header_font_bolder.weight | default: header_font.weight -}};
+  --cn-fw-header--bold: {{ header_font_bolder.weight | default: header_font.weight -}};
+  {%- else -%}
+    --cn-ff-header: '';
+  --cn-fs-header: normal;
+  --cn-fw-header: bold;
+  --cn-fw-header--light: normal;
+  --cn-fw-header--bold: bolder;
+  {%- endif %}
+
+  --cn-c-primary: {{ settings.color_primary -}};
+  --cn-c-primary--rgb: {{ settings.color_primary | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-c-primary-dark: {{ settings.color_primary | color_darken: darken_amt -}};
+  --cn-c-primary-light: {{ settings.color_primary | color_lighten: lighten_amt -}};
+  --cn-c-primary-text: {% render 'contrasting-color' with color: settings.color_primary %};
+  --cn-c-primary-bg: {{ settings.color_body | color_mix: settings.color_primary, bg_mix_amt -}};
+  
+  --cn-c-accent: {{ settings.color_accent -}};
+  --cn-c-accent--rgb: {{ settings.color_accent | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-c-accent-dark: {{ settings.color_accent | color_darken: darken_amt -}};
+  --cn-c-accent-light: {{ settings.color_accent | color_lighten: lighten_amt -}};
+  --cn-c-accent-text: {% render 'contrasting-color' with color: settings.color_accent %};
+  --cn-c-accent-bg: {{ settings.color_body | color_mix: settings.color_accent, bg_mix_amt -}};
+  
+  --cn-c-error: {{ settings.color_error -}};
+  --cn-c-error--rgb: {{ settings.color_error | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-c-error-dark: {{ settings.color_error | color_darken: darken_amt -}};
+  --cn-c-error-light: {{ settings.color_error | color_lighten: lighten_amt -}};
+  --cn-c-error-text: {% render 'contrasting-color' with color: settings.color_error %};
+  --cn-c-error-bg: {{ settings.color_body | color_mix: settings.color_error, bg_mix_amt -}};
+  
+  --cn-c-warning: {{ settings.color_warning -}};
+  --cn-c-warning--rgb: {{ settings.color_warning | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-c-warning-dark: {{ settings.color_warning | color_darken: darken_amt -}};
+  --cn-c-warning-light: {{ settings.color_warning | color_lighten: lighten_amt -}};
+  --cn-c-warning-text: {% render 'contrasting-color' with color: settings.color_warning %};
+  --cn-c-warning-bg: {{ settings.color_body | color_mix: settings.color_warning, bg_mix_amt -}};
+  
+  --cn-c-success: {{ settings.color_success -}};
+  --cn-c-success--rgb: {{ settings.color_success | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-c-success-dark: {{ settings.color_success | color_darken: darken_amt -}};
+  --cn-c-success-light: {{ settings.color_success | color_lighten: lighten_amt -}};
+  --cn-c-success-text: {% render 'contrasting-color' with color: settings.color_success %};
+  --cn-c-success-bg: {{ settings.color_body | color_mix: settings.color_success, bg_mix_amt -}};
+
+  --cn-c-sale: {{ settings.color_sale -}};
+  --cn-c-sale--rgb: {{ settings.color_sale | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-c-sale-dark: {{ settings.color_sale | color_darken: darken_amt -}};
+  --cn-c-sale-light: {{ settings.color_sale | color_lighten: lighten_amt -}};
+  --cn-c-sale-text: {% render 'contrasting-color' with color: settings.color_sale %};
+  --cn-c-sale-bg: {{ settings.color_sale | color_mix: settings.color_sale, bg_mix_amt -}};
+
+  --cn-c-bg: {{ settings.color_body -}};
+  --cn-c-bg--rgb: {{ settings.color_body | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-c-bg-dark: {{ settings.color_body | color_darken: 2 -}};
+  --cn-c-bg-light: {{ settings.color_body | color_lighten: 2 -}};
+
+  {% liquid 
+    assign text_dark = settings.color_text | color_darken: darken_amt
+    assign text_light = settings.color_text | color_lighten: lighten_amt
+    assign text_headers_dark = settings.color_text_headers | color_darken: darken_amt
+    assign text_headers_light = settings.color_text_headers | color_lighten: lighten_amt
   -%}
+  --cn-c-text: {{ settings.color_text -}};
+  --cn-c-text--rgb: {{ settings.color_text | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-c-text-light: {{ text_light -}};
+  --cn-c-text-dark: {{ text_dark -}};
+  --cn-c-text-header: {{ settings.color_text_headers -}};
+  --cn-c-text-header--rgb: {{ settings.color_text_headers | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-c-text-header-light: {{ text_headers_light -}};
+  --cn-c-text-header-dark: {{ text_headers_dark -}};
+  
+  --cn-c-link: {{ settings.color_text_links -}};
+  --cn-c-link--rgb: {{ settings.color_text_links | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-c-link--hover: {{ settings.color_text_links | color_lighten: lighten_amt -}};
+  --cn-c-link--focus: {{ settings.color_text_links | color_lighten: lighten_amt -}};
+  --cn-c-link--active: {{ settings.color_text_links | color_darken: darken_amt -}};
+  --cn-c-link--visited: {{ settings.color_text_links -}};
+  
+  --cn-border: {{ settings.color_borders -}};
+  --cn-border-light: {{ settings.color_borders | color_lighten: lighten_amt -}};
+  --cn-border-dark: {{ settings.color_borders | color_darken: darken_amt -}};
+  --cn-border-dark--hover: {{ settings.color_borders -}};
+  
+  --cn-btn-primary: {{ settings.color_button -}};
+  --cn-btn-primary-light: {{ settings.color_button | color_lighten: lighten_amt -}};
+  --cn-btn-primary-dark: {{ settings.color_button | color_darken: darken_amt -}};
+  --cn-btn-primary-text: {{ settings.color_button_text -}};
+  --cn-btn-primary-text-light: {{ settings.color_button_text | color_lighten: lighten_amt -}};
+  --cn-btn-primary-text-dark: {{ settings.color_button_text | color_darken: darken_amt -}};
 
+  --cn-btn-accent: {{ settings.color_small_button -}};
+  --cn-btn-accent-light: {{ settings.color_small_button | color_lighten: lighten_amt -}};
+  --cn-btn-accent-dark: {{ settings.color_small_button | color_darken: darken_amt -}};
+  --cn-btn-accent-text: {{ settings.color_small_button_text -}};
+  --cn-btn-accent-text-light: {{ settings.color_small_button_text | color_lighten: lighten_amt -}};
+  --cn-btn-accent-text--dark: {{ settings.color_small_button_text | color_darken: darken_amt -}};
+
+  --cn-form-bg: {{ settings.color_text_field -}};
+  --cn-form-bg--rgb: {{ settings.color_text_field | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-form-text: {{ settings.color_text_field_text -}};
+  --cn-form-text-dark: {{ settings.color_text_field_text | color_darken: darken_amt -}};
+  --cn-form-text--rgb: {{ settings.color_text_field_text | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-form-text-titles: {{ settings.color_text_field_titles -}};
+  --cn-form-text-labels: {{ settings.color_text_field_labels -}};
+  --cn-form-border: {{ settings.color_text_field_border -}};
+  --cn-form-border-dark: {{ settings.color_text_field_border | color_darken: darken_amt}};
+  --cn-form-border--rgb: {{ settings.color_text_field_border | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+
+  --cn-modal-bg:  {{ settings.modal_color -}};
+  --cn-modal-text:  {{ settings.modal_color_text -}};
+  --cn-modal-overlay: {{ settings.modal_color_overlay -}};
+  --cn-modal-overlay--rgb: {{ settings.modal_color_overlay | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-modal-overlay-o: {{ settings.modal_overlay_opacity | times: 0.01 -}};
+
+  --cn-card-bg: {{ settings.card_color -}};
+  --cn-card-text: {{ settings.card_color_text -}};
+  --cn-card-shadow: {{ settings.card_color_shadow -}};
+  --cn-card-shadow--rgb: {{ settings.card_color_shadow | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-card-shadow-o: {{ settings.card_shadow_opacity | divided_by: 100.00 -}};
+
+  {% comment -%} brand logo variables {%- endcomment -%}
+  --cn-logo-w: {{ settings.logo_max_width | append: 'px' -}};
+
+  {% comment -%} based on the image overlay either lighten or darken {%- endcomment -%}
+  {% liquid
+    assign image_overlay_opacity = settings.image_overlay_opacity | divided_by: 100.00 
+    assign image_overlay_opacity_hover = image_overlay_opacity | plus: 0.4
+
+    if image_overlay_opacity > 0.85
+      assign image_overlay_opacity_hover = image_overlay_opacity | minus: 0.3
+    endif
+  -%}
+  --cn-image-overlay: {{ settings.color_image_overlay -}};
+  --cn-image-overlay--rgb: {{ settings.color_image_overlay | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-image-overlay-text: {{ settings.color_image_overlay_text -}};
+  --cn-image-overlay-text--focus: {% render 'adaptive-color' with color: settings.color_image_overlay_text %};
+  --cn-image-overlay-opacity: {{ image_overlay_opacity -}};
+  --cn-image-overlay-opacity--hover: {{ image_overlay_opacity_hover | at_most: 1 -}};
+
+  {% comment -%} create an appropriate poster background color {%- endcomment -%}
+  {% liquid
+    assign color_body_bg = settings.color_body_bg
+    assign color_body_bg_brightness = color_body_bg | color_brightness
+    assign background_color_poster = color_body_bg | color_darken: darken_amt
+
+    if color_body_bg_brightness <= 26
+      assign background_color_poster = color_body_bg | color_lighten: lighten_amt
+    elsif color_body_bg_brightness <= 65
+      assign background_color_poster = color_body_bg | color_lighten: darken_amt
+    endif
+  -%}
+  --cn-video-bg: {{ background_color_poster -}};
+
+  {% comment -%} Image placeholder {%- endcomment -%}
+  {%- assign placeholder_alpha = settings.color_image_loader_opacity | divided_by: 100.00 -%}
+  --cn-image-loader-primary: {{ settings.color_image_loader | color_modify: 'alpha', placeholder_alpha }};
+  --cn-image-loader-secondary: {{ settings.color_image_loader | color_darken: 5 | color_modify: 'alpha', placeholder_alpha }};
+
+  {% comment -%}Banner variables{%- endcomment -%}
+  {%- capture banner_text_color -%}
+    {% render 'contrasting-color' with color: settings.color_primary -%}
+  {%- endcapture -%}
+  --cn-banner-bg: {{ settings.color_primary }};
+  --cn-banner-bg--hover: {% render 'adaptive-color' with color: settings.color_primary, is_background_color: true -%};
+  --cn-banner-text: {{ banner_text_color -}};
+  --cn-banner-text--hover: {% render 'adaptive-color' with color: banner_text_color -%};
+
+  {% if request.page_type contains 'customers/' -%}
+    --cn-login-bg: {{ settings.user_pages__login_bg -}};
+  --cn-login-bg--rgb: {{ settings.user_pages__login_bg | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-login-bg-align: {{ settings.user_pages__login_bg_alignment -}};
+  --cn-login-bg-blend: {{ settings.user_pages__login_bg_blend -}};
+  --cn-login-bg-opacity: {{ settings.user_pages__login_bg_opacity | divided_by: 100.0 -}};
+  --cn-login-bg-repeat: {{ settings.user_pages__login_bg_repeat -}};
+  --cn-login-bg-size: {{ settings.user_pages__login_bg_size -}};
+
+  --cn-accounts-bg: {{ settings.user_pages__hero_bg -}};
+  --cn-accounts-bg--rgb: {{ settings.user_pages__hero_bg | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-accounts-bg-align: {{ settings.user_pages__hero_bg_alignment -}};
+  --cn-accounts-bg-blend: {{ settings.user_pages__hero_bg_blend -}};
+  --cn-accounts-bg-opacity: {{ settings.user_pages__hero_bg_opacity | divided_by: 100.0 -}};
+  --cn-accounts-bg-repeat: {{ settings.user_pages__hero_bg_repeat -}};
+  --cn-accounts-bg-size: {{ settings.user_pages__hero_bg_size -}};
+
+  --cn-accounts-bar-bg: {{ settings.user_pages__header_bg -}};
+  --cn-accounts-bar-bg--rgb: {{ settings.user_pages__header_bg | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-accounts-bar-text: {{ settings.user_pages__header_color -}};
+  {%- endif %}
+}
+
+@media screen and (max-width: 767px) {
   :root {
-    {% comment -%} Use the Major Third Scale by default {%- endcomment -%}
-    --f-sz-body: {{ body_font_size -}}px;
-    --f-sz-body-sm: {{ body_font_size | times: 0.8 | floor -}}px;
-    --f-sz-body-md: {{ body_font_size | times: 1.25 | floor -}}px;
-    --f-sz-body-lg: {{ body_font_size | times: 1.5625 | floor -}}px;
-    --f-lh-body: {{ body_font_height -}};
-
-    {% for lvl in header_levels -%}
-      --f-sz-header-{{- lvl }}: {{ current_header_size | floor -}}px;     
-      {%- assign current_header_size = current_header_size | times: header_font_size  %}
-    {% endfor -%}
-    --f-lh-header: {{ header_font_height -}};
-
-    {% if settings.type_body_enabled -%}
-      --f-f-body: {{ body_font.family -}};
-      --f-s-body: {{ body_font.style -}};
-      --f-w-body: {{ body_font.weight -}};
-      --f-w-body--light: {{ body_font_light.weight | default: body_font.weight -}};
-      --f-w-body--bold: {{ body_font_bold.weight | default: body_font.weight -}};
-      --f-w-body--bolder: {{ body_font_bolder.weight | default: body_font.weight -}};
-    {%- else -%}
-      --f-f-body: '';
-      --f-s-body: normal;
-      --f-w-body: normal;
-      --f-w-body--light: light;
-      --f-w-body--bold: bold;
-      --f-w-body--bolder: bolder;
-    {%- endif %}
-
-    {% if settings.type_header_enabled -%}
-      --f-f-header: {{ header_font.family -}};
-      --f-s-header: {{ header_font.style -}};
-      --f-w-header: {{ header_font.weight -}};
-      --f-w-header--light: {{ header_font_bolder.weight | default: header_font.weight -}};
-      --f-w-header--bold: {{ header_font_bolder.weight | default: header_font.weight -}};
-    {%- else -%}
-      --f-f-header: '';
-      --f-s-header: normal;
-      --f-w-header: bold;
-      --f-w-header--light: normal;
-      --f-w-header--bold: bolder;
-    {%- endif %}
-
-    --c-primary: {{ settings.color_primary -}};
-    --c-primary--rgb: {{ settings.color_primary | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-    --c-primary-dark: {{ settings.color_primary | color_darken: darken_amt -}};
-    --c-primary-light: {{ settings.color_primary | color_lighten: lighten_amt -}};
-    --c-primary-text: {% render 'contrasting-color' with color: settings.color_primary %};
-    --c-primary-bg: {{ settings.color_body | color_mix: settings.color_primary, bg_mix_amt -}};
-    
-    --c-accent: {{ settings.color_accent -}};
-    --c-accent--rgb: {{ settings.color_accent | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-    --c-accent-dark: {{ settings.color_accent | color_darken: darken_amt -}};
-    --c-accent-light: {{ settings.color_accent | color_lighten: lighten_amt -}};
-    --c-accent-text: {% render 'contrasting-color' with color: settings.color_accent %};
-    --c-accent-bg: {{ settings.color_body | color_mix: settings.color_accent, bg_mix_amt -}};
-    
-    --c-error: {{ settings.color_error -}};
-    --c-error--rgb: {{ settings.color_error | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-    --c-error-dark: {{ settings.color_error | color_darken: darken_amt -}};
-    --c-error-light: {{ settings.color_error | color_lighten: lighten_amt -}};
-    --c-error-text: {% render 'contrasting-color' with color: settings.color_error %};
-    --c-error-bg: {{ settings.color_body | color_mix: settings.color_error, bg_mix_amt -}};
-    
-    --c-warning: {{ settings.color_warning -}};
-    --c-warning--rgb: {{ settings.color_warning | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-    --c-warning-dark: {{ settings.color_warning | color_darken: darken_amt -}};
-    --c-warning-light: {{ settings.color_warning | color_lighten: lighten_amt -}};
-    --c-warning-text: {% render 'contrasting-color' with color: settings.color_warning %};
-    --c-warning-bg: {{ settings.color_body | color_mix: settings.color_warning, bg_mix_amt -}};
-    
-    --c-success: {{ settings.color_success -}};
-    --c-success--rgb: {{ settings.color_success | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-    --c-success-dark: {{ settings.color_success | color_darken: darken_amt -}};
-    --c-success-light: {{ settings.color_success | color_lighten: lighten_amt -}};
-    --c-success-text: {% render 'contrasting-color' with color: settings.color_success %};
-    --c-success-bg: {{ settings.color_body | color_mix: settings.color_success, bg_mix_amt -}};
-
-    --c-sale: {{ settings.color_sale -}};
-    --c-sale--rgb: {{ settings.color_sale | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-    --c-sale-dark: {{ settings.color_sale | color_darken: darken_amt -}};
-    --c-sale-light: {{ settings.color_sale | color_lighten: lighten_amt -}};
-    --c-sale-text: {% render 'contrasting-color' with color: settings.color_sale %};
-    --c-sale-bg: {{ settings.color_sale | color_mix: settings.color_sale, bg_mix_amt -}};
-
-    --c-bg: {{ settings.color_body -}};
-    --c-bg--rgb: {{ settings.color_body | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-    --c-bg-dark: {{ settings.color_body | color_darken: 2 -}};
-    --c-bg-light: {{ settings.color_body | color_lighten: 2 -}};
-    
-    --c-border: {{ settings.color_borders -}};
-    --c-border-light: {{ settings.color_borders | color_lighten: lighten_amt -}};
-    --c-border-dark: {{ settings.color_borders | color_darken: darken_amt -}};
-    --c-border-dark--hover: {{ settings.color_borders -}};
-
-    {% liquid 
-      assign text_dark = settings.color_text | color_darken: darken_amt
-      assign text_light = settings.color_text | color_lighten: lighten_amt
-      assign text_headers_dark = settings.color_text_headers | color_darken: darken_amt
-      assign text_headers_light = settings.color_text_headers | color_lighten: lighten_amt
-    -%}
-    --c-text: {{ settings.color_text -}};
-    --c-text--rgb: {{ settings.color_text | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-    --c-text-light: {{ text_light -}};
-    --c-text-dark: {{ text_dark -}};
-    --c-text-header: {{ settings.color_text_headers -}};
-    --c-text-header--rgb: {{ settings.color_text_headers | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-    --c-text-header-light: {{ text_headers_light -}};
-    --c-text-header-dark: {{ text_headers_dark -}};
-    
-    --c-link: {{ settings.color_text_links -}};
-    --c-link--rgb: {{ settings.color_text_links | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-    --c-link--hover: {{ settings.color_text_links | color_lighten: lighten_amt -}};
-    --c-link--focus: {{ settings.color_text_links | color_lighten: lighten_amt -}};
-    --c-link--active: {{ settings.color_text_links | color_darken: darken_amt -}};
-    --c-link--visited: {{ settings.color_text_links -}};
-    
-    --c-btn-primary: {{ settings.color_button -}};
-    --c-btn-primary-light: {{ settings.color_button | color_lighten: lighten_amt -}};
-    --c-btn-primary-dark: {{ settings.color_button | color_darken: darken_amt -}};
-    --c-btn-primary-text: {{ settings.color_button_text -}};
-    --c-btn-primary-text-light: {{ settings.color_button_text | color_lighten: lighten_amt -}};
-    --c-btn-primary-text-dark: {{ settings.color_button_text | color_darken: darken_amt -}};
-
-    --c-btn-accent: {{ settings.color_small_button -}};
-    --c-btn-accent-light: {{ settings.color_small_button | color_lighten: lighten_amt -}};
-    --c-btn-accent-dark: {{ settings.color_small_button | color_darken: darken_amt -}};
-    --c-btn-accent-text: {{ settings.color_small_button_text -}};
-    --c-btn-accent-text-light: {{ settings.color_small_button_text | color_lighten: lighten_amt -}};
-    --c-btn-accent-text--dark: {{ settings.color_small_button_text | color_darken: darken_amt -}};
-
-    --c-form-bg: {{ settings.color_text_field -}};
-    --c-form-bg--rgb: {{ settings.color_text_field | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-    --c-form-headings: {{ settings.color_text_field_titles -}};
-    --c-form-labels: {{ settings.color_text_field_labels -}};
-    --c-form-text: {{ settings.color_text_field_text -}};
-    --c-form-text-dark: {{ settings.color_text_field_text | color_darken: darken_amt -}};
-    --c-form-text--rgb: {{ settings.color_text_field_text | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-    --c-form-border: {{ settings.color_text_field_border -}};
-    --c-form-border-dark: {{ settings.color_text_field_border | color_darken: darken_amt}};
-    --c-form-border--rgb: {{ settings.color_text_field_border | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-
-    --c-image-overlay: {{ settings.color_image_overlay -}};
-    --c-image-overlay-rgb: {{ settings.color_image_overlay | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-    --c-image-overlay-text: {{ settings.color_image_overlay_text -}};
-    --c-image-overlay--text-focus: {% render 'adaptive-color' with color: settings.color_image_overlay_text %};
-
-    --c-modal-bg:  {{ settings.color_modal -}};
-    --c-modal-text:  {{ settings.color_modal_text -}};
-    --c-modal-overlay: {{ settings.color_modal_overlay -}};
-    --c-modal-overlay--rgb: {{ settings.color_modal_overlay | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-    --o-modal-overlay: {{ settings.opacity_modal_overlay | times: 0.01 -}};
-
-    --c-card-bg: {{ settings.color_card -}};
-    --c-card-text: {{ settings.color_card_text -}};
-    --c-card-shadow: {{ settings.color_card_shadow | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --cn-fz-body: {{ body_font_size | times: 0.9 | floor -}}px;
+    --cn-fz-body-sm: {{ body_font_size | times: 0.9 | times: 0.875 | floor -}}px;
+    --cn-fz-body-md: {{ body_font_size | times: 0.9 | times: 1.25 | floor -}}px;
+    --cn-fz-body-lg: {{ body_font_size | times: 0.9 | times: 1.5 | floor -}}px;
 
     {% comment -%}
       Brand logo variables
     {%- endcomment -%}
-    --brand-logo-width: {{ settings.logo_max_width | append: 'px'}};
-
-    {% comment -%}
-      Based on the image overlay opacity, either lighten or darken the image on hover
-    {%- endcomment -%}
-    {%- assign image_overlay_opacity = settings.image_overlay_opacity | divided_by: 100.00 -%}
-    {%- if image_overlay_opacity > 0.85 -%}
-      {%- assign image_overlay_opacity_hover = image_overlay_opacity | minus: 0.3 -%}
-    {%- else -%}
-      {%- assign image_overlay_opacity_hover = image_overlay_opacity | plus: 0.4 -%}
-    {%- endif -%}
-    --opacity-image-overlay: {{ image_overlay_opacity }};
-    --hover-overlay-opacity: {{ image_overlay_opacity_hover | at_most: 1 }};
-
-    {% comment -%} 
-      Create an appropriate poster background color 
-      based on background color and brightness 
-    {%- endcomment -%}
-    {%- assign color_body_bg = settings.color_body_bg -%}
-    {%- assign color_body_bg_brightness = color_body_bg | color_brightness -%}
-    {%- if color_body_bg_brightness <= 26 -%}
-      {%- assign background_color_poster = color_body_bg | color_lighten: lighten_amt -%}
-    {%- elsif color_body_bg_brightness <= 65 -%}
-      {%- assign background_color_poster = color_body_bg | color_lighten: 5 -%}
-    {%- else -%}
-      {%- assign background_color_poster = color_body_bg | color_darken: 5 -%}
-    {%- endif -%}
-    --c-video-bg: {{ background_color_poster }};
-
-    {% comment -%} Image placeholder {%- endcomment -%}
-    {%- assign placeholder_alpha = settings.color_image_loader_opacity | divided_by: 100.00 -%}
-    --c-image-loader-primary: {{ settings.color_image_loader | color_modify: 'alpha', placeholder_alpha }};
-    --c-image-loader-secondary: {{ settings.color_image_loader | color_darken: 5 | color_modify: 'alpha', placeholder_alpha }};
-
-    {% comment -%}Banner variables{%- endcomment -%}
-    {%- capture banner_text_color -%}
-      {% render 'contrasting-color' with color: settings.color_primary -%}
-    {%- endcapture -%}
-    --c-banner-bg: {{ settings.color_primary }};
-    --c-banner-bg--hover: {% render 'adaptive-color' with color: settings.color_primary, is_background_color: true -%};
-    --c-banner-text: {{ banner_text_color -}};
-    --c-banner-text--hover: {% render 'adaptive-color' with color: banner_text_color -%};
+    --cn-logo-w: {{ settings.logo_max_width | times: 0.75 | round | append: 'px'}};
   }
+}  
 
-  @media screen and (max-width: 767px) {
-    :root {
-      --f-sz-body: {{ body_font_size | times: 0.9 | floor -}}px;
-      --f-sz-body-sm: {{ body_font_size | times: 0.9 | times: 0.875 | floor -}}px;
-      --f-sz-body-md: {{ body_font_size | times: 0.9 | times: 1.25 | floor -}}px;
-      --f-sz-body-lg: {{ body_font_size | times: 0.9 | times: 1.5 | floor -}}px;
-
-      {% comment -%}
-        Brand logo variables
-      {%- endcomment -%}
-      --brand-logo-width: {{ settings.logo_max_width | times: 0.75 | round | append: 'px'}};
-    }
-  }  
-
-  @media screen and (min-width: 1408px) {
-    :root {
-      --f-sz-body: {{ body_font_size | times: 1.05 | floor -}}px;
-      --f-sz-body-sm: {{ body_font_size | times: 1.05 | times: 0.875 | floor -}}px;
-      --f-sz-body-md: {{ body_font_size | times: 1.05 | times: 1.25 | floor -}}px;
-      --f-sz-body-lg: {{ body_font_size | times: 1.05 | times: 1.5 | floor -}}px;
-    }
+@media screen and (min-width: 1408px) {
+  :root {
+    --cn-fz-body: {{ body_font_size | times: 1.05 | floor -}}px;
+    --cn-fz-body-sm: {{ body_font_size | times: 1.05 | times: 0.875 | floor -}}px;
+    --cn-fz-body-md: {{ body_font_size | times: 1.05 | times: 1.25 | floor -}}px;
+    --cn-fz-body-lg: {{ body_font_size | times: 1.05 | times: 1.5 | floor -}}px;
   }
+}
+
 {%- endstyle %}
  

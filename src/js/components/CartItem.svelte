@@ -31,7 +31,7 @@
     @apply py-4 border-b;
 
     align-items: stretch;
-    border-color: var(--c-border);
+    border-color: var(--cn-border);
     display: flex;
     flex: 1;
     flex-flow: row nowrap;
@@ -57,7 +57,7 @@
   }
 
   .item-price {
-    font-weight: var(--f-w-body--bold);
+    font-weight: var(--cn-fw-body--bold);
   }
 </style>
 

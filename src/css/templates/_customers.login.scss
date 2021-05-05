@@ -1,3 +1,7 @@
+.login-section {
+  @extend %customer-section-background;
+}
+
 .login-card {
   .card-header {
     @apply py-6;

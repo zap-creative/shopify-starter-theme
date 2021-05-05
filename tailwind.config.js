@@ -33,8 +33,8 @@ module.exports = {
       'sans': sans,
       'serif': serif,
       'mono': mono,
-      'heading': ['var(--f-f-header)', ...serif],
-      'body': ['var(--f-f-body)', ...sans],
+      'heading': ['var(--cn-ff-header)', ...serif],
+      'body': ['var(--cn-ff-body)', ...sans],
     },
     screens: {
       'small': {

@@ -34,16 +34,17 @@ $modal-overlay-animation-easing: $transition-easing !default;
 }
 
 %modal-overlay {
-  @apply px-12;
+  @apply p-12;
 
   align-items: center;
   backdrop-filter: blur(8px);
-  background-color: rgba($c-modal-overlay--rgb, $o-modal-overlay);
+  background-color: rgba($modal-overlay--rgb, $modal-overlay-o);
   display: flex;
-  flex-flow: column wrap;
+  flex-flow: row wrap;
   height: 100%;
   justify-content: center;
   left: 0;
+  overflow-y: auto;
   position: absolute;
   top: 0;
   width: 100%;
@@ -63,16 +64,15 @@ $modal-overlay-animation-easing: $transition-easing !default;
 }
 
 %modal-body {
-  @apply p-6 max-w-xl;
+  @apply p-6 my-4 max-w-xl;
 
   align-items: stretch;
-  background-color: var(--c-modal-bg);
+  background-color: var(--cn-modal-bg);
   border-radius: $modal-radius;
-  color: var(--c-modal-text);
+  color: var(--cn-modal-text);
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
-  max-height: 100vh;
   position: relative;
   width: 100%;
   will-change: transform;
