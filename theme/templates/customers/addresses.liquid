@@ -45,7 +45,10 @@
   <div class="tablet:container tablet:grid tablet:grid-cols-2 desktop:grid-cols-3 fullhd:grid-cols-4 tablet:gap-4">
   
     <div class="my-4 border-2 border-dashed rounded" data-address>
-      <button type="button" data-modal-open="address-modal" data-address-add
+      <button type="button"
+        data-modal-open="address-modal"
+        data-address-add
+        aria-haspopup="dialog"
         class="p-6 rounded text-xl font-light text-center h-full w-full hover:bg-blue-100"
       >
         <svg class="w-8 h-8 inline text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -72,6 +75,7 @@
           <button type="button" class="btn is-primary text-caps"
             data-modal-open="address-modal"
             data-address-edit
+            aria-haspopup="dialog"
           >
             {{ 'customer.addresses.edit' | t }}
           </button>

@@ -1099,7 +1099,7 @@
       {
         "type": "select",
         "id": "user_pages__login_bg_repeat",
-        "label": "Image Repat",
+        "label": "Image Repeat",
         "default": "no-repeat",
         "options": [
           {

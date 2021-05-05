@@ -257,14 +257,6 @@ $image-overlay--rgb: var(--cn-image-overlay--rgb, color-to-rgb($primary)) !defau
 $image-overlay-text: var(--cn-image-overlay-text, $text-invert) !default;
 $image-overlay--text-focus: var(--cn-image-overlay--text-focus, $text-invert-strong) !default;
 
-$login-bg: var(--cn-login-bg, lighten($primary, $lighten-amt));
-$login-bg--rgb: var(--cn-login-bg--rgb, color-to-rgb($primary));
-$login-bg-align: var(--cn-login-bg-align, center);
-$login-bg-blend: var(--cn-login-bg-blend, normal);
-$login-bg-opacity: var(--cn-login-bg-opacity, 1);
-$login-bg-repeat: var(--cn-login-bg-repeat, no-repeat);
-$login-bg-size: var(--cn-login-bg-size, cover);
-
 $accounts-bg: var(--cn-accounts-bg, lighten($primary, $lighten-amt));
 $accounts-bg--rgb: var(--cn-accounts-bg--rgb, color-to-rgb($primary));
 $accounts-bg-align: var(--cn-accounts-bg-align, center);
@@ -277,6 +269,27 @@ $accounts-bar-bg: var(--cn-accounts-bar-bg, lighten($primary, $lighten-amt));
 $accounts-bar-bg--rgb: var(--cn-accounts-bar-bg--rgb, color-to-rgb($primary));
 $accounts-bar-text: var(--cn-accounts-bar-text, contrast-color($primary));
 
+$login-bg: var(--cn-login-bg, lighten($primary, $lighten-amt));
+$login-bg--rgb: var(--cn-login-bg--rgb, color-to-rgb($primary));
+$login-bg-align: var(--cn-login-bg-align, center);
+$login-bg-blend: var(--cn-login-bg-blend, normal);
+$login-bg-opacity: var(--cn-login-bg-opacity, 1);
+$login-bg-repeat: var(--cn-login-bg-repeat, no-repeat);
+$login-bg-size: var(--cn-login-bg-size, cover);
+
+$password-bg: var(--cn-password-bg);
+$password-bg--rgb: var(--cn-password-bg--rgb);
+$password-bg-align: var(--cn-password-bg-align, center);
+$password-bg-blend: var(--cn-password-bg-blend, normal);
+$password-bg-opacity: var(--cn-password-bg-opacity, 1);
+$password-bg-repeat: var(--cn-password-bg-repeat, no-repeat);
+$password-bg-size: var(--cn-password-bg-size, cover);
+$password-text: var(--cn-password-text);
+
+$password-logo-w: var(--cn-password-logo-w);
+
+$password-social-icon: var(--cn-password-social-icon);
+$password-share-icon: var(--cn-password-share-icon);
 
 /**
  * derived color sets

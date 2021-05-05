@@ -17,7 +17,7 @@
             {% liquid 
               if form[name]
                 assign name_value = form[name]
-              else if customer
+              elsif customer
                 assign name_value = customer.name
               endif
             -%}
@@ -39,7 +39,7 @@
             {% liquid 
               if form[email]
                 assign email_value = form[email]
-              else if customer
+              elsif customer
                 assign email_value = customer.email
               endif
 
@@ -81,7 +81,7 @@
             {% liquid 
               if form[phone]
                 assign phone_value = form[phone]
-              else if customer
+              elsif customer
                 assign phone_value = customer.phone
               endif
 
