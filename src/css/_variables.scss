@@ -128,6 +128,8 @@ $f-height: var(--cn-lh-body, #{$height-body}) !default;
 
 $f-family: var(--cn-ff-body, #{$family-sans}) !default;
 $f-style: var(--cn-fs-body, normal) !default;
+$f-style-italic: var(--cn-fs-body--italic, italic) !default;
+$f-style-oblique: var(--cn-fs-body--oblique, oblique) !default;
 $f-weight: var(--cn-fw-body, #{$weight-normal}) !default;
 $f-weight-light: var(--cn-fw-body--light, #{$weight-light}) !default;
 $f-weight-bold: var(--cn-fw-body--bold, #{$weight-bold}) !default;
@@ -143,6 +145,8 @@ $f-height-header: var(--cn-lh-header, #{$height-header}) !default;
 
 $f-family-header: var(--cn-ff-header, #{$family-serif}) !default;
 $f-style-header: var(--cn-fs-header, normal) !default;
+$f-style-header-italic: var(--cn-fs-header--italic, italic) !default;
+$f-style-header-oblique: var(--cn-fs-header--oblique, oblique) !default;
 $f-weight-header: var(--cn-fw-header, #{$weight-bold}) !default;
 $f-weight-header-light: var(--cn-fw-header--light, #{$weight-normal}) !default;
 $f-weight-header-bold: var(--cn-fw-header--bold, #{$weight-bolder}) !default;
@@ -257,39 +261,40 @@ $image-overlay--rgb: var(--cn-image-overlay--rgb, color-to-rgb($primary)) !defau
 $image-overlay-text: var(--cn-image-overlay-text, $text-invert) !default;
 $image-overlay--text-focus: var(--cn-image-overlay--text-focus, $text-invert-strong) !default;
 
-$accounts-bg: var(--cn-accounts-bg, lighten($primary, $lighten-amt));
-$accounts-bg--rgb: var(--cn-accounts-bg--rgb, color-to-rgb($primary));
-$accounts-bg-align: var(--cn-accounts-bg-align, center);
-$accounts-bg-blend: var(--cn-accounts-bg-blend, normal);
-$accounts-bg-opacity: var(--cn-accounts-bg-opacity, 1);
-$accounts-bg-repeat: var(--cn-accounts-bg-repeat, no-repeat);
-$accounts-bg-size: var(--cn-accounts-bg-size, cover);
+$accounts-bg: var(--cn-accounts-bg, lighten($primary, $lighten-amt)) !default;
+$accounts-bg--rgb: var(--cn-accounts-bg--rgb, color-to-rgb($primary)) !default;
+$accounts-bg-align: var(--cn-accounts-bg-align, center) !default;
+$accounts-bg-blend: var(--cn-accounts-bg-blend, normal) !default;
+$accounts-bg-opacity: var(--cn-accounts-bg-opacity, 1) !default;
+$accounts-bg-repeat: var(--cn-accounts-bg-repeat, no-repeat) !default;
+$accounts-bg-size: var(--cn-accounts-bg-size, cover) !default;
 
-$accounts-bar-bg: var(--cn-accounts-bar-bg, lighten($primary, $lighten-amt));
-$accounts-bar-bg--rgb: var(--cn-accounts-bar-bg--rgb, color-to-rgb($primary));
-$accounts-bar-text: var(--cn-accounts-bar-text, contrast-color($primary));
+$accounts-bar-bg: var(--cn-accounts-bar-bg, lighten($primary, $lighten-amt)) !default;
+$accounts-bar-bg--rgb: var(--cn-accounts-bar-bg--rgb, color-to-rgb($primary)) !default;
+$accounts-bar-text: var(--cn-accounts-bar-text, contrast-color($primary)) !default;
+$accounts-bar-opacity: var(--cn-accounts-bar-opacity, 1) !default;
 
-$login-bg: var(--cn-login-bg, lighten($primary, $lighten-amt));
-$login-bg--rgb: var(--cn-login-bg--rgb, color-to-rgb($primary));
-$login-bg-align: var(--cn-login-bg-align, center);
-$login-bg-blend: var(--cn-login-bg-blend, normal);
-$login-bg-opacity: var(--cn-login-bg-opacity, 1);
-$login-bg-repeat: var(--cn-login-bg-repeat, no-repeat);
-$login-bg-size: var(--cn-login-bg-size, cover);
+$login-bg: var(--cn-login-bg, lighten($primary, $lighten-amt)) !default;
+$login-bg--rgb: var(--cn-login-bg--rgb, color-to-rgb($primary)) !default;
+$login-bg-align: var(--cn-login-bg-align, center) !default;
+$login-bg-blend: var(--cn-login-bg-blend, normal) !default;
+$login-bg-opacity: var(--cn-login-bg-opacity, 1) !default;
+$login-bg-repeat: var(--cn-login-bg-repeat, no-repeat) !default;
+$login-bg-size: var(--cn-login-bg-size, cover) !default;
 
-$password-bg: var(--cn-password-bg);
-$password-bg--rgb: var(--cn-password-bg--rgb);
-$password-bg-align: var(--cn-password-bg-align, center);
-$password-bg-blend: var(--cn-password-bg-blend, normal);
-$password-bg-opacity: var(--cn-password-bg-opacity, 1);
-$password-bg-repeat: var(--cn-password-bg-repeat, no-repeat);
-$password-bg-size: var(--cn-password-bg-size, cover);
-$password-text: var(--cn-password-text);
+$password-bg: var(--cn-password-bg) !default;
+$password-bg--rgb: var(--cn-password-bg--rgb) !default;
+$password-bg-align: var(--cn-password-bg-align, center) !default;
+$password-bg-blend: var(--cn-password-bg-blend, normal) !default;
+$password-bg-opacity: var(--cn-password-bg-opacity, 1) !default;
+$password-bg-repeat: var(--cn-password-bg-repeat, no-repeat) !default;
+$password-bg-size: var(--cn-password-bg-size, cover) !default;
+$password-text: var(--cn-password-text) !default;
 
-$password-logo-w: var(--cn-password-logo-w);
+$password-logo-w: var(--cn-login-logo-w) !default;
 
-$password-social-icon: var(--cn-password-social-icon);
-$password-share-icon: var(--cn-password-share-icon);
+$password-social-icon: var(--cn-login-social-icon) !default;
+$password-share-icon: var(--cn-login-share-icon) !default;
 
 /**
  * derived color sets
@@ -376,7 +381,7 @@ $colors: (
     $c-sale-text,
     $c-sale-bg
   ),
-);
+) !default;
 
 /**
  * mixins/_controls.scss

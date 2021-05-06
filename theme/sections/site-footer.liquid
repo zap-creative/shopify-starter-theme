@@ -1,5 +1,5 @@
-{%- liquid 
-  if request.page_type == 'captcha'
+{% liquid
+  if request.page_type == 'captcha' and settings.challenge__use_simple_page
     assign simple_footer = true
   endif
 
@@ -56,6 +56,7 @@
 
   #shopify-section-site-footer .social-icon .btn {
     color: {{ social_icon_color -}};
+  }
 {% endstyle %}
 
 {%- capture localization_form -%}

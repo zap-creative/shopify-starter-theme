@@ -1,25 +1,17 @@
 .account-section {
+  @extend %customer-section-background;
+
   @apply pb-12;
 
-  background-color: $accounts-bg;
   padding-top: 0;
-
-  > .background {
-    background-blend-mode: $accounts-bg-blend;
-    background-color: $accounts-bg;
-    background-position: $accounts-bg-align;
-    background-repeat: $accounts-bg-repeat;
-    background-size: $accounts-bg-size;
-    opacity: $accounts-bg-opacity;
-    z-index: 0;
-  }
 
   > :not(.background) {
     position: relative;
   }
 
   .hero {
-    background-color: $accounts-bar-bg;
+    background-color: rgba($accounts-bar-bg--rgb, $accounts-bar-opacity);
+    border-bottom: 1px solid $accounts-bar-bg;
     color: $accounts-bar-text;
 
     .title,

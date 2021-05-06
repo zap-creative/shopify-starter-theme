@@ -1,5 +1,5 @@
 {% liquid 
-  if request.page_type == 'captcha'
+  if request.page_type == 'captcha' and settings.challenge__use_simple_page
     assign simple_header = true
   endif
 

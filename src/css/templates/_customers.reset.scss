@@ -1,5 +1,19 @@
 .reset-password-section {
-  @extend %customer-section-background;
+  background-color: $login-bg;
+
+  > .background {
+    background-blend-mode: $login-bg-blend;
+    background-color: $login-bg;
+    background-position: $login-bg-align;
+    background-repeat: $login-bg-repeat;
+    background-size: $login-bg-size;
+    opacity: $login-bg-opacity;
+    z-index: 0;
+  }
+
+  > :not(.background) {
+    position: relative;
+  }
 }
 
 .reset-password-card {

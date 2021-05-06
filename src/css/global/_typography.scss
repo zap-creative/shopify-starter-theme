@@ -1,3 +1,7 @@
+html {
+  font-family: $f-family;
+}
+
 a {
   color: $c-link;
   cursor: pointer;
@@ -35,8 +39,8 @@ h6,
   font-family: $f-family-header;
   line-height: $f-height-header;
 
-  &:not(:last-child) {
-    margin-bottom: 0.5rem;
+  .prose &:not(:last-child) {
+    padding-bottom: 0.5rem;
   }
 }
 
@@ -70,8 +74,23 @@ h6,
   font-size: $f-size-h6;
 }
 
+.title {
+  margin-bottom: 1.25rem;
+}
+
+.subtitle {
+  .title + & {
+    margin-top: -0.5rem;
+  }
+}
+
 .prose {
   @apply mx-auto max-w-3xl;
+
+  &,
+  > * {
+    color: inherit;
+  }
 
   &.narrow {
     @apply max-w-lg;
@@ -80,16 +99,6 @@ h6,
   &.wide {
     @apply max-w-7xl;
   }
-
-  * {
-    color: inherit;
-  }
-}
-
-.asterisk {
-  color: $c-error;
-  font-size: $f-size-medium;
-  font-weight: $f-weight-bold;
 }
 
 .text-caps {
@@ -100,12 +109,8 @@ h6,
   text-transform: uppercase;
 }
 
-.title {
-  margin-bottom: 1.25em;
-}
-
-.subtitle {
-  .title + & {
-    margin-top: -0.5em;
-  }
+.asterisk {
+  color: $c-error;
+  font-size: $f-size-medium;
+  font-weight: $f-weight-bold;
 }

@@ -67,9 +67,9 @@ $modal-overlay-animation-easing: $transition-easing !default;
   @apply p-6 my-4 max-w-xl;
 
   align-items: stretch;
-  background-color: var(--cn-modal-bg);
+  background-color: $modal-bg;
   border-radius: $modal-radius;
-  color: var(--cn-modal-text);
+  color: $modal-text;
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
@@ -94,6 +94,10 @@ $modal-overlay-animation-easing: $transition-easing !default;
 
   > section {
     @apply py-8;
+  }
+
+  .modal-title {
+    color: $modal-text;
   }
 }
 

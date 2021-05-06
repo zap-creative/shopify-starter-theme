@@ -2,7 +2,7 @@
   assign title_size = settings.user_pages__title_level
   assign title_align = settings.user_pages__title_align
 
-  assign bg_image = settings.user_pages__hero_bg_image
+  assign bg_image = settings.user_pages__bg_image
 -%}
 
 <section class="customer-section address-section">
@@ -28,8 +28,6 @@
         {% endunless %}
       ></div>
     </noscript>
-  {%- else -%}
-    {{ 'image' | placeholder_svg_tag: 'placeholder-svg overlay background' }}
   {%- endif %}
 
   <div class="hero adapt mb-10">

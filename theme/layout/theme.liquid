@@ -1,8 +1,7 @@
 {% liquid
-  assign page_type = request.page_type
-  unless page_type == 'captcha'
-    assign full_page = true
-  endunless
+  if request.page_type == 'captcha'
+    assign challenge_page = true
+  endif
 -%}
 
 <!doctype html>
@@ -68,6 +67,10 @@
     -%}
   {%- endif %}
 
+  {% if challenge_page %}
+    <div class="background overlay"></div>
+  {% endif %}
+
   {% section 'site-header' %}
 
   <main role="main">
@@ -76,12 +79,12 @@
 
   {% section 'site-footer' %}
 
-  {% if settings.enable_ajax and full_page -%}
+  {% if settings.enable_ajax and challenge_page == false -%}
     {% comment %} <link rel="prefetch" href="{{ 'app-cart-init.bundle.js' | asset_url }}" as="script"> {% endcomment %}
     <aside id="app-cart"></aside>
   {%- endif %}
 
-  {% if settings.predictive_search_enabled and full_page -%}
+  {% if settings.predictive_search_enabled and challenge_page == false -%}
     {% comment %} <link rel="prefetch" href="{{ 'app-search-init.bundle.js' | asset_url }}" as="script"> {% endcomment %}
     <aside id="app-search"></aside>
   {%- endif %}

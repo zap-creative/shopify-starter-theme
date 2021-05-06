@@ -2,6 +2,8 @@
   assign body_font = settings.type_body_font
   assign body_font_size = settings.type_body_size
   assign body_font_height = settings.type_body_height
+  assign body_font_italic = body_font | font_modify: 'style', 'italic' 
+  assign body_font_oblique = body_font | font_modify: 'style', 'oblique' 
   assign body_font_light = body_font | font_modify: 'weight', 'light' 
   assign body_font_bold = body_font | font_modify: 'weight', 'bold' 
   assign body_font_bolder = body_font | font_modify: 'weight', 'bolder'
@@ -12,6 +14,8 @@
     assign header_font_size = settings.type_header_size_custom  
   endif
   assign header_font_height = settings.type_header_height
+  assign header_font_italic = header_font | font_modify: 'style', 'italic'
+  assign header_font_oblique = header_font | font_modify: 'style', 'oblique'
   assign header_font_light = header_font | font_modify: 'weight', 'normal'
   assign header_font_bold = header_font | font_modify: 'weight', 'bolder'
 
@@ -43,13 +47,16 @@
   {% if settings.type_body_enabled -%}
     --cn-ff-body: {{ body_font.family -}};
   --cn-fs-body: {{ body_font.style -}};
+  --cn-fs-body--italic: {{ body_font_italic.style -}};
+  --cn-fs-body--oblique: {{ body_font_oblique.style -}};
   --cn-fw-body: {{ body_font.weight -}};
   --cn-fw-body--light: {{ body_font_light.weight | default: body_font.weight -}};
   --cn-fw-body--bold: {{ body_font_bold.weight | default: body_font.weight -}};
   --cn-fw-body--bolder: {{ body_font_bolder.weight | default: body_font.weight -}};
   {%- else -%}
-    --cn-ff-body: '';
-  --cn-fs-body: normal;
+    --cn-fs-body: normal;
+  --cn-fs-body--italic: italic;
+  --cn-fs-body--oblique: oblique;
   --cn-fw-body: normal;
   --cn-fw-body--light: light;
   --cn-fw-body--bold: bold;
@@ -59,12 +66,15 @@
   {% if settings.type_header_enabled -%}
     --cn-ff-header: {{ header_font.family -}};
   --cn-fs-header: {{ header_font.style -}};
+  --cn-fs-header--italic: {{ header_font_italic.style -}};
+  --cn-fs-header--oblique: {{ header_font_oblique.style -}};
   --cn-fw-header: {{ header_font.weight -}};
   --cn-fw-header--light: {{ header_font_bolder.weight | default: header_font.weight -}};
   --cn-fw-header--bold: {{ header_font_bolder.weight | default: header_font.weight -}};
   {%- else -%}
-    --cn-ff-header: '';
-  --cn-fs-header: normal;
+    --cn-fs-header: normal;
+  --cn-fs-header--italic: italic;
+  --cn-fs-header--oblique: oblique;
   --cn-fw-header: bold;
   --cn-fw-header--light: normal;
   --cn-fw-header--bold: bolder;
@@ -228,26 +238,42 @@
   --cn-banner-text: {{ banner_text_color -}};
   --cn-banner-text--hover: {% render 'adaptive-color' with color: banner_text_color -%};
 
-  {% if request.page_type contains 'customers/' -%}
-    --cn-login-bg: {{ settings.user_pages__login_bg -}};
+  {% if request.page_type contains 'captcha' -%}
+    --cn-challenge-bg: {{ settings.challenge__bg -}};
+  --cn-challenge-bg--rgb: {{ settings.challenge__bg | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-challenge-bg-align: {{ settings.challenge__bg_alignment -}};
+  --cn-challenge-bg-blend: {{ settings.challenge__bg_blend -}};
+  --cn-challenge-bg-opacity: {{ settings.challenge__bg_opacity | divided_by: 100.0 -}};
+  --cn-challenge-bg-repeat: {{ settings.challenge__bg_repeat -}};
+  --cn-challenge-bg-size: {{ settings.challenge__bg_size -}};
+
+  --cn-challenge-prompt-bg: {{ settings.challenge__prompt_bg -}};
+  --cn-challenge-prompt-bg--rgb: {{ settings.challenge__prompt_bg | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-challenge-prompt-text: {{ settings.challenge__prompt_color -}};
+  {%- endif %}
+
+  {% if request.page_type contains 'customers' -%}
+    --cn-accounts-bg: {{ settings.user_pages__bg -}};
+  --cn-accounts-bg--rgb: {{ settings.user_pages__bg | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-accounts-bg-align: {{ settings.user_pages__bg_alignment -}};
+  --cn-accounts-bg-blend: {{ settings.user_pages__bg_blend -}};
+  --cn-accounts-bg-opacity: {{ settings.user_pages__bg_opacity | divided_by: 100.0 -}};
+  --cn-accounts-bg-repeat: {{ settings.user_pages__bg_repeat -}};
+  --cn-accounts-bg-size: {{ settings.user_pages__bg_size -}};
+
+  --cn-accounts-bar-bg: {{ settings.user_pages__header_bg -}};
+  --cn-accounts-bar-bg--rgb: {{ settings.user_pages__header_bg | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+  --cn-accounts-bar-text: {{ settings.user_pages__header_color -}};
+  --cn-accounts-bar-opacity: {{ settings.user_pages__header_opacity | divided_by: 100.0 -}};
+
+  --cn-login-bg: {{ settings.user_pages__login_bg -}};
   --cn-login-bg--rgb: {{ settings.user_pages__login_bg | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
   --cn-login-bg-align: {{ settings.user_pages__login_bg_alignment -}};
   --cn-login-bg-blend: {{ settings.user_pages__login_bg_blend -}};
   --cn-login-bg-opacity: {{ settings.user_pages__login_bg_opacity | divided_by: 100.0 -}};
   --cn-login-bg-repeat: {{ settings.user_pages__login_bg_repeat -}};
   --cn-login-bg-size: {{ settings.user_pages__login_bg_size -}};
-
-  --cn-accounts-bg: {{ settings.user_pages__hero_bg -}};
-  --cn-accounts-bg--rgb: {{ settings.user_pages__hero_bg | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-  --cn-accounts-bg-align: {{ settings.user_pages__hero_bg_alignment -}};
-  --cn-accounts-bg-blend: {{ settings.user_pages__hero_bg_blend -}};
-  --cn-accounts-bg-opacity: {{ settings.user_pages__hero_bg_opacity | divided_by: 100.0 -}};
-  --cn-accounts-bg-repeat: {{ settings.user_pages__hero_bg_repeat -}};
-  --cn-accounts-bg-size: {{ settings.user_pages__hero_bg_size -}};
-
-  --cn-accounts-bar-bg: {{ settings.user_pages__header_bg -}};
-  --cn-accounts-bar-bg--rgb: {{ settings.user_pages__header_bg | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
-  --cn-accounts-bar-text: {{ settings.user_pages__header_color -}};
+  --cn-login-text: {{ settings.user_pages__login_color -}};
   {%- endif %}
 }
 

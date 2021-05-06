@@ -4,15 +4,15 @@
 }
 
 %customer-section-background {
-  background-color: $login-bg;
+  background-color: $accounts-bg;
 
   > .background {
-    background-blend-mode: $login-bg-blend;
-    background-color: $login-bg;
-    background-position: $login-bg-align;
-    background-repeat: $login-bg-repeat;
-    background-size: $login-bg-size;
-    opacity: $login-bg-opacity;
+    background-blend-mode: $accounts-bg-blend;
+    background-color: $accounts-bg;
+    background-position: $accounts-bg-align;
+    background-repeat: $accounts-bg-repeat;
+    background-size: $accounts-bg-size;
+    opacity: $accounts-bg-opacity;
     z-index: 0;
   }
 
