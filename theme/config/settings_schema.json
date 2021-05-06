@@ -722,13 +722,13 @@
       {
         "type": "color",
         "id": "challenge__prompt_color",
-        "label": "Prompt Text Colour",
+        "label": "Text Colour",
         "default": "#333232"
       },
       {
         "type": "color",
         "id": "challenge__prompt_bg",
-        "label": "Prompt Colour",
+        "label": "Background Colour",
         "default": "#f2f2f2"
       },
       {

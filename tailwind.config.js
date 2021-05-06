@@ -2,9 +2,9 @@ const isProduction = process.env.NODE_ENV === 'production';
 const typography = require('@tailwindcss/typography');
 const forms = require('@tailwindcss/forms');
 
-const sans = ['-apple-system', 'BlinkMacSystemFont', 'Avenir\\ Next', 'Avenir', 'Segoe\\ UI', 'Helvetica\\ Neue', 'Helvetica', 'Ubuntu', 'Roboto', 'Noto', 'Arial', 'sans-serif'];
-const serif = ['Iowan\\ Old\\ Style', 'Apple\\ Garamond', 'Baskerville', 'Times\\ New\\ Roman', 'Droid\\ Serif', 'Times', 'Source\\ Serif\\ Pro', 'serif', 'Apple\\ Color\\ Emoji', 'Segoe\\ UI\\ Emoji', 'Segoe\\ UI\\ Symbol'];
-const mono = ['Menlo', 'Consolas', 'Monaco', 'Liberation\\ Mono', 'Lucida\\ Console', 'monospace'];
+const sans = ['-apple-system', 'BlinkMacSystemFont', '"Avenir Next"', 'Avenir', '"Segoe UI"', '"Helvetica Neue"', 'Helvetica', 'Ubuntu', 'Roboto', 'Noto', 'Arial', 'sans-serif'];
+const serif = ['"Iowan Old Style"', '"Apple Garamond"', 'Baskerville', '"Times New Roman"', '"Droid Serif"', 'Times', '"Source Serif Pro"', 'serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"'];
+const mono = ['Menlo', 'Consolas', 'Monaco', '"Liberation Mono"', '"Lucida Console"', 'monospace'];
 
 module.exports = {
   mode: 'jit',
@@ -33,8 +33,8 @@ module.exports = {
       'sans': sans,
       'serif': serif,
       'mono': mono,
-      'heading': ['var(--cn-ff-header)', ...serif],
-      'body': ['var(--cn-ff-body)', ...sans],
+      'heading': sans,
+      'body': sans,
     },
     screens: {
       'small': {

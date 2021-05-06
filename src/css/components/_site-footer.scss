@@ -1,8 +1,12 @@
 #shopify-section-site-footer {
-  @apply mt-auto pt-4;
+  @apply mt-auto;
 
-  background-color: var(--footer-bg);
-  color: var(--footer-color);
+  background-color: $c-bg;
+  color: $c-text;
+
+  > section:not(.simple-footer) {
+    @apply pt-4;
+  }
 
   .payment-icons {
     @screen desktop {

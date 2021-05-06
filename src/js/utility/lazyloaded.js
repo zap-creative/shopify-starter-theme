@@ -56,4 +56,6 @@ export const handleLazyload = () => {
   });
 
   onLoadHideLazysizesAnimation();
+  // trigger scroll event to load in the correct resolution images
+  window.dispatchEvent(new Event('scroll'));
 };

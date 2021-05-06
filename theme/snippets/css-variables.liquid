@@ -180,6 +180,7 @@
   --cn-form-border--rgb: {{ settings.color_text_field_border | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
 
   --cn-modal-bg:  {{ settings.modal_color -}};
+  --cn-modal-bg--rgb:  {{ settings.modal_color | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
   --cn-modal-text:  {{ settings.modal_color_text -}};
   --cn-modal-overlay: {{ settings.modal_color_overlay -}};
   --cn-modal-overlay--rgb: {{ settings.modal_color_overlay | color_to_rgb | remove: 'rgb(' | remove: ')' -}};

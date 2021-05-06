@@ -13,7 +13,6 @@
   import SearchResultsArticles from '../components/SearchResultsArticles.svelte';
   import SearchResultsPages from '../components/SearchResultsPages.svelte';
   
-  const body = document.body;
   const {
     settings: {
       predictiveSearchUri,
@@ -88,10 +87,10 @@
   }
   
   const focusSearch = () => {
-    body.classList.add('overflow-hidden');
+    document.body.classList.add('overflow-hidden');
 
     const modal = document.getElementById('predictive-search-modal');
-    trapFocus( modal, { 
+    trapFocus(modal, { 
       elementToFocus: modal.querySelector('[predictive-search-input]')
     });
   }
@@ -99,7 +98,7 @@
   const hideSearch = () => {
     open = false;
 
-    body.classList.remove('overflow-hidden');
+    document.body.classList.remove('overflow-hidden');
     removeTrapFocus();
   }
 
@@ -126,14 +125,8 @@
 </script>
 
 <style>
-  .modal-overlay {
-    justify-content: flex-start;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
   .modal-body {
-    @apply max-h-36;
+    @apply py-4 px-8 max-h-36;
 
     border-radius: 0;
     max-width: none;
@@ -147,9 +140,10 @@
   }
 
   section {
-    @apply max-w-3xl py-4;
+    @apply max-w-3xl;
 
     align-self: center;
+    padding-top: 0;
     width: 100%;
   }
 
@@ -185,13 +179,13 @@
 
 {#if open}
   <div id="predictive-search-modal" class="modal open" in:focusSearch>
-    <div class="modal-overlay" 
+    <div class="modal-overlay from-top" 
       in:fade="{{ duration: 300 }}" 
       out:fade="{{ duration: 300, delay: 200 }}" 
       on:click|self="{hideSearch}"
     >
       <div class="modal-body" 
-        in:fly="{{ y: -200, duration: 300, delay: 200 }}"
+        in:fly="{{ y: -200, duration: 500 }}"
         out:fly="{{ y: -200, duration: 300 }}"
       >
         
@@ -241,8 +235,8 @@
             
             {#if open && query.length > 0}
               <div class="results-container {loading ? 'loading' : ''}" 
-                in:slide="{{ y: -100, duration: 300, delay: loading ? 0 : 300 }}"
-                out:slide="{{ y: -100, duration: 300 }}"
+                in:slide="{{ duration: 300, delay: loading ? 0 : 300 }}"
+                out:slide="{{ duration: 300 }}"
               >
                 <div id="predictive-search-results">
                 {#if results.products && results.products.length }

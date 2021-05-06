@@ -42,16 +42,18 @@
   endif 
 
   if simple_footer
+    assign show_legal_menu = false
     assign show_payment_icons = false
     assign show_selectors = false
+    assign show_social_accounts = false
   endif
 -%}
 
 {% style %}
   #shopify-section-site-footer {
-    --cn-c-bg: {{ section.settings.color_bg }};
-    --cn-c-bg--rgb: {{ section.settings.color_bg | color_to_rgb | remove: 'rgb(' | remove: ')' }};
-    --cn-c-text: {{ section.settings.color_text }};
+    --cn-c-bg: {{ section.settings.color_bg -}};
+    --cn-c-bg--rgb: {{ section.settings.color_bg | color_to_rgb | remove: 'rgb(' | remove: ')' -}};
+    --cn-c-text: {{ section.settings.color_text -}};
   }
 
   #shopify-section-site-footer .social-icon .btn {
@@ -111,7 +113,7 @@
   {%- endform -%}
 {%- endcapture -%}
 
-<section class="container critical-hidden" 
+<section class="container {% if simple_footer -%}simple-footer{%- endif %} critical-hidden" 
   data-section-id="{{ section.id }}" 
   data-section-type="footer-section"
   role="contentinfo"
@@ -240,7 +242,9 @@
     {%- endif %}
   </div>
 
-  <hr class="my-1 hr">
+  {% unless simple_footer -%}
+    <hr class="my-1 hr">
+  {%- endunless %}
 
   <div class="{% render 'columns-classes' with columns: section.settings %}">
     <nav class="column mobile:full {% if simple_footer -%}full h-center{%- endif -%}" role="navigation">

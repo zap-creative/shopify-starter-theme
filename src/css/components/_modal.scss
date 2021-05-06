@@ -34,8 +34,6 @@ $modal-overlay-animation-easing: $transition-easing !default;
 }
 
 %modal-overlay {
-  @apply p-12;
-
   align-items: center;
   backdrop-filter: blur(8px);
   background-color: rgba($modal-overlay--rgb, $modal-overlay-o);
@@ -49,13 +47,35 @@ $modal-overlay-animation-easing: $transition-easing !default;
   top: 0;
   width: 100%;
 
-  [aria-hidden=false] & {
+  [aria-hidden='false'] & {
     animation: $modal-overlay-animation-in $modal-overlay-animation-duration $modal-overlay-animation-easing;
   }
 
-  [aria-hidden=true] & {
+  [aria-hidden='true'] & {
     animation: $modal-overlay-animation-out $modal-overlay-animation-duration $modal-overlay-animation-easing;
     animation-delay: 100ms;
+  }
+
+  &.from-top {
+    align-items: flex-start;
+  }
+
+  &.from-bottom {
+    align-items: flex-end;
+  }
+
+  &.from-left {
+    align-items: flex-start;
+    flex-flow: column wrap;
+  }
+
+  &.from-right {
+    align-items: flex-end;
+    flex-flow: column wrap;
+  }
+
+  &.padded {
+    @apply p-12;
   }
 }
 
@@ -64,7 +84,7 @@ $modal-overlay-animation-easing: $transition-easing !default;
 }
 
 %modal-body {
-  @apply p-6 my-4 max-w-xl;
+  @apply p-6 max-w-xl;
 
   align-items: stretch;
   background-color: $modal-bg;
@@ -77,11 +97,11 @@ $modal-overlay-animation-easing: $transition-easing !default;
   width: 100%;
   will-change: transform;
 
-  [aria-hidden=false] & {
+  [aria-hidden='false'] & {
     animation: $modal-animation-in $modal-animation-duration $modal-animation-easing;
   }
 
-  [aria-hidden=true] & {
+  [aria-hidden='true'] & {
     animation: $modal-animation-out $modal-animation-duration $modal-animation-easing;
   }
 

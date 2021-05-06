@@ -126,7 +126,7 @@ $f-size-medium: var(--cn-fz-body-md, floor($size-body * $size-5)) !default;
 $f-size-large: var(--cn-fz-body-lg, floor($size-body * $size-4)) !default;
 $f-height: var(--cn-lh-body, #{$height-body}) !default;
 
-$f-family: var(--cn-ff-body, #{$family-sans}) !default;
+$f-family: var(--cn-ff-body, inherit) !default;
 $f-style: var(--cn-fs-body, normal) !default;
 $f-style-italic: var(--cn-fs-body--italic, italic) !default;
 $f-style-oblique: var(--cn-fs-body--oblique, oblique) !default;
@@ -143,7 +143,7 @@ $f-size-h5: var(--cn-fz-header-5, floor($size-body * $size-5)) !default;
 $f-size-h6: var(--cn-fz-header-6, floor($size-body * $size-6)) !default;
 $f-height-header: var(--cn-lh-header, #{$height-header}) !default;
 
-$f-family-header: var(--cn-ff-header, #{$family-serif}) !default;
+$f-family-header: var(--cn-ff-header), theme('fontFamily.heading') !default;
 $f-style-header: var(--cn-fs-header, normal) !default;
 $f-style-header-italic: var(--cn-fs-header--italic, italic) !default;
 $f-style-header-oblique: var(--cn-fs-header--oblique, oblique) !default;
@@ -245,6 +245,7 @@ $form--border-dark: var(--cn-form-border-dark, $border-dark) !default;
 $form--border--rgb: var(--cn-form-border--rgb, color-to-rgb($border)) !default;
 
 $modal-bg: var(--cn-modal-bg, $scheme-main-light) !default;
+$modal-bg--rgb: var(--cn-modal-bg--rgb, color-to-rgb($scheme-main-light)) !default;
 $modal-text: var(--cn-modal-text, $text) !default;
 $modal-overlay: var(--cn-modal-overlay, $scheme-invert) !default;
 $modal-overlay--rgb: var(--cn-modal-overlay--rgb, color-to-rgb($scheme-invert)) !default;
@@ -260,6 +261,18 @@ $image-overlay: var(--cn-image-overlay, $primary) !default;
 $image-overlay--rgb: var(--cn-image-overlay--rgb, color-to-rgb($primary)) !default;
 $image-overlay-text: var(--cn-image-overlay-text, $text-invert) !default;
 $image-overlay--text-focus: var(--cn-image-overlay--text-focus, $text-invert-strong) !default;
+
+$challenge-bg: var(--cn-challenge-bg, lighten($primary, $lighten-amt)) !default;
+$challenge-bg--rgb: var(--cn-challenge-bg--rgb, color-to-rgb($primary)) !default;
+$challenge-bg-align: var(--cn-challenge-bg-align, center) !default;
+$challenge-bg-blend: var(--cn-challenge-bg-blend, normal) !default;
+$challenge-bg-opacity: var(--cn-challenge-bg-opacity, 1) !default;
+$challenge-bg-repeat: var(--cn-challenge-bg-repeat, no-repeat) !default;
+$challenge-bg-size: var(--cn-challenge-bg-size, cover) !default;
+
+$challenge-prompt-bg: var(--cn-challenge-prompt-bg, $modal-bg) !default;
+$challenge-prompt-bg--rgb: var(--cn-challenge-prompt-bg--rgb, $modal-bg--rgb) !default;
+$challenge-prompt-text: var(--cn-challenge-prompt-text, $modal-text) !default;
 
 $accounts-bg: var(--cn-accounts-bg, lighten($primary, $lighten-amt)) !default;
 $accounts-bg--rgb: var(--cn-accounts-bg--rgb, color-to-rgb($primary)) !default;

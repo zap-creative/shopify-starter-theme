@@ -1,28 +1,42 @@
 .template-captcha {
-  background-image: linear-gradient(to bottom, rgba(#{$c-primary--rgb}, 0.3), transparent);
+  background-color: $challenge-bg;
+
+  > .background {
+    background-blend-mode: $challenge-bg-blend;
+    background-color: $challenge-bg;
+    background-position: $challenge-bg-align;
+    background-repeat: $challenge-bg-repeat;
+    background-size: $challenge-bg-size;
+    opacity: $challenge-bg-opacity;
+    z-index: -1;
+  }
 
   main {
     align-items: center;
     display: flex;
-    flex-flow: column wrap;
+    flex-flow: row wrap;
     justify-content: center;
   }
 }
 
 .shopify-challenge {
   &__container {
+    @extend %modal-body;
+
     @apply shadow-md;
+
+    background-color: $challenge-prompt-bg;
+    color: $challenge-prompt-text;
 
     form {
       @apply my-4;
     }
-
-    @extend %modal-body;
   }
 
   &__message {
     @apply my-4;
 
+    color: inherit;
     font-size: $f-size-h5;
     font-weight: $f-weight-header;
   }

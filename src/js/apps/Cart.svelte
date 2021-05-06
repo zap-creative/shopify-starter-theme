@@ -3,12 +3,11 @@
   import { fade, fly } from 'svelte/transition';
 
   import { trapFocus, removeTrapFocus } from '@shopify/theme-a11y';
-  import { updateItem, clearItems } from '@shopify/theme-cart';
+  import { updateItem } from '@shopify/theme-cart';
   
   import CartItem from '../components/CartItem.svelte';
   import CartSummary from '../components/CartSummary.svelte';
 
-  const body = document.body;
   const {
     strings: {
       cart_checkout = 'Checkout',
@@ -44,15 +43,18 @@
   }
   
   const focusCart = () => {
-    body.classList.add('overflow-hidden');
+    document.body.classList.add('overflow-hidden');
 
-    trapFocus(document.getElementById('cart-modal'));
+    const modal = document.getElementById('cart-modal');
+    trapFocus(modal, {
+      elementToFocus: modal.querySelector('[data-modal-close]')
+    });
   }
 
   const hideCart = () => {
     open = false;
 
-    body.classList.remove('overflow-hidden');
+    document.body.classList.remove('overflow-hidden');
     removeTrapFocus();
   }
 
@@ -76,65 +78,59 @@
 </script>
 
 <style>
-  .modal-overlay {
-    align-items: flex-end;
-    padding-left: 0;
-    padding-right: 0;
-  }
+.modal-body {
+  @apply max-w-lg;
 
-  .modal-body {
-    @apply max-w-lg;
+  border-radius: 0;
+  height: 100vh;
+  padding: 0;
+}
 
-    border-radius: 0;
-    min-height: 100vh;
-    padding: 0;
-  }
+header,
+section,
+footer {
+  @apply px-6;
+}
 
-  header,
-  section,
-  footer {
-    @apply px-6;
-  }
+header {
+  @apply py-2;
+}
 
-  header {
-    @apply py-4;
-  }
+section {
+  @apply shadow-inner;
 
-  section {
-    @apply shadow-inner;
+  display: flex;
+  flex: 1;
+  flex-flow: column nowrap;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
 
-    display: flex;
-    flex: 1;
-    flex-flow: column nowrap;
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
+form {
+  @apply mt-6;
 
-  form {
-    @apply mt-6;
+  align-items: center;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+}
 
-    align-items: center;
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-between;
-  }
-
-  footer {
-    @apply py-6 border-t;
-  }
+footer {
+  @apply py-6 border-t;
+}
 </style>
 
 <svelte:window on:keydown|once="{handleKeydown}"/>
 
 {#if open}
   <div id="cart-modal" class="modal open" in:focusCart>
-    <div class="modal-overlay"
+    <div class="modal-overlay from-right overflow-hidden"
       in:fade="{{ duration: 300 }}"
       out:fade="{{ duration: 300, delay: 200 }}"
       on:click|self="{hideCart}"
     >
       <div class="modal-body"
-        in:fly="{{ x: 300, duration: 300, delay: 200 }}"
+        in:fly="{{ x: 100, duration: 500 }}"
         out:fly="{{ x: 300, duration: 300 }}"
       >
 
@@ -143,6 +139,7 @@
           <button class="btn small is-ghost"
             aria-label="{cart_close}"
             on:click={hideCart}
+            data-modal-close
           >
             <i class="icon material-icons-outlined">logout</i>
           </button>
